@@ -54,32 +54,45 @@
         <main id="main" class="site-main" role="main">
             <article id="post-1270" class="post-1270 post type-post status-publish format-standard hentry category-90 category-129 tag-149">
                 <header class="entry-header">
-                    <h1 class="entry-title">Hello Gridea</h1>
-                    <p class="entry-census">发布于 2018-12-12</p>
+                    <h1 class="entry-title">贪心算法</h1>
+                    <p class="entry-census">发布于 2021-08-27</p>
                     <hr>
                 </header>
                 <div class="neko">
-                    <p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+                    <h2 id="算法解释">算法解释</h2>
+<p>贪心算法或贪心思想采用贪心的策略，保证<u>每次操作都是局部最优</u>的，从而使最后得到的结果是<u>全局最优的</u> 。</p>
 <!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
+<p>举一个例子：A和B喜欢吃苹果，A可以吃五个，B可以吃三个。已知苹果园里有吃不完的苹果，求A和B一共最多吃多少个苹果。在这个例子中，我们可以选用的贪心策略为，每个人吃自己能吃的最多数量的苹果，这在每个人身上都是局部最优的。有因为全局结果是局部结果的简单求和，且局部结果互补想干，因此局部最优的策略也同样是全局最优策略。</p>
+<h2 id="分配问题">分配问题</h2>
+<h3 id="455-assign-cookies">455. Assign Cookies</h3>
+<h4 id="题目">题目</h4>
+<p>有一群孩子和一堆饼干，每一个孩子有一个饥饿度，每一个饼干都有一个大小。每个孩子只能吃最多一个饼干，且只有饼干的大小大于孩子的饥饿度时，这个孩子才能吃饱。求最多有多少孩子可以吃饱。</p>
+<h4 id="示例">示例</h4>
+<p>输入两个数组，分别代表孩子的饥饿度和饼干的大小。输出最多有多少孩子可以吃饱的数量。</p>
+<pre><code>Input:[1,2],[1,2,3]
+Output:2
+</code></pre>
+<p>在这个示例中，我们可以给两个孩子吃[1,2]、[1,3]、[2,3]这三个组合的任意一种</p>
+<h4 id="解题">解题</h4>
+<p>因为饥饿度最小的孩子最容易吃饱，所以先考虑这个孩子。为了尽量使得剩下的饼干可以满足饥饿度更大的孩子，所以我们应该把大于等于这个孩子饥饿度的、且大小最小的饼干给这个孩子。满足了这个孩子后，我们采取同样的策略，考虑剩下孩子里饥饿度最小的孩子，知道没有满足饼干存在。</p>
+<p>简而言之，这里的贪心策略是给剩余孩子里最小饥饿度的孩子分配最小能饱腹的饼干。</p>
+<p>至于具体实现，因为我们需要获得大小关系，所以最方便的就是把孩子和饼干分别排序。这样我们就可以从饥饿度最小的孩子和大小最小的饼干出发，计算有多少组合可以满足条件。</p>
+<pre><code class="language-c++">class Solution {
+public:
+    int findContentChildren(vector&lt;int&gt;&amp; children, vector&lt;int&gt;&amp; cookies) {
+		sort(children.begin(),children.end());
+        sort(cookies.begin(),children.end());
+        int child=0,cookie=0;
+        while(child&lt;children.size() &amp;&amp; cookie&lt;cookies.size())
+        {
+            if(children[child] &lt;= cookies[cookie])
+                ++child;
+            ++cookie;
+        }
+        return child;
+    }
+};
+</code></pre>
 
                 </div>
             </article>
@@ -89,16 +102,16 @@
         <div class="mdui-container">
             <div class="mdui-row">
                 
-                <a href="https://anchengxiang.space/post/tan-xin-suan-fa/" class="mdui-ripple mdui-color-theme mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left">
+                <div class="mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left"></div>
+                
+                
+                <a href="https://anchengxiang.space/post/hello-gridea/" class="mdui-ripple mdui-color-theme mdui-col-xs-10 mdui-col-sm-6 doc-footer-nav-right">
                     <div class="doc-footer-nav-text">
-                        <i class="mdui-icon material-icons">arrow_back</i>
-                        <span class="doc-footer-nav-direction mdui-hidden-xs-down">上一篇文章</span>
-                        <div class="doc-footer-nav-chapter mdui-hidden-xs-down">贪心算法</div>
+                        <i class="mdui-icon material-icons">arrow_forward</i>
+                        <span class="doc-footer-nav-direction">下一篇文章</span>
+                        <div class="doc-footer-nav-chapter">Hello Gridea</div>
                     </div>
                 </a>
-                
-                
-                <div class="mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left"></div>
                 
             </div>
         </div>

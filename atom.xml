@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2021-08-25T07:25:56.460Z</updated>
+    <updated>2021-08-27T04:46:30.731Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
@@ -10,6 +10,51 @@
     <logo>https://anchengxiang.space/images/avatar.png</logo>
     <icon>https://anchengxiang.space/favicon.ico</icon>
     <rights>All rights reserved 2021, zhangxyiang_blog</rights>
+    <entry>
+        <title type="html"><![CDATA[贪心算法]]></title>
+        <id>https://anchengxiang.space/post/tan-xin-suan-fa/</id>
+        <link href="https://anchengxiang.space/post/tan-xin-suan-fa/">
+        </link>
+        <updated>2021-08-27T03:43:18.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="算法解释">算法解释</h2>
+<p>贪心算法或贪心思想采用贪心的策略，保证<u>每次操作都是局部最优</u>的，从而使最后得到的结果是<u>全局最优的</u> 。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h2 id="算法解释">算法解释</h2>
+<p>贪心算法或贪心思想采用贪心的策略，保证<u>每次操作都是局部最优</u>的，从而使最后得到的结果是<u>全局最优的</u> 。</p>
+<!-- more -->
+<p>举一个例子：A和B喜欢吃苹果，A可以吃五个，B可以吃三个。已知苹果园里有吃不完的苹果，求A和B一共最多吃多少个苹果。在这个例子中，我们可以选用的贪心策略为，每个人吃自己能吃的最多数量的苹果，这在每个人身上都是局部最优的。有因为全局结果是局部结果的简单求和，且局部结果互补想干，因此局部最优的策略也同样是全局最优策略。</p>
+<h2 id="分配问题">分配问题</h2>
+<h3 id="455-assign-cookies">455. Assign Cookies</h3>
+<h4 id="题目">题目</h4>
+<p>有一群孩子和一堆饼干，每一个孩子有一个饥饿度，每一个饼干都有一个大小。每个孩子只能吃最多一个饼干，且只有饼干的大小大于孩子的饥饿度时，这个孩子才能吃饱。求最多有多少孩子可以吃饱。</p>
+<h4 id="示例">示例</h4>
+<p>输入两个数组，分别代表孩子的饥饿度和饼干的大小。输出最多有多少孩子可以吃饱的数量。</p>
+<pre><code>Input:[1,2],[1,2,3]
+Output:2
+</code></pre>
+<p>在这个示例中，我们可以给两个孩子吃[1,2]、[1,3]、[2,3]这三个组合的任意一种</p>
+<h4 id="解题">解题</h4>
+<p>因为饥饿度最小的孩子最容易吃饱，所以先考虑这个孩子。为了尽量使得剩下的饼干可以满足饥饿度更大的孩子，所以我们应该把大于等于这个孩子饥饿度的、且大小最小的饼干给这个孩子。满足了这个孩子后，我们采取同样的策略，考虑剩下孩子里饥饿度最小的孩子，知道没有满足饼干存在。</p>
+<p>简而言之，这里的贪心策略是给剩余孩子里最小饥饿度的孩子分配最小能饱腹的饼干。</p>
+<p>至于具体实现，因为我们需要获得大小关系，所以最方便的就是把孩子和饼干分别排序。这样我们就可以从饥饿度最小的孩子和大小最小的饼干出发，计算有多少组合可以满足条件。</p>
+<pre><code class="language-c++">class Solution {
+public:
+    int findContentChildren(vector&lt;int&gt;&amp; children, vector&lt;int&gt;&amp; cookies) {
+		sort(children.begin(),children.end());
+        sort(cookies.begin(),children.end());
+        int child=0,cookie=0;
+        while(child&lt;children.size() &amp;&amp; cookie&lt;cookies.size())
+        {
+            if(children[child] &lt;= cookies[cookie])
+                ++child;
+            ++cookie;
+        }
+        return child;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://anchengxiang.space/post/hello-gridea/</id>
