@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2021-08-30T02:59:27.242Z</updated>
+    <updated>2021-10-09T08:52:52.045Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
@@ -10,6 +10,196 @@
     <logo>https://anchengxiang.space/images/avatar.png</logo>
     <icon>https://anchengxiang.space/favicon.ico</icon>
     <rights>All rights reserved 2021, zhangxyiang_blog</rights>
+    <entry>
+        <title type="html"><![CDATA[ShaderGraph基础]]></title>
+        <id>https://anchengxiang.space/post/shadergraph-ji-chu/</id>
+        <link href="https://anchengxiang.space/post/shadergraph-ji-chu/">
+        </link>
+        <updated>2021-10-09T08:39:03.000Z</updated>
+        <summary type="html"><![CDATA[<h1 id="介绍">介绍</h1>
+<p>之前写shader相当于重学一门语言，shadergraph可以通过可视化的连接节点就可实现各种效果。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h1 id="介绍">介绍</h1>
+<p>之前写shader相当于重学一门语言，shadergraph可以通过可视化的连接节点就可实现各种效果。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://i.loli.net/2021/10/09/h49XHZrkKfFR1P8.jpg" alt="img" loading="lazy"></figure>
+<p>现有Shader Graph节点被分为8类，每个节点的详细信息可以看官方文档</p>
+<p>https://docs.unity3d.com/Packages/com.unity.shadergraph@7.1/manual/Node-Library.html</p>
+<p>也可以对着节点右键，点Open Documentation，查看指定节点的文档。</p>
+<p>所有节点用处，其实可以总结为3大类：<strong>输入→运算→输出</strong></p>
+<ul>
+<li>输入：图片，数字等一些列外部能取到的信息</li>
+<li>运算：加减乘除平方开方等，将上述输入内容进行处理，生成新的图像</li>
+<li>输出：将运算后的图片或数据，喂给各种光照模型的Master节点，完成着色。</li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://i.loli.net/2021/10/09/27DjCTcMatX5EUH.png" alt="image-20211009151050762" loading="lazy"></figure>
+<p>这是一个最基础的连法<br>
+他一共做了4件事</p>
+<ol>
+<li>以图中UV方式映射一张图</li>
+<li>外部输入一张彩图</li>
+<li>外部输入一个颜色，颜色与上图相乘</li>
+<li>该图输出到 Unlit Master 的 Color</li>
+</ol>
+<p>可见，输入有2个：图片 与 颜色，运算也有2个：UV 与 乘法（运算）。如果要做文章，自然在UV和运算上。</p>
+<h2 id="uv">UV</h2>
+<p>可能某些程序，天天能看到模型贴图，但至今不知道UV是起什么作用。<br>
+UV是什么？他其实是一种规则，告诉贴图应该怎么贴在模型上。模型做完后，需要手动<strong>展开UV</strong>，再**制作贴图。**之后贴图便能以该UV的规则，贴在模型上。</p>
+<figure data-type="image" tabindex="3"><img src="https://i.loli.net/2021/10/09/HgSXJrDB8732A1q.png" alt="image-20211009151652433" loading="lazy"></figure>
+<p><strong>Split:分离通道 / Combine：合并通道</strong></p>
+<p>基础的UV看似一张彩图，其实是用两个通道来记录贴图的上下左右位置。拆开UV，可以看到UV的<strong>U记录左右信息</strong>，UV的<strong>V记录上下信息。</strong><br>
+<strong>所以，改变UV也会改变图片映射方式</strong></p>
+<figure data-type="image" tabindex="4"><img src="https://i.loli.net/2021/10/09/wuORZ1SBj3YCiET.png" alt="image-20211009151928843" loading="lazy"></figure>
+<p>UV乘以一个数值，就是缩放(Tiling)，UV加减一个值，就是移动（Offset）。当然你也可以直接用Tiling And Offset这个节点。</p>
+<figure data-type="image" tabindex="5"><img src="https://i.loli.net/2021/10/09/LzgIbtn9jENe1w3.png" alt="image-20211009152048642" loading="lazy"></figure>
+<p>UV大类中还有很多节点，都可以试试，还挺好玩的。</p>
+<figure data-type="image" tabindex="6"><img src="https://i.loli.net/2021/10/09/zKc498odrfEQW3J.png" alt="image-20211009152323373" loading="lazy"></figure>
+<p>理解了UV含义后，现在回头再看看。并非只有制作模型时的UV，能当作图片映射规则，只要是能再画面中变化的数值，均可当作UV。</p>
+<p>举个例子，以<strong>世界坐标的XZ来当作UV</strong></p>
+<figure data-type="image" tabindex="7"><img src="https://i.loli.net/2021/10/09/nN8wedOIpAGT1Vr.png" alt="image-20211009152451042" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="https://i.loli.net/2021/10/09/eDR5Lxbsl2UkJyM.gif" alt="1" loading="lazy"></figure>
+<p>这个可以用来做地面重复的瓷砖材质，模型都不用展UV。（或者你可以用Triplanar节点，做三面映射）</p>
+<h2 id="配置使用shadergraph">配置使用ShaderGraph</h2>
+<p>在Unity2019中，ShaderGraph支持Lightweight Render Pipeline(又名Universal RP，即通用渲染管线)和HD Render Pipeline。在Unity 2019中，采用了PackageManager来管理Unity的众多新功能，包括Shader shader包和Lightweight Render Pipeline包。</p>
+<ol>
+<li>
+<p>安装Lightweight Render Pipeline和ShaderGraph包。</p>
+<p>有两种方式：<br>
+1）在菜单栏Window &gt; PackageManager的All 标签页中下载组件包</p>
+<figure data-type="image" tabindex="9"><img src="https://i.loli.net/2021/10/09/CgJLX93bZNwPBYn.png" alt="img" loading="lazy"></figure>
+<p>Package Manager界面</p>
+<p>2）通过手动设置Unity工程下Packages/manifest.json文件</p>
+<figure data-type="image" tabindex="10"><img src="https://i.loli.net/2021/10/09/1l8h4BTuAmdp3XI.png" alt="img" loading="lazy"></figure>
+<p>manifest.json</p>
+<blockquote>
+<p>目前通过Package Manager只能下载最新版本的包，而通过manifest文件可以设置使用任意版本的包。如果有时候新版本的包和Unity版本不兼容的话，可以通过manifest文件回退到之前的旧版本。</p>
+</blockquote>
+</li>
+<li>
+<p>创建设置SRP（可编程渲染管线）</p>
+<p>1）菜单栏Assets &gt; Create &gt; Rendering&gt;Lightingweight Pipeline Asset，会创建出来一个文件，这是渲染管线的配置文件。</p>
+<figure data-type="image" tabindex="11"><img src="https://i.loli.net/2021/10/09/tdvJPGTBjs8oQ12.png" alt="img" loading="lazy"></figure>
+<p>2）在菜单栏 Edit &gt; Project Settings &gt; Graphics中设置刚才的SRP文件</p>
+<figure data-type="image" tabindex="12"><img src="https://i.loli.net/2021/10/09/fHrE62BUnivN89Y.png" alt="img" loading="lazy"></figure>
+<p>经过这些设置，现在就可以开始使用ShaderGraph了！</p>
+</li>
+</ol>
+<h3 id="创建shadergraph文件">创建ShaderGraph文件</h3>
+<p>通过菜单栏 Create &gt; Shader &gt; *** Graph 可以创建ShaderGraph文件，会在Project创建一个graph文件。</p>
+<figure data-type="image" tabindex="13"><img src="https://i.loli.net/2021/10/09/WEbjKy6TqrUOit5.png" alt="img" loading="lazy"></figure>
+<p><em>PBR Graph</em> PBR图<br>
+<em>Sub Graph</em> 子图，用于创建一些可复用的节点<br>
+<em>Unlit Graph</em> 不受光照的图</p>
+<h1 id="shadergraph窗口">ShaderGraph窗口</h1>
+<p>我们先创建一个PBRGraph来看一看。双击graph文件即可打开ShaderGraph窗口。</p>
+<figure data-type="image" tabindex="14"><img src="https://i.loli.net/2021/10/09/gxWNEb3AHB1ofiV.png" alt="img" loading="lazy"></figure>
+<p>ShaderGraph的图是以节点和连线组成的，默认创建出来会有一个Master Node（主节点）。你可以通过把其他节点连接到Master Node来创造你想要的效果。</p>
+<h2 id="编辑节点的属性">编辑节点的属性</h2>
+<p>如下图所示，你可以通过编辑默认的数值快速改变物体的表面属性。</p>
+<figure data-type="image" tabindex="15"><img src="https://i.loli.net/2021/10/09/yNqL7b2he1UntlH.gif" alt="img" loading="lazy"></figure>
+<p>修改节点属性</p>
+<h2 id="添加节点">添加节点</h2>
+<p>添加纹理和其他复杂的交互操作，只要右键点击并选择“Create Node”。</p>
+<figure data-type="image" tabindex="16"><img src="https://i.loli.net/2021/10/09/7bSvFR9i8rTg1PM.gif" alt="img" loading="lazy"></figure>
+<p>创建节点</p>
+<h2 id="连接节点">连接节点</h2>
+<p>通过拖拽对应的值即可创建连线。</p>
+<figure data-type="image" tabindex="17"><img src="https://i.loli.net/2021/10/09/s3tQhDg9bPVnCcY.gif" alt="img" loading="lazy"></figure>
+<h2 id="创建输入变量">创建输入变量</h2>
+<p>一个shader当然必不可少要有输入的变量了，这在ShaderGraph中也很简单。</p>
+<figure data-type="image" tabindex="18"><img src="https://i.loli.net/2021/10/09/RQfz943HIn1qZjW.gif" alt="img" loading="lazy"></figure>
+<p>创建输入变量</p>
+<h2 id="使用输入变量">使用输入变量</h2>
+<p>你可以给输入变量设置一个默认值，方便调试。</p>
+<figure data-type="image" tabindex="19"><img src="https://i.loli.net/2021/10/09/PRg49dIyLpMbeNr.gif" alt="img" loading="lazy"></figure>
+<p>给输入变量设置默认值</p>
+<p>在Graph中使用这个变量也很简单，只需要将变量拖入图中，和其他节点创建连线即可。</p>
+<figure data-type="image" tabindex="20"><img src="https://i.loli.net/2021/10/09/mrU7NKwY2nscLfp.gif" alt="img" loading="lazy"></figure>
+<p>使用输入变量</p>
+<h2 id="自定义预览模型">自定义预览模型</h2>
+<p>ShaderGraph右下角有一个预览窗口，可以选择内置的5种和自定义的模型来更好的预览Shader的效果。</p>
+<figure data-type="image" tabindex="21"><img src="https://i.loli.net/2021/10/09/owLkGhX3pCey8Ja.gif" alt="img" loading="lazy"></figure>
+<p>自定义预览模型</p>
+<h1 id="材质球使用shader">材质球使用Shader</h1>
+<p>Shader调好以后，当然最最终要应用到材质球上。材质球的Shader选择菜单中会多出一个graphs的类别，下面就是你创建的ShaderGraph对应的shader。</p>
+<figure data-type="image" tabindex="22"><img src="https://i.loli.net/2021/10/09/veWdHoaGZKlxkim.png" alt="img" loading="lazy"></figure>
+<h2 id="基础材质">基础材质</h2>
+<figure data-type="image" tabindex="23"><img src="https://i.loli.net/2021/10/09/z2uD79pgqYHxGoN.jpg" alt="1" loading="lazy"></figure>
+<p>基础材质，也就是Standard材质，是我们使用unity过程中最常见的一种着色器</p>
+<figure data-type="image" tabindex="24"><img src="https://i.loli.net/2021/10/09/LxSsmDib1Vzj7kZ.png" alt="image-20211009162722668" loading="lazy"></figure>
+<h3 id="metallic工作流">Metallic工作流：</h3>
+<p><strong>贴图</strong></p>
+<ul>
+<li>颜色：Albdeo(RGB)+Alpha(A)</li>
+<li>材质：Metallic(R)+AO(G)+Smoothness(A)</li>
+<li>法线：Normal（RGB/OpenGL）</li>
+<li>自发光：Emission(RGB)</li>
+</ul>
+<p><strong>控件</strong></p>
+<ul>
+<li>所有贴图的UV位移和缩放</li>
+<li>与Albedo相乘的颜色</li>
+<li>法线强度</li>
+<li>金属度/光滑度/AO强度滑块（0-1）</li>
+<li>与自发光相乘的颜色（可以是HDR）</li>
+<li>自发光强度</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【Unity】ScriptableObject]]></title>
+        <id>https://anchengxiang.space/post/unity-scriptableobject/</id>
+        <link href="https://anchengxiang.space/post/unity-scriptableobject/">
+        </link>
+        <updated>2021-08-31T03:00:58.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="简介">简介</h1>
+<p>ScriptableObject是用来存储数据的一个<strong>资源文件</strong>，像是JSON、XML、文本文件这样的存储文件，可以用来存储数据。但是这里他在最开始的时候不需要再读文件，就想是JSON在游戏开始时，我们需要加载JSON文件中的数据，我们就需要读取这个文件，然后在赋值给对象。他就可以直接使用其中的数据。因为他是资源文件，所以他有着资源文件的特性，我们Resource.Load他就可以使用他了。</p>
+<p>其实可以简单的理解为把你所有的数据都用变量在一个类中声明，然后我们使用的时候，直接实例化这个类就好了。</p>
+<h1 id="优势">优势</h1>
+<ul>
+<li>不会被unity序列化机制影响，故可以多场景共用。</li>
+<li>可以作为一个引用在脚本上，因为它是资源文件</li>
+<li>在实例化对象时用它来做配置文件降低了内存的消耗</li>
+<li>有自己的回调OnEnable、OnDisable、OnDestroy</li>
+</ul>
+<h1 id="解决了什么问题">解决了什么问题</h1>
+<ul>
+<li>ScriptableObject的数据存储在asset里面，退出时不会重置数据，就像unity里的材质，纹理等资源数据一样</li>
+<li>这些资源在实例化的时候是可以被引用，而不是复制</li>
+<li>可以在场景间共享</li>
+<li>在项目之间共享</li>
+</ul>
+<h1 id="用法">用法</h1>
+<pre><code class="language-c#">using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+[Serializable]
+public class MyObj
+{
+    public int age;
+    public string name;
+}
+[CreateAssetMenu]
+public class MySciptObj : ScriptableObject
+{
+    public List&lt;MyObj&gt; myObjs;
+
+    public void Print()
+    {
+        for(int i=0,iMax=myObjs.Count;i&lt;iMax;i++)
+        {
+            Debug.Log(&quot;Name:&quot;+myObjs[i].name+&quot;Age:&quot;+myObjs[i].age);
+        }
+    }
+    public void Save(string name,int age)
+    {
+        myObjs.Add(new MyObj { name=name,age=age});
+    }
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Unity移动游戏优化]]></title>
         <id>https://anchengxiang.space/post/unity-yi-dong-you-xi-you-hua/</id>
@@ -513,7 +703,7 @@ GameObject.Instantiate(prefab, parent, position, rotation);
 <p><strong>优化设置</strong></p>
 <p>在 PlayerSettings 中，尽可能选中 <strong>Prebake Collision Meshes</strong>。</p>
 <figure data-type="image" tabindex="38"><img src="https://i.loli.net/2021/08/29/mAxC9EOe3NHk6pP.png" alt="img" loading="lazy"></figure>
-<h4 id="请务必同时编辑-physics-设置-project-settings-physics-尽可能简化-layer-collision-matrix"><strong>请务必同时编辑</strong> <strong>Physics</strong> <strong>设置</strong> <strong>(Project Settings &gt; Physics)。尽可能简化</strong> <strong>Layer Collision Matrix。</strong></h4>
+<p><strong>请务必同时编辑</strong> <strong>Physics</strong> <strong>设置</strong> <strong>(Project Settings &gt; Physics)。尽可能简化</strong> <strong>Layer Collision Matrix。</strong></p>
 <p>禁用 <strong>Auto Sync Transforms</strong> 并启用 <strong>Reuse Collision Callbacks。</strong></p>
 <figure data-type="image" tabindex="39"><img src="https://i.loli.net/2021/08/29/LeyW5VXivqmAsuI.png" alt="img" loading="lazy"></figure>
 <center>修改物理项目设置以进一步提高性能。</center>
@@ -559,8 +749,8 @@ GameObject.Instantiate(prefab, parent, position, rotation);
     </entry>
     <entry>
         <title type="html"><![CDATA[贪心算法]]></title>
-        <id>https://anchengxiang.space/post/tan-xin-suan-fa/</id>
-        <link href="https://anchengxiang.space/post/tan-xin-suan-fa/">
+        <id>https://anchengxiang.space/post/tan-xin-suan-fa-1/</id>
+        <link href="https://anchengxiang.space/post/tan-xin-suan-fa-1/">
         </link>
         <updated>2021-08-27T03:43:18.000Z</updated>
         <summary type="html"><![CDATA[<h1 id="算法解释">算法解释</h1>
