@@ -144,6 +144,46 @@ Output:5
 </code></pre>
 <h1 id="区间问题">区间问题</h1>
 <h2 id="435无重叠区间non-overlapping-intervals">435.无重叠区间Non-overlapping Intervals</h2>
+<h3 id="题目-3">题目</h3>
+<p>给定多个区间，计算让这些区间互不重叠所需要移除区间的最少个数。起止相连不算重叠。</p>
+<h3 id="示例-3">示例</h3>
+<p>输入是一个数组，数组由多个长度固定为2的数组组成，表示区间的开始和结尾。输出一个整数，表示需要移除的区间数量。</p>
+<pre><code>Input：[[1,2],[2,4],[1,3]]
+Output:1
+</code></pre>
+<p>在此示例中，我们可以移除区间[1,3]，使得剩余的区间[[1,2],[2,4]]互不重叠。</p>
+<h3 id="解题-3">解题</h3>
+<p>在选择要保留区间时，区间的结尾十分重要：选择的区间结尾越小，余留给其他区间的空间就越大，也就能保留更多的区间。因此，我们采取的贪心策略为，优先保留结尾小且不想交的区间。</p>
+<p>具体实现方法为，先把区间按照结尾的大小进行增序排序，每次选择结尾最小和前一个选择的区间不重叠的区间。</p>
+<p>在示例中，排序后的数组为[[1,2],[1,3],[2,4]]。按照我们的贪心策略，首先初始化为区间[1,2]；由于[1,3]与[1,2]相交，我们跳过该区间；由于[2,4]与[1,2]不想交，我们保留。因此最终保留的区间为[[1,2],[2,4]]。</p>
+<pre><code class="language-c#">public class Solution {
+    public int EraseOverlapIntervals(int[][] intervals) {
+		if(intervals.Length==0)return 0;
+        Array.Sort(intervals,(a,b)=&gt;a[1].CompareTo(b[1]));
+        int temp=-1;
+        int right=int.MinValue;
+        int count=0;
+        temp=intervals[0][0];
+        right=intervals[0][1];
+        for(int i=1;i&lt;intervals.Length;i++){
+            if(temp==intervals[i][0]){
+                if(right&gt;=intervals[i][1]){
+                    right=intervals[i][1];
+                }
+                count++;
+            }
+            else{
+                if(right&lt;=intervals[i][0]){
+                    temp=intervals[i][0];
+                    right=intervals[i][1];
+            }
+            else count++;
+            }
+        }
+        return count;
+    }
+}
+</code></pre>
 
                 </div>
             </article>
