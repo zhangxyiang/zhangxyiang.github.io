@@ -58,136 +58,13 @@
         <main id="main" class="site-main" role="main">
             <article id="post-1270" class="post-1270 post type-post status-publish format-standard hentry category-90 category-129 tag-149">
                 <header class="entry-header">
-                    <h1 class="entry-title">贪心算法</h1>
-                    <p class="entry-census">发布于 2021-08-27</p>
+                    <h1 class="entry-title">分享</h1>
+                    <p class="entry-census">发布于 2021-12-11</p>
                     <hr>
                 </header>
                 <div class="neko">
-                    <h1 id="算法解释">算法解释</h1>
-<p>贪心算法或贪心思想采用贪心的策略，保证<u>每次操作都是局部最优</u>的，从而使最后得到的结果是<u>全局最优的</u> 。</p>
-<!-- more -->
-<p>举一个例子：A和B喜欢吃苹果，A可以吃五个，B可以吃三个。已知苹果园里有吃不完的苹果，求A和B一共最多吃多少个苹果。在这个例子中，我们可以选用的贪心策略为，每个人吃自己能吃的最多数量的苹果，这在每个人身上都是局部最优的。有因为全局结果是局部结果的简单求和，且局部结果互补想干，因此局部最优的策略也同样是全局最优策略。</p>
-<h1 id="分配问题">分配问题</h1>
-<h2 id="455-assign-cookies">455. Assign Cookies</h2>
-<h3 id="题目">题目</h3>
-<p>有一群孩子和一堆饼干，每一个孩子有一个饥饿度，每一个饼干都有一个大小。每个孩子只能吃最多一个饼干，且只有饼干的大小大于孩子的饥饿度时，这个孩子才能吃饱。求最多有多少孩子可以吃饱。</p>
-<h3 id="示例">示例</h3>
-<p>输入两个数组，分别代表孩子的饥饿度和饼干的大小。输出最多有多少孩子可以吃饱的数量。</p>
-<pre><code>Input:[1,2],[1,2,3]
-Output:2
-</code></pre>
-<p>在这个示例中，我们可以给两个孩子吃<code>[1,2]、[1,3]、[2,3]</code>这三个组合的任意一种</p>
-<h3 id="解题">解题</h3>
-<p>因为饥饿度最小的孩子最容易吃饱，所以先考虑这个孩子。为了尽量使得剩下的饼干可以满足饥饿度更大的孩子，所以我们应该把大于等于这个孩子饥饿度的、且大小最小的饼干给这个孩子。满足了这个孩子后，我们采取同样的策略，考虑剩下孩子里饥饿度最小的孩子，知道没有满足饼干存在。</p>
-<p>简而言之，这里的贪心策略是给剩余孩子里最小饥饿度的孩子分配最小能饱腹的饼干。</p>
-<p>至于具体实现，因为我们需要获得大小关系，所以最方便的就是把孩子和饼干分别排序。这样我们就可以从饥饿度最小的孩子和大小最小的饼干出发，计算有多少组合可以满足条件。</p>
-<pre><code class="language-c#">public class Solution {
-    public int FindContentChildren(int[] g, int[] s) {
-        if (g.Length == 0 || s.Length == 0) return 0;
-
-        Array.Sort(g);
-        Array.Sort(s);
-        int child = 0;
-        int cookie = 0;
-        while (child &lt; g.Length &amp;&amp; cookie &lt; s.Length)
-        {
-            if (s[cookie] &gt;= g[child]) child++;
-            cookie++;
-        }
-        return child;
-    }
-}
-</code></pre>
-<h2 id="135candy">135.Candy</h2>
-<h3 id="题目-2">题目</h3>
-<p>一群孩子站成一排，每一个孩子有自己的评分。现在需要给这些孩子发糖果，规则是如果一个孩子的评分比自己身旁的一个孩子要高，那么这个孩子就必须得到比身旁孩子更多的糖果；所有的孩子至少要有一个糖果。求解最少需要多少个糖果。</p>
-<h3 id="示例-2">示例</h3>
-<p>输入一个数组，表示孩子的评分。输出是最少糖果的数量。</p>
-<pre><code>Input:[1,0,2]
-Output:5
-</code></pre>
-<p>在此示例中，最少的糖果分法是<code>[2,1,2]</code></p>
-<h3 id="解题-2">解题</h3>
-<p>这一题也运用贪心策略，但是我们只需要简单的两次遍历即可，不需要排序或者选择，不要认为存在比较关系的贪心策略一定需要排序或者是选择。</p>
-<p>把所有的孩子的糖果数初始化为1；先从左往右遍历一遍，如果右边孩子的评分比左边高，则右边孩子的糖果数更新为左边孩子的糖果数加1,；再从右往左遍历一遍，如果左边孩子的评分数比右边高，且左边孩子当前的糖果数不大于右边孩子的糖果数，则左边孩子的糖果数更新为右边孩子的糖果数加1。通过两次遍历，分配的糖果就可以满足题目要求了。这里的贪心策略即为，<u>在每次遍历中，只考虑并更新相邻一侧的大小关系</u></p>
-<p>这示例中，初始化糖果为<code>[1,1,1]</code>，第一次遍历后结果为<code>[1,1,2]</code>，第二次遍历结果为<code>[2,1,2]</code>.</p>
-<pre><code class="language-c#">public class Solution {
-    public int Candy(int[] ratings) {
-        int size=ratings.Length;
-        int num=0;
-        if(size&lt;2)
-        {
-            return size;
-        }
-        int[] pnum=new int[size];
-        for(int i=0;i&lt;size;i++)
-        {
-            pnum[i]=1;
-        }
-        for(int i=1;i&lt;size;i++)
-        {
-            if(ratings[i]&gt;ratings[i-1])
-            {
-                pnum[i]=pnum[i-1]+1;
-            }
-        }
-        for(int i=size-1;i&gt;0;i--)
-        {
-            if(ratings[i]&lt;ratings[i-1])
-            {
-                pnum[i-1]=Math.Max(pnum[i-1],pnum[i]+1);
-            }
-        }
-        foreach (int i in pnum)
-        {
-            num += i;
-        }
-        return num;
-    }
-}
-</code></pre>
-<h1 id="区间问题">区间问题</h1>
-<h2 id="435无重叠区间non-overlapping-intervals">435.无重叠区间Non-overlapping Intervals</h2>
-<h3 id="题目-3">题目</h3>
-<p>给定多个区间，计算让这些区间互不重叠所需要移除区间的最少个数。起止相连不算重叠。</p>
-<h3 id="示例-3">示例</h3>
-<p>输入是一个数组，数组由多个长度固定为2的数组组成，表示区间的开始和结尾。输出一个整数，表示需要移除的区间数量。</p>
-<pre><code>Input：[[1,2],[2,4],[1,3]]
-Output:1
-</code></pre>
-<p>在此示例中，我们可以移除区间[1,3]，使得剩余的区间[[1,2],[2,4]]互不重叠。</p>
-<h3 id="解题-3">解题</h3>
-<p>在选择要保留区间时，区间的结尾十分重要：选择的区间结尾越小，余留给其他区间的空间就越大，也就能保留更多的区间。因此，我们采取的贪心策略为，优先保留结尾小且不想交的区间。</p>
-<p>具体实现方法为，先把区间按照结尾的大小进行增序排序，每次选择结尾最小和前一个选择的区间不重叠的区间。</p>
-<p>在示例中，排序后的数组为[[1,2],[1,3],[2,4]]。按照我们的贪心策略，首先初始化为区间[1,2]；由于[1,3]与[1,2]相交，我们跳过该区间；由于[2,4]与[1,2]不想交，我们保留。因此最终保留的区间为[[1,2],[2,4]]。</p>
-<pre><code class="language-c#">public class Solution {
-    public int EraseOverlapIntervals(int[][] intervals) {
-		if(intervals.Length==0)return 0;
-        Array.Sort(intervals,(a,b)=&gt;a[1].CompareTo(b[1]));
-        int temp=-1;
-        int right=int.MinValue;
-        int count=0;
-        temp=intervals[0][0];
-        right=intervals[0][1];
-        for(int i=1;i&lt;intervals.Length;i++){
-            if(temp==intervals[i][0]){
-                if(right&gt;=intervals[i][1]){
-                    right=intervals[i][1];
-                }
-                count++;
-            }
-            else{
-                if(right&lt;=intervals[i][0]){
-                    temp=intervals[i][0];
-                    right=intervals[i][1];
-            }
-            else count++;
-            }
-        }
-        return count;
-    }
-}
-</code></pre>
+                    <h3 id="unity">Unity</h3>
+<p><a href="https://my.oschina.net/u/4589313?q=unity3d">Unity UPR学习博客</a></p>
 
                 </div>
             </article>
@@ -197,16 +74,16 @@ Output:1
         <div class="mdui-container">
             <div class="mdui-row">
                 
-                <a href="https://anchengxiang.space/post/unity-yi-dong-you-xi-you-hua/" class="mdui-ripple mdui-color-theme mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left">
+                <div class="mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left"></div>
+                
+                
+                <a href="https://anchengxiang.space/post/shadergraph-ji-chu/" class="mdui-ripple mdui-color-theme mdui-col-xs-10 mdui-col-sm-6 doc-footer-nav-right">
                     <div class="doc-footer-nav-text">
-                        <i class="mdui-icon material-icons">arrow_back</i>
-                        <span class="doc-footer-nav-direction mdui-hidden-xs-down">上一篇文章</span>
-                        <div class="doc-footer-nav-chapter mdui-hidden-xs-down">Unity移动游戏优化</div>
+                        <i class="mdui-icon material-icons">arrow_forward</i>
+                        <span class="doc-footer-nav-direction">下一篇文章</span>
+                        <div class="doc-footer-nav-chapter">ShaderGraph基础</div>
                     </div>
                 </a>
-                
-                
-                <div class="mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left"></div>
                 
             </div>
         </div>
