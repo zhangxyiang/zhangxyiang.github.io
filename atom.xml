@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2021-12-11T14:40:21.677Z</updated>
+    <updated>2021-12-19T14:18:57.324Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
@@ -11,13 +11,1085 @@
     <icon>https://anchengxiang.space/favicon.ico</icon>
     <rights>All rights reserved 2021, zhangxyiang_blog</rights>
     <entry>
-        <title type="html"><![CDATA[分享]]></title>
-        <id>https://anchengxiang.space/post/share/</id>
-        <link href="https://anchengxiang.space/post/share/">
+        <title type="html"><![CDATA[Odin-基础]]></title>
+        <id>https://anchengxiang.space/post/odin-ji-chu/</id>
+        <link href="https://anchengxiang.space/post/odin-ji-chu/">
         </link>
-        <updated>2021-12-11T14:34:54.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="unity">Unity</h3>
-<p><a href="https://my.oschina.net/u/4589313?q=unity3d">Unity UPR学习博客</a></p>
+        <updated>2021-12-19T14:10:11.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="essentials">Essentials</h2>
+<h3 id="assets-only-与-sceneobjectsonly">Assets Only 与 SceneObjectsOnly</h3>
+<p>AssetsOnly 用于对象属性，并将属性限制为项目资产，而不是场景对象。当您要确保对象来自项目而不是场景时，请使用此选项。</p>
+<p>SceneObjectsOnly 则用于对象属性，并将属性限制为场景对象，而不是项目资产。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AssetsOnly</td>
+<td>选择Assets下面的资源</td>
+</tr>
+<tr>
+<td>SceneObjectsOnly</td>
+<td>选择场景中的物体</td>
+</tr>
+</tbody>
+</table>
+<pre><code>[Title(&quot;Assets only&quot;)]
+[AssetsOnly]
+public List&lt;GameObject&gt; OnlyPrefabs;
+
+[AssetsOnly]
+public GameObject SomePrefab;
+
+[AssetsOnly]
+public Material MaterialAsset;
+
+[AssetsOnly]
+public MeshRenderer SomeMeshRendererOnPrefab;
+
+[Title(&quot;Scene Objects only&quot;)]
+[SceneObjectsOnly]
+public List&lt;GameObject&gt; OnlySceneObjects;
+
+[SceneObjectsOnly]
+public GameObject SomeSceneObject;
+
+[SceneObjectsOnly]
+public MeshRenderer SomeMeshRenderer;
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2021/12/15/ls1EXrBz9m5gKVj.png" alt="image-20211215000028326" loading="lazy"></figure>
+<h3 id="custom-value-drawer-attribute">Custom Value Drawer Attribute</h3>
+<p>你可以用这个属性制作一个方法，作为一个自定义的属性绘图，而不是制作一个新的属性，和一个新的绘图，来做一件一次性的事情。这些绘图开箱即用，支持撤销/重做和多选。</p>
+<pre><code class="language-c#">public float From = 2, To = 7;
+
+[CustomValueDrawer(&quot;MyCustomDrawerStatic&quot;)]
+public float CustomDrawerStatic;
+
+[CustomValueDrawer(&quot;MyCustomDrawerInstance&quot;)]
+public float CustomDrawerInstance;
+
+[CustomValueDrawer(&quot;MyCustomDrawerAppendRange&quot;)]
+public float AppendRange;
+
+[CustomValueDrawer(&quot;MyCustomDrawerArrayNoLabel&quot;)]
+public float[] CustomDrawerArrayNoLabel = new float[] { 3f, 5f, 6f };
+
+private static float MyCustomDrawerStatic(float value, GUIContent label)
+{
+    return EditorGUILayout.Slider(label, value, 0f, 10f);
+}
+
+private float MyCustomDrawerInstance(float value, GUIContent label)
+{
+    return EditorGUILayout.Slider(label, value, this.From, this.To);
+}
+
+private float MyCustomDrawerAppendRange(float value, GUIContent label, Func&lt;GUIContent, bool&gt; callNextDrawer)
+{
+    SirenixEditorGUI.BeginBox();
+    callNextDrawer(label);
+    var result = EditorGUILayout.Slider(value, this.From, this.To);
+    SirenixEditorGUI.EndBox();
+    return result;
+}
+
+private float MyCustomDrawerArrayNoLabel(float value)
+{
+    return EditorGUILayout.Slider(value, this.From, this.To);
+}
+
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://s2.loli.net/2021/12/18/USPt6hJlIuRk4Bb.png" alt="image-20211218212854538" loading="lazy"></figure>
+<h3 id="delayed-property-attribute">Delayed Property Attribute</h3>
+<p>当属性仍在inspector中被编辑时，延迟应用对属性的改变。类似于Unity内置的Delayed属性，但这个属性也可以应用于属性。</p>
+<pre><code class="language-c#">// Delayed和DelayedProperty属性实际上是相同的
+[Delayed]
+[OnValueChanged(&quot;OnValueChanged&quot;)]
+public int DelayedField;
+
+// 但是DelayedProperty正如其名，也可以应用于属性
+[ShowInInspector, DelayedProperty]
+[OnValueChanged(&quot;OnValueChanged&quot;)]
+public string DelayedProperty { get; set; }
+
+private void OnValueChanged()
+{
+    Debug.Log(&quot;Value changed!&quot;);
+}
+
+</code></pre>
+<p>当我注释掉上面的[Delayed]属性时，如下图可见一直在输出</p>
+<figure data-type="image" tabindex="3"><img src="https://s2.loli.net/2021/12/18/gZDrxuGvjoL1eaf.gif" alt="no_delayued" loading="lazy"></figure>
+<p>当我加上[Delayed]属性时，只有我停止改变时才输出一行</p>
+<figure data-type="image" tabindex="4"><img src="https://s2.loli.net/2021/12/18/lfEeXAD8CxsqPw4.gif" alt="delayued" loading="lazy"></figure>
+<h3 id="detailed-info-box-attribute">Detailed Info Box Attribute</h3>
+<p>DetailedInfoBox用于任何属性，并显示一个信息框，可以展开以显示更多细节。用这个来向用户传达一个信息，并让他们选择查看更多的细节。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>message</td>
+<td>string</td>
+<td>信息</td>
+</tr>
+<tr>
+<td>detail</td>
+<td>string</td>
+<td>详细信息</td>
+</tr>
+<tr>
+<td>infoMessageType</td>
+<td>InfoMessageType</td>
+<td>提示类型，None,Info,Warning,Error四种类型</td>
+</tr>
+<tr>
+<td>VisibleIf</td>
+<td>string</td>
+<td>可选的成员名称，用于隐藏或显示消息框。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-c#">[DetailedInfoBox(&quot;点击查看更多&quot;, &quot;你点开了更多，&quot; +
+        &quot;DetailedInfoBox用于任何属性，并显示一个信息框，可以展开以显示更多细节。&quot; +
+        &quot;用这个来向用户传达一个信息，并让他们选择查看更多的细节。&quot;,InfoMessageType.Info, &quot;VisibleIf&quot;)]
+    public int Field;
+
+    public bool VisibleIf;
+
+    [DetailedInfoBox(&quot;点击查看更多&quot;, &quot;你点开了更多，&quot; +
+        &quot;DetailedInfoBox用于任何属性，并显示一个信息框，可以展开以显示更多细节。&quot; +
+        &quot;用这个来向用户传达一个信息，并让他们选择查看更多的细节。&quot;, InfoMessageType.Error)]
+    public int Field2;
+</code></pre>
+<p>默认情况下，是显示此消息框的，如果需要一个bool值作为前提条件，就加一个bool字段，并写到</p>
+<p>VisibleIf参数中，这样，只有VisibleIf为true，才会显示消息框</p>
+<figure data-type="image" tabindex="5"><img src="https://s2.loli.net/2021/12/18/TIaoiVENWRw4X9d.png" alt="image-20211218220739773" loading="lazy"></figure>
+<h3 id="enable-gui-attribute">Enable GUI Attribute</h3>
+<p>启用属性的GUI，否则将被禁用。</p>
+<p>可以控制只有Get的属性，在Inspector中是否为可灰态的（但是依然不可编辑），不写则默认为灰态。</p>
+<pre><code class="language-c#">  [ShowInInspector]
+    public int GUIDisabledProperty { get { return 10; } }
+
+    [ShowInInspector, EnableGUI]
+    public int GUIEnabledProperty { get { return 10; } }
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="https://s2.loli.net/2021/12/18/XUWLR3zgmwi9leV.png" alt="image-20211218221517549" loading="lazy"></figure>
+<h3 id="guicolor-attribute">GUIColor Attribute</h3>
+<p>GUIColor用于任何属性，并改变用于绘制该属性的GUI颜色。</p>
+<p>就是改个颜色而已，搞得花里胡哨的</p>
+<pre><code class="language-c#">[GUIColor(0.3f, 0.8f, 0.8f, 1f)]
+public int ColoredInt1;
+
+[GUIColor(0.3f, 0.8f, 0.8f, 1f)]
+public int ColoredInt2;
+
+[ButtonGroup]
+[GUIColor(0, 1, 0)]
+private void Apply()
+{
+}
+
+[ButtonGroup]
+[GUIColor(1, 0.6f, 0.4f)]
+private void Cancel()
+{
+}
+
+[InfoBox(&quot;You can also reference a color member to dynamically change the color of a property.&quot;)]
+[GUIColor(&quot;GetButtonColor&quot;)]
+[Button(&quot;I Am Fabulous&quot;, ButtonSizes.Gigantic)]
+private static void IAmFabulous()
+{
+}
+
+[Button(ButtonSizes.Large)]
+[GUIColor(&quot;@Color.Lerp(Color.red, Color.green, Mathf.Abs(Mathf.Sin((float)EditorApplication.timeSinceStartup)))&quot;)]
+private static void Expressive()
+{
+}
+
+private static Color GetButtonColor()
+{
+    Sirenix.Utilities.Editor.GUIHelper.RequestRepaint();
+    return Color.HSVToRGB(Mathf.Cos((float)UnityEditor.EditorApplication.timeSinceStartup + 1f) * 0.225f + 0.325f, 1, 1);
+}
+
+</code></pre>
+<figure data-type="image" tabindex="7"><img src="https://s2.loli.net/2021/12/18/FKUc85uD9PZzeBX.gif" alt="color" loading="lazy"></figure>
+<h3 id="hide-label-attribute">Hide Label Attribute</h3>
+<p>HideLabel用于任何属性，并在Inspector中隐藏标签。用它来隐藏Inspector中的属性标签。</p>
+<p>比如string WideString;加上**[HideLabel]**，就不会在前面显示WideString，而是只显示一个string的输入框</p>
+<pre><code>[Title(&quot;Wide Colors&quot;)]
+[HideLabel]
+[ColorPalette(&quot;Fall&quot;)]
+public Color WideColor1;
+
+[HideLabel]
+[ColorPalette(&quot;Fall&quot;)]
+public Color WideColor2;
+
+[Title(&quot;Wide Vector&quot;)]
+[HideLabel]
+public Vector3 WideVector1;
+
+[HideLabel]
+public Vector4 WideVector2;
+
+[Title(&quot;Wide String&quot;)]
+[HideLabel]
+public string WideString;
+
+[Title(&quot;Wide Multiline Text Field&quot;)]
+[HideLabel]
+[MultiLineProperty]
+public string WideMultilineTextField = &quot;&quot;;
+
+</code></pre>
+<figure data-type="image" tabindex="8"><img src="https://s2.loli.net/2021/12/18/qDeFY73lOJWs4XT.png" alt="image-20211218224250030" loading="lazy"></figure>
+<h3 id="property-order-attribute">Property Order Attribute</h3>
+<p>PropertyOrder用于任何属性，并允许对属性进行排序。使用它来定义你的属性以何种顺序显示。</p>
+<pre><code>[PropertyOrder(1)]
+public int Second;
+
+[InfoBox(&quot;PropertyOrder is used to change the order of properties in the inspector.&quot;)]
+[PropertyOrder(-1)]
+public int First;
+</code></pre>
+<figure data-type="image" tabindex="9"><img src="https://s2.loli.net/2021/12/18/eJM7YX4VRmHkBlT.png" alt="image-20211218224440726" loading="lazy"></figure>
+<p>如果按照默认的话，Second在First上面，但是加了**[PropertyOrder]**，就会按照自定义的顺序显示</p>
+<h3 id="property-space-attribute">Property Space Attribute</h3>
+<p>PropertySpace属性的功能与Unity现有的Space属性相同，但可以应用在任何地方，而不仅仅是字段。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>spaceBefore</td>
+<td>float</td>
+<td>与前一个的距离</td>
+</tr>
+<tr>
+<td>spaceAfter</td>
+<td>float</td>
+<td>与后一个的距离</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-c#">// PropertySpace and Space attributes are virtually identical...
+[Space]
+public int Space;
+
+// ... but the PropertySpace can, as the name suggests, also be applied to properties.
+[ShowInInspector, PropertySpace]
+public string Property { get; set; }
+
+// You can also control spacing both before and after the PropertySpace attribute.
+[PropertySpace(SpaceBefore = 0, SpaceAfter = 60), PropertyOrder(2)]
+public int BeforeAndAfter;
+
+</code></pre>
+<figure data-type="image" tabindex="10"><img src="https://s2.loli.net/2021/12/18/5DIMkg6jf4F7YnE.png" alt="image-20211218225155117" loading="lazy"></figure>
+<h3 id="read-only-attribute">Read Only Attribute</h3>
+<p>ReadOnly用于任何属性，并禁止该属性在Inspector中被改变。当你想在Inspector中看到一个属性的值，但不希望它被改变时，可以使用这个。</p>
+<pre><code class="language-c#">[ReadOnly]
+public string MyString = &quot;This is displayed as text&quot;;
+
+[ReadOnly]
+public int MyInt = 9001;
+
+[ReadOnly]
+public int[] MyIntList = new int[] { 1, 2, 3, 4, 5, 6, 7, };
+
+</code></pre>
+<figure data-type="image" tabindex="11"><img src="https://s2.loli.net/2021/12/18/hKkUlQj87sXPLbx.png" alt="image-20211218225516211" loading="lazy"></figure>
+<h3 id="required-attribute">Required Attribute</h3>
+<p>Required用于任何对象属性，如果该属性缺失，会在检查器中画出一条信息。用它来清楚地标记对象的必要字段。</p>
+<pre><code class="language-c#">[Required]
+public GameObject MyGameObject;
+
+[Required(&quot;Custom error message.&quot;)]
+public Rigidbody MyRigidbody;
+
+[InfoBox(&quot;Use $ to indicate a member string as message.&quot;)]
+[Required(&quot;$DynamicMessage&quot;)]
+public GameObject GameObject;
+
+public string DynamicMessage = &quot;Dynamic error message&quot;;
+
+</code></pre>
+<figure data-type="image" tabindex="12"><img src="https://s2.loli.net/2021/12/19/tNrCET1UP9f8SoD.png" alt="image-20211219202229095" loading="lazy"></figure>
+<h3 id="searchable-attribute">Searchable Attribute</h3>
+<p>加一个搜索过滤器，可以搜索它所应用的字段或类型的子项。请注意，这在直接应用于字典时目前还不起作用，不过如果搜索字典的 &quot;上面 &quot;字段是递归搜索的话，它仍然会搜索字典的属性。</p>
+<h4 id="searchable-perks">Searchable Perks</h4>
+<pre><code class="language-c#">// SearchablePerksExampleComponent.cs
+using Sirenix.OdinInspector;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SearchablePerksExampleComponent : MonoBehaviour
+{
+    [Searchable]
+    public List&lt;Perk&gt; Perks = new List&lt;Perk&gt;()
+    {
+        new Perk()
+        {
+            Name = &quot;Old Sage&quot;,
+            Effects = new List&lt;Effect&gt;()
+            {
+                new Effect() { Skill = Skill.Wisdom, Value = 2, },
+                new Effect() { Skill = Skill.Intelligence, Value = 1, },
+                new Effect() { Skill = Skill.Strength, Value = -2 },
+            },
+        },
+        new Perk()
+        {
+            Name = &quot;Hardened Criminal&quot;,
+            Effects = new List&lt;Effect&gt;()
+            {
+                new Effect() { Skill = Skill.Dexterity, Value = 2, },
+                new Effect() { Skill = Skill.Strength, Value = 1, },
+                new Effect() { Skill = Skill.Charisma, Value = -2 },
+            },
+        },
+        new Perk()
+        {
+            Name = &quot;Born Leader&quot;,
+            Effects = new List&lt;Effect&gt;()
+            {
+                new Effect() { Skill = Skill.Charisma, Value = 2, },
+                new Effect() { Skill = Skill.Intelligence, Value = -3 },
+            },
+        },
+        new Perk()
+        {
+            Name = &quot;Village Idiot&quot;,
+            Effects = new List&lt;Effect&gt;()
+            {
+                new Effect() { Skill = Skill.Charisma, Value = 4, },
+                new Effect() { Skill = Skill.Constitution, Value = 2, },
+                new Effect() { Skill = Skill.Intelligence, Value = -3 },
+                new Effect() { Skill = Skill.Wisdom, Value = -3 },
+            },
+        },
+    };
+    
+    [Serializable]
+    public class Perk
+    {
+        public string Name;
+    
+        [TableList]
+        public List&lt;Effect&gt; Effects;
+    }
+    
+    [Serializable]
+    public class Effect
+    {
+        public Skill Skill;
+        public float Value;
+    }
+    
+    public enum Skill
+    {
+        Strength,
+        Dexterity,
+        Constitution,
+        Intelligence,
+        Wisdom,
+        Charisma,
+    }
+}
+</code></pre>
+<figure data-type="image" tabindex="13"><img src="https://img-blog.csdnimg.cn/img_convert/8fb082e881090922128801766ef7340b.gif" alt="img" loading="lazy"></figure>
+<h4 id="searchable-inspector">Searchable Inspector</h4>
+<p>放在类顶进行全局搜索</p>
+<pre><code>// SearchableInspectorExampleComponent.cs
+using Sirenix.OdinInspector;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+#if UNITY_EDITOR // Editor namespaces can only be used in the editor.
+using Sirenix.OdinInspector.Editor.Examples;
+#endif
+
+[Searchable]
+public class SearchableInspectorExampleComponent : MonoBehaviour
+{
+    public List&lt;string&gt; strings = new List&lt;string&gt;(Enumerable.Range(1, 10).Select(i =&gt; &quot;Str Element &quot; + i));
+    
+    public List&lt;ExampleStruct&gt; searchableList = new List&lt;ExampleStruct&gt;(Enumerable.Range(1, 10).Select(i =&gt; new ExampleStruct(i)));
+    
+    [Serializable]
+    public struct ExampleStruct
+    {
+        public string Name;
+        public int Number;
+        public ExampleEnum Enum;
+    
+        public ExampleStruct(int nr) : this()
+        {
+            this.Name = &quot;Element &quot; + nr;
+            this.Number = nr;
+#if UNITY_EDITOR // ExampleHelper is an editor-only class so we cannot use it in a build
+            this.Enum = (ExampleEnum)ExampleHelper.RandomInt(0, 5);
+#endif
+        }
+    }
+    
+    public enum ExampleEnum
+    {
+        One, Two, Three, Four, Five
+    }
+}
+</code></pre>
+<figure data-type="image" tabindex="14"><img src="https://s2.loli.net/2021/12/19/Qf1puAbMyvcerzY.gif" alt="img" loading="lazy"></figure>
+<h4 id="searchable-members">Searchable Members</h4>
+<p>Searchable应用到对应的类型上后，使用对应的类型都会出现搜索栏，也可以通过 <code>ISearchFilterable</code>接口自定义搜索规则</p>
+<pre><code class="language-c#">[Searchable]
+public ExampleClass searchableClass = new ExampleClass();
+
+[Searchable]
+public List&lt;ExampleStruct&gt; searchableList = new List&lt;ExampleStruct&gt;(Enumerable.Range(1, 10).Select(i =&gt; new ExampleStruct(i)));
+
+[Searchable(FilterOptions = SearchFilterOptions.ISearchFilterableInterface)]
+public List&lt;FilterableBySquareStruct&gt; customFiltering = new List&lt;FilterableBySquareStruct&gt;(Enumerable.Range(1, 10).Select(i =&gt; new FilterableBySquareStruct(i)));
+
+[Serializable]
+public class ExampleClass
+{
+    public string SomeString = &quot;Saehrimnir is a tasty delicacy&quot;;
+    public int SomeInt = 13579;
+
+    public DataContainer DataContainerOne = new DataContainer() { Name = &quot;Example Data Set One&quot; };
+    public DataContainer DataContainerTwo = new DataContainer() { Name = &quot;Example Data Set Two&quot; };
+}
+
+[Serializable, Searchable] // You can also apply it on a type like this, and it will become searchable wherever it appears
+public class DataContainer
+{
+    public string Name;
+    public List&lt;ExampleStruct&gt; Data = new List&lt;ExampleStruct&gt;(Enumerable.Range(1, 10).Select(i =&gt; new ExampleStruct(i)));
+}
+
+[Serializable]
+public struct FilterableBySquareStruct : ISearchFilterable
+{
+    public int Number;
+
+    [ShowInInspector, DisplayAsString, EnableGUI]
+    public int Square { get { return this.Number * this.Number; } }
+
+    public FilterableBySquareStruct(int nr)
+    {
+        this.Number = nr;
+    }
+
+    public bool IsMatch(string searchString)
+    {
+        return searchString.Contains(Square.ToString());
+    }
+}
+
+[Serializable]
+public struct ExampleStruct
+{
+    public string Name;
+    public int Number;
+    public ExampleEnum Enum;
+
+    public ExampleStruct(int nr) : this()
+    {
+        this.Name = &quot;Element &quot; + nr;
+        this.Number = nr;
+
+        this.Enum = (ExampleEnum)ExampleHelper.RandomInt(0, 5);
+    }
+}
+
+public enum ExampleEnum
+{
+    One, Two, Three, Four, Five
+}
+
+</code></pre>
+<figure data-type="image" tabindex="15"><img src="https://s2.loli.net/2021/12/19/5sklCYW8quEeFiM.gif" alt="img" loading="lazy"></figure>
+<h3 id="show-in-inspector-attribute">Show In Inspector Attribute</h3>
+<p>Show In Inspector Attribute特性：用于任何成员，并在inspector中显示该值。请记住，ShowInInspector特性不会序列化任何内容; 这意味着您所做的任何更改都不会仅仅使用ShowInInspector属性进行保存。<br>
+如果需要序列化，需要配合SerializeField特性使用</p>
+<pre><code class="language-c#">using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Sirenix.OdinInspector;
+public class ShowInInspector : MonoBehaviour
+{
+    [ShowInInspector]
+    private int myPrivateInt;
+
+    [ShowInInspector]
+    public int MyPropertyInt { get; set; }
+
+    [ShowInInspector]
+    public int ReadOnlyProperty
+    {
+        get { return this.myPrivateInt; }
+    }
+
+    [ShowInInspector]
+    public static bool StaticProperty { get; set; }
+
+
+    [SerializeField, HideInInspector]
+    private int evenNumber;
+
+    [ShowInInspector]
+    public int EvenNumber
+    {
+        get { return this.evenNumber; }
+        set { this.evenNumber = value - (value % 2); }
+    }
+
+}
+
+</code></pre>
+<figure data-type="image" tabindex="16"><img src="https://upload-images.jianshu.io/upload_images/7643202-d1f1b160ca9df58a.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img" loading="lazy"></figure>
+<p>可见，只有SerializeField特性的evenNumber保存下来了</p>
+<h3 id="title-attribute">Title Attribute</h3>
+<p>标题是用来在属性上面做一个粗体标题的</p>
+<pre><code class="language-c#">[Title(&quot;Titles and Headers&quot;)]
+public string MyTitle = &quot;My Dynamic Title&quot;;
+public string MySubtitle = &quot;My Dynamic Subtitle&quot;;
+
+[Title(&quot;Static title&quot;)]
+public int C;
+public int D;
+
+[Title(&quot;Static title&quot;, &quot;Static subtitle&quot;)]
+public int E;
+public int F;
+
+[Title(&quot;$MyTitle&quot;, &quot;$MySubtitle&quot;)]
+public int G;
+public int H;
+
+[Title(&quot;Non bold title&quot;, &quot;$MySubtitle&quot;, bold: false)]
+public int I;
+public int J;
+
+[Title(&quot;Non bold title&quot;, &quot;With no line seperator&quot;, horizontalLine: false, bold: false)]
+public int K;
+public int L;
+
+[Title(&quot;$MyTitle&quot;, &quot;$MySubtitle&quot;, TitleAlignments.Right)]
+public int M;
+public int N;
+
+[Title(&quot;$MyTitle&quot;, &quot;$MySubtitle&quot;, TitleAlignments.Centered)]
+public int O;
+public int P;
+
+[Title(&quot;$Combined&quot;, titleAlignment: TitleAlignments.Centered)]
+public int Q;
+public int R;
+
+[ShowInInspector]
+[Title(&quot;Title on a Property&quot;)]
+public int S { get; set; }
+
+[Title(&quot;Title on a Method&quot;)]
+[Button]
+public void DoNothing()
+{ }
+
+[Title(&quot;@DateTime.Now.ToString(\&quot;dd:MM:yyyy\&quot;)&quot;, &quot;@DateTime.Now.ToString(\&quot;HH:mm:ss\&quot;)&quot;)]
+public int Expresion;
+
+public string Combined { get { return this.MyTitle + &quot; - &quot; + this.MySubtitle; } }
+
+</code></pre>
+<figure data-type="image" tabindex="17"><img src="https://s2.loli.net/2021/12/19/SCvyYN786KHqPwn.png" alt="image-20211219211431885" loading="lazy"></figure>
+<h3 id="type-filter-attribute">Type Filter Attribute</h3>
+<p>对输入的value 进行自定义过滤，只显示需要的类型</p>
+<h3 id="type-info-box-attribute">Type Info Box Attribute</h3>
+<p>T将信息框添加到Inspector中类型的最顶部。<br>
+使用此选项可将信息框添加到Inspector中类的顶部，而无需同时使用PropertyOrder和OnInspectorGUI属性。</p>
+<pre><code class="language-c#">using Sirenix.OdinInspector;
+using System;
+using UnityEngine;
+ 
+public class TypeInfoBoxExample : MonoBehaviour
+{
+    public MyType MyObject = new MyType();
+ 
+    [InfoBox(&quot;双击此此段的value值，可在inspecter中查看对应ScriptableObject信息&quot;)]
+    public MyScripty Scripty = null;
+    public void Awake()
+    {
+        Scripty = ExampleHelper.GetScriptableObject&lt;MyScripty&gt;();
+    }
+ 
+ 
+    [Serializable]
+    [TypeInfoBox(&quot;TypeInfoBox特性可以放在类型定义上，并将导致在属性的顶端处绘制一个InfoBox。&quot;)]
+    public class MyType
+    {
+        public int Value;
+    }
+}
+</code></pre>
+<figure data-type="image" tabindex="18"><img src="https://s2.loli.net/2021/12/19/ERJh8CmVzD7LZgs.gif" alt="7643202-e3eb1974e6644abe.gif" loading="lazy"></figure>
+<h3 id="validate-input-attribute">Validate Input Attribute</h3>
+<p>用于任何属性，并允自定义检查器，灵活实现多种监测规则。使用此选项可强制执行正确的值（提供对应的返回值）</p>
+<figure data-type="image" tabindex="19"><img src="https://s2.loli.net/2021/12/19/KnQkd2My1zR9HiX.png" alt="7643202-889cdd4afc6700a4.png" loading="lazy"></figure>
+<pre><code class="language-c#">using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Sirenix.OdinInspector;
+
+public class ValidateInput : MonoBehaviour
+{
+    [ValidateInput(&quot;MustBeNull&quot;, &quot;这个字段应该为空。&quot;)]
+    public GameObject DefaultMessage;
+    private bool MustBeNull(GameObject scripty)
+    {
+        return scripty == null;
+    }
+
+    [ReadOnly]
+    public string dynamicMessage = &quot;这个物体不应该为空！&quot;;
+    [ValidateInput(&quot;CheckGameObject&quot;, &quot;$dynamicMessage&quot;, InfoMessageType.None)]
+    public GameObject targetObj_None = null;
+    [ValidateInput(&quot;CheckGameObject&quot;, &quot;$dynamicMessage&quot;, InfoMessageType.Info)]
+    public GameObject targetObj_Info = null;
+    [ValidateInput(&quot;CheckGameObject&quot;, &quot;$dynamicMessage&quot;, InfoMessageType.Warning)]
+    public GameObject targetObj_Warning = null;
+    [ValidateInput(&quot;CheckGameObject&quot;, &quot;$dynamicMessage&quot;, InfoMessageType.Error)]
+    public GameObject targetObj_Error = null;
+
+    private bool CheckGameObject(GameObject tempObj)
+    {
+        return tempObj != null;
+    }
+
+    [ValidateInput(&quot;IfNullIsFalse&quot;, &quot;$Message&quot;, InfoMessageType.Warning)]
+    public string Message = &quot;Dynamic ValidateInput message&quot;;
+
+    private bool IfNullIsFalse(string value)
+    {
+        return string.IsNullOrEmpty(value);
+    }
+
+    [ValidateInput(&quot;HasMeshRendererDynamicMessage&quot;, &quot;对应的函数中已经有消息，所以这个默认消息已经没用&quot;)]
+    public GameObject DynamicMessage;
+    private bool HasMeshRendererDynamicMessage(GameObject gameObject, ref string errorMessage)
+    {
+        if (gameObject == null) return true;
+
+        if (gameObject.GetComponentInChildren&lt;MeshRenderer&gt;() == null)
+        {
+            errorMessage = &quot;\&quot;&quot; + gameObject.name + &quot;\&quot; 这玩应必须有一个 MeshRenderer 组件&quot;;//如果设置消息，则默认消息会被覆盖
+            return false;
+        }
+        return true;
+    }
+
+    [ValidateInput(&quot;HasMeshRendererDynamicMessageAndType&quot;, &quot;对应的函数中已经有消息和类型，所以这个默认消息和类型已经没用&quot;)]
+    public GameObject DynamicMessageAndType;
+
+    [InfoBox(&quot;Change GameObject value to update message type&quot;, InfoMessageType.Info)]
+    public InfoMessageType MessageType;
+    private bool HasMeshRendererDynamicMessageAndType(GameObject gameObject, ref string errorMessage, ref InfoMessageType? messageType)
+    {
+        if (gameObject == null) return true;
+
+        if (gameObject.GetComponentInChildren&lt;MeshRenderer&gt;() == null)
+        {
+            errorMessage = &quot;\&quot;&quot; + gameObject.name + &quot;\&quot; 要有一个 MeshRenderer 组件&quot;;//如果设置消息，则默认消息会被覆盖
+            messageType = this.MessageType;//如果设置消息类型，则默认消息类型会被覆盖
+            return false;
+        }
+        return true;
+    }
+
+
+    private bool HasMeshRendererDefaultMessage(GameObject gameObject)
+    {
+        if (gameObject == null) return true;
+        return gameObject.GetComponentInChildren&lt;MeshRenderer&gt;() != null;
+    }
+}
+</code></pre>
+<h3 id="value-dropdown-attribute">Value Dropdown Attribute</h3>
+<p>Value Dropdown Attribute特性用于任何属性，并使用可配置选项创建下拉列表。使用此选项可为用户提供一组特定的选项供您选择。<br>
+也就是创建一些特殊的下拉条</p>
+<h5 id="membername也是唯一一个有参构造函数需要的属性有两种形式的drop下拉条一种是直接数值的另一种是key-value形式的">【MemberName】,也是唯一一个有参构造函数需要的属性，有两种形式的Drop下拉条，一种是直接数值的，另一种是Key-Value形式的</h5>
+<figure data-type="image" tabindex="20"><img src="https://s2.loli.net/2021/12/19/BNG7sAznx1uwifT.gif" alt="7643202-5133392a301e7482.gif" loading="lazy"></figure>
+<pre><code class="language-c#">    /*【MemberName】*/
+    [PropertySpace(40, 0)]
+    [ValueDropdown(&quot;TextureSizes&quot;)]
+    public int SomeSize1;
+    private static int[] TextureSizes = new int[] { 32, 64, 128, 256, 512, 1024, 2048, 4096 };
+ 
+    [ValueDropdown(&quot;FriendlyTextureSizes&quot;)]
+    public int SomeSize2;
+    private static IEnumerable FriendlyTextureSizes = new ValueDropdownList&lt;int&gt;()
+    {
+      { &quot;Small&quot;, 256 },
+      { &quot;Medium&quot;, 512 },
+      { &quot;Large&quot;, 1024 },
+    };
+</code></pre>
+<h5 id="sortdropdownitems默认为false-开启后为下拉列表为根据key升序排序">【SortDropdownItems】默认为false 开启后为下拉列表为根据Key升序排序</h5>
+<figure data-type="image" tabindex="21"><img src="https://s2.loli.net/2021/12/19/Pl2h9UW6TktcF8y.gif" alt="7643202-0d2e87e0c595e834.gif" loading="lazy"></figure>
+<pre><code class="language-c#">    /*【SortDropdownItems】默认为false 开启后为下拉列表为根据Key升序排序*/
+    [PropertySpace(40, 0)]
+    [ValueDropdown(&quot;SortList1&quot;)]
+    public int SomeSize3;
+    private IEnumerable SortList1 = new ValueDropdownList&lt;int&gt;()
+    {
+      { &quot;Small&quot;, 256 },
+      { &quot;Medium&quot;, 512 },
+      { &quot;Large&quot;, 1024 },
+       { &quot;A&quot;, 128 },
+    };
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;SortList2&quot;, SortDropdownItems = true)]
+    public int SomeSize4;
+    private List&lt;ValueDropdownItem&lt;int&gt;&gt; SortList2 = new ValueDropdownList&lt;int&gt;()
+    {
+      { &quot;Small&quot;, 256 },
+      { &quot;Medium&quot;, 512 },
+      { &quot;Large&quot;, 1024 },
+      { &quot;A&quot;, 128 },
+    };
+</code></pre>
+<h5 id="dropdowntitle给下来条提供一个标题">【DropdownTitle】给下来条提供一个标题</h5>
+<figure data-type="image" tabindex="22"><img src="https://s2.loli.net/2021/12/19/hvWAw1nFH63mr58.gif" alt="7643202-9a139d5edd540247.gif" loading="lazy"></figure>
+<pre><code class="language-c#">    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TextureSizes&quot;, DropdownTitle = &quot;下拉条标题&quot;)]
+    public int SomeSize5;
+</code></pre>
+<h5 id="dropdownheight下拉条高度">【DropdownHeight】下拉条高度</h5>
+<figure data-type="image" tabindex="23"><img src="https://s2.loli.net/2021/12/19/RY9P7dAcqVrsoED.gif" alt="7643202-8d497fb864acf9ad.gif" loading="lazy"></figure>
+<pre><code>    /*【DropdownWidth】下拉条的宽度*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TextureSizes&quot;, DropdownWidth = 100)]
+    public int SomeSize7;
+</code></pre>
+<h5 id="flattentreeview是否使用平铺的树形视图">【FlattenTreeView】是否使用平铺的树形视图</h5>
+<pre><code>/*【FlattenTreeView】是否使用平铺的树形视图*/
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;TreeViewOfInts&quot;, FlattenTreeView = true)]//默认为false，如果设置为true则禁用树形结构使用平铺模式
+public int SomeSize8;
+</code></pre>
+<h5 id="doubleclicktoconfirm需要双击才能确地选中的内容">【DoubleClickToConfirm】需要双击才能确地选中的内容</h5>
+<figure data-type="image" tabindex="24"><img src="https://s2.loli.net/2021/12/19/XzV7ECBuWv5H8ao.gif" alt="7643202-0522a8c8db841a5e.gif" loading="lazy"></figure>
+<pre><code>    /*【DoubleClickToConfirm】需要双击才能确地选中的内容*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TreeViewOfInts&quot;, DoubleClickToConfirm = true)]//需要双击才能选中
+    public int SomeSize9;
+</code></pre>
+<p><strong>【HideChildProperties】是否隐藏此类型所含有的属性信息</strong></p>
+<figure data-type="image" tabindex="25"><img src="https://s2.loli.net/2021/12/19/SJvEMLi3Ydt4PCs.png" alt="7643202-f9351ae2fc862355.png" loading="lazy"></figure>
+<pre><code>/*【HideChildProperties】是否隐藏此类型所含有的属性信息*/
+[ValueDropdown(&quot;RangVector3&quot;, HideChildProperties = true)]//
+public Vector3 vector3HideChildProperties;
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;RangVector3&quot;, HideChildProperties = false)]//
+public Vector3 vector3ShowChildProperties;
+ 
+public IEnumerable&lt;Vector3&gt;  RangVector3()
+{
+   return Enumerable.Range(0, 10).Select(i =&gt; new Vector3(i, i, i));
+}
+</code></pre>
+<p><strong>【AppendNextDrawer】下拉条变成一个小的选择器，代替原有的宽型下拉条</strong></p>
+<figure data-type="image" tabindex="26"><img src="https://s2.loli.net/2021/12/19/KiO9QpPwIuTVnCv.gif" alt="7643202-132b3d1fe697a04a.gif" loading="lazy"></figure>
+<pre><code>/*【AppendNextDrawer】下拉条变成一个小的选择器，代替原有的宽型下拉条*/
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;TreeViewOfInts&quot;, AppendNextDrawer = true)]//
+public int SomeSize11;
+</code></pre>
+<p><strong>【DisableGUIInAppendedDrawer】配合AppendNextDrawer使用，显示的数值为灰度状态，达到不可更改数值的目的</strong></p>
+<figure data-type="image" tabindex="27"><img src="https://s2.loli.net/2021/12/19/A29mVnUtYH1p6gZ.gif" alt="7643202-55796b6570049c75.gif" loading="lazy"></figure>
+<pre><code>/*【DisableGUIInAppendedDrawer】配合AppendNextDrawer使用，显示的数值为灰度状态，达到不可更改数值的目的*/
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;TreeViewOfInts&quot;, AppendNextDrawer = true, DisableGUIInAppendedDrawer = true)]//
+public int SomeSize12;
+</code></pre>
+<p><strong>【ExpandAllMenuItems】下拉条里面的条目是否全部展开</strong></p>
+<figure data-type="image" tabindex="28"><img src="https://s2.loli.net/2021/12/19/lQ1Mk9ANGSst4bD.gif" alt="7643202-01569c004ab367f8.gif" loading="lazy"></figure>
+<pre><code>/*【ExpandAllMenuItems】下拉条里面的条目是否全部展开*/
+[ValueDropdown(&quot;TreeViewOfInts&quot; , ExpandAllMenuItems = false)]//
+public int SomeSize13;
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;TreeViewOfInts&quot;, ExpandAllMenuItems =true )]//
+public int SomeSize14;
+</code></pre>
+<p><strong>【IsUniqueList】在添加的列表Item前面添加勾选框，可以一次性勾选多个Item并添加</strong></p>
+<figure data-type="image" tabindex="29"><img src="https://s2.loli.net/2021/12/19/Gr2jdasQNSxzhm8.gif" alt="7643202-c01d00466668a841.gif" loading="lazy"></figure>
+<pre><code>/*【IsUniqueList】在添加的列表Item前面添加勾选框，可以一次性勾选多个Item并添加*/
+[ValueDropdown(&quot;GetAllSceneObjects&quot;, IsUniqueList = false)]
+public List&lt;GameObject&gt; UniqueGameobjectList0;
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;GetAllSceneObjects&quot;, IsUniqueList = true)]
+public List&lt;GameObject&gt; UniqueGameobjectList1;
+</code></pre>
+<p><strong>【ExcludeExistingValuesInList】添加列中不会显示已经选中的Item</strong></p>
+<figure data-type="image" tabindex="30"><img src="https://s2.loli.net/2021/12/19/EuGIc3tmpqBskRA.gif" alt="7643202-a494380d06e61060.gif" loading="lazy"></figure>
+<pre><code>/*【ExcludeExistingValuesInList】添加列中不会显示已经选中的Item*/
+[ValueDropdown(&quot;GetAllSceneObjects&quot;)]
+public List&lt;GameObject&gt; UniqueGameobjectList2;
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;GetAllSceneObjects&quot;, ExcludeExistingValuesInList = true)]
+public List&lt;GameObject&gt; UniqueGameobjectList3;
+</code></pre>
+<p><strong>【DisableListAddButtonBehaviour】禁用下拉列表，以弹窗的形式弹出</strong></p>
+<figure data-type="image" tabindex="31"><img src="https://s2.loli.net/2021/12/19/S7opCz1W4ftDlOw.gif" alt="7643202-ce51f8559caf0457.gif" loading="lazy"></figure>
+<pre><code>/*【DisableListAddButtonBehaviour】禁用下拉列表，以弹窗的形式弹出*/
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;GetAllSceneObjects&quot;, DisableListAddButtonBehaviour = true, IsUniqueList = true)]
+public List&lt;GameObject&gt; UniqueGameobjectList4;
+</code></pre>
+<p><strong>【DrawDropdownForListElements】已经添加的Item不会再出现Item下拉表</strong></p>
+<figure data-type="image" tabindex="32"><img src="https://s2.loli.net/2021/12/19/mcxIPCaKbd9RpsT.gif" alt="7643202-cc3b46a31df970df.gif" loading="lazy"></figure>
+<pre><code>/*【DrawDropdownForListElements】已经添加的Item不会再出现Item下拉表*/
+[PropertySpace(0, 40)]
+[ValueDropdown(&quot;GetAllSceneObjects&quot;, DrawDropdownForListElements = false)]
+public List&lt;GameObject&gt; UniqueGameobjectList5;
+</code></pre>
+<h5 id="numberofitemsbeforeenablingsearch查过指定数量的item则出现搜索框-默认是10">【NumberOfItemsBeforeEnablingSearch】查过指定数量的Item则出现搜索框。默认是10。</h5>
+<figure data-type="image" tabindex="33"><img src="https://upload-images.jianshu.io/upload_images/7643202-87b2e38d89c171cc.gif?imageMogr2/auto-orient/strip" alt="" loading="lazy"></figure>
+<pre><code class="language-cs">    /*【NumberOfItemsBeforeEnablingSearch】查过指定数量的Item则出现搜索框。默认是10。*/
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, NumberOfItemsBeforeEnablingSearch =200)]
+    public List&lt;GameObject&gt; UniqueGameobjectList6;
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, NumberOfItemsBeforeEnablingSearch = 20)]
+    public List&lt;GameObject&gt; UniqueGameobjectList7;
+</code></pre>
+<p><strong>示例完整代码（含有一些其他辅助性功能代码）</strong></p>
+<pre><code>using Sirenix.OdinInspector;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+ 
+ 
+public class ValueDropdownAttributeExample : MonoBehaviour
+{
+ 
+    /*【MemberName】*/
+    [PropertySpace(40, 0)]
+    [ValueDropdown(&quot;TextureSizes&quot;)]
+    public int SomeSize1;
+    private static int[] TextureSizes = new int[] { 32, 64, 128, 256, 512, 1024, 2048, 4096 };
+ 
+    [ValueDropdown(&quot;FriendlyTextureSizes&quot;)]
+    public int SomeSize2;
+    private static IEnumerable FriendlyTextureSizes = new ValueDropdownList&lt;int&gt;()
+    {
+      { &quot;Small&quot;, 256 },
+      { &quot;Medium&quot;, 512 },
+      { &quot;Large&quot;, 1024 },
+    };
+ 
+    /*【SortDropdownItems】默认为false 开启后为下拉列表为根据Key升序排序*/
+    [PropertySpace(40, 0)]
+    [ValueDropdown(&quot;SortList1&quot;)]
+    public int SomeSize3;
+    private IEnumerable SortList1 = new ValueDropdownList&lt;int&gt;()
+    {
+      { &quot;Small&quot;, 256 },
+      { &quot;Medium&quot;, 512 },
+      { &quot;Large&quot;, 1024 },
+       { &quot;A&quot;, 128 },
+    };
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;SortList2&quot;, SortDropdownItems = true)]
+    public int SomeSize4;
+    private List&lt;ValueDropdownItem&lt;int&gt;&gt; SortList2 = new ValueDropdownList&lt;int&gt;()
+    {
+      { &quot;Small&quot;, 256 },
+      { &quot;Medium&quot;, 512 },
+      { &quot;Large&quot;, 1024 },
+      { &quot;A&quot;, 128 },
+    };
+ 
+    /*【DropdownTitle】给下来条提供一个标题*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TextureSizes&quot;, DropdownTitle = &quot;下拉条标题&quot;)]
+    public int SomeSize5;
+ 
+    /*【DropdownHeight】下拉条高度*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TextureSizes&quot;, DropdownHeight = 80)]
+    public int SomeSize6;
+ 
+    /*【DropdownWidth】下拉条的宽度*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TextureSizes&quot;, DropdownWidth = 100)]
+    public int SomeSize7;
+ 
+    /*【FlattenTreeView】是否使用平铺的树形视图*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TreeViewOfInts&quot;, FlattenTreeView = true)]//默认为false，如果设置为true则禁用树形结构使用平铺模式
+    public int SomeSize8;
+ 
+    /*【DoubleClickToConfirm】需要双击才能确地选中的内容*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TreeViewOfInts&quot;, DoubleClickToConfirm = true)]//需要双击才能选中
+    public int SomeSize9;
+ 
+    /*【HideChildProperties】是否隐藏此类型所含有的属性信息*/
+    [ValueDropdown(&quot;RangVector3&quot;, HideChildProperties = true)]//
+    public Vector3 vector3HideChildProperties;
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;RangVector3&quot;, HideChildProperties = false)]//
+    public Vector3 vector3ShowChildProperties;
+ 
+    public IEnumerable&lt;Vector3&gt;  RangVector3()
+    {
+       return Enumerable.Range(0, 10).Select(i =&gt; new Vector3(i, i, i));
+    }
+ 
+ 
+    /*【AppendNextDrawer】下拉条变成一个小的选择器，代替原有的宽型下拉条*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TreeViewOfInts&quot;, AppendNextDrawer = true)]//
+    public int SomeSize11;
+ 
+    /*【DisableGUIInAppendedDrawer】配合AppendNextDrawer使用，显示的数值为灰度状态，达到不可更改数值的目的*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TreeViewOfInts&quot;, AppendNextDrawer = true, DisableGUIInAppendedDrawer = true)]//
+    public int SomeSize12;
+ 
+    /*【ExpandAllMenuItems】下拉条里面的条目是否全部展开*/
+    [ValueDropdown(&quot;TreeViewOfInts&quot; , ExpandAllMenuItems = false)]//
+    public int SomeSize13;
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;TreeViewOfInts&quot;, ExpandAllMenuItems =true )]//
+    public int SomeSize14;
+ 
+    /*【IsUniqueList】在添加的列表Item前面添加勾选框，可以一次性勾选多个Item并添加*/
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, IsUniqueList = false)]
+    public List&lt;GameObject&gt; UniqueGameobjectList0;
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, IsUniqueList = true)]
+    public List&lt;GameObject&gt; UniqueGameobjectList1;
+ 
+    /*【ExcludeExistingValuesInList】添加列中不会显示已经选中的Item*/
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;)]
+    public List&lt;GameObject&gt; UniqueGameobjectList2;
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, ExcludeExistingValuesInList = true)]
+    public List&lt;GameObject&gt; UniqueGameobjectList3;
+ 
+    /*【DisableListAddButtonBehaviour】禁用下拉列表，以弹窗的形式弹出*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, DisableListAddButtonBehaviour = true, IsUniqueList = true)]
+    public List&lt;GameObject&gt; UniqueGameobjectList4;
+ 
+    /*【DrawDropdownForListElements】已经添加的Item不会再出现Item下拉表*/
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, DrawDropdownForListElements = false)]
+    public List&lt;GameObject&gt; UniqueGameobjectList5;
+ 
+    /*【NumberOfItemsBeforeEnablingSearch】查过指定数量的Item则出现搜索框。默认是10。*/
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, NumberOfItemsBeforeEnablingSearch =200)]
+    public List&lt;GameObject&gt; UniqueGameobjectList6;
+    [PropertySpace(0, 40)]
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, NumberOfItemsBeforeEnablingSearch = 20)]
+    public List&lt;GameObject&gt; UniqueGameobjectList7;
+ 
+ 
+    [ValueDropdown(&quot;GetListOfMonoBehaviours&quot;, AppendNextDrawer = true, HideChildProperties = false)]
+    public MonoBehaviour SomeMonoBehaviour;
+    private IEnumerable&lt;MonoBehaviour&gt; GetListOfMonoBehaviours()
+    {
+        return GameObject.FindObjectsOfType&lt;MonoBehaviour&gt;();
+    }
+ 
+    [ValueDropdown(&quot;KeyCodes&quot;)]
+    public KeyCode FilteredEnum;
+    private static IEnumerable&lt;KeyCode&gt; KeyCodes = Enumerable.Range((int)KeyCode.Alpha0, 10).Cast&lt;KeyCode&gt;();
+ 
+ 
+    [ValueDropdown(&quot;TreeViewOfInts&quot;, ExpandAllMenuItems = true)]
+    public List&lt;int&gt; IntTreeview = new List&lt;int&gt;() { 1, 2, 7 };
+    /// &lt;summary&gt;
+    /// 以“/”符号作为类别分隔符
+    /// &lt;/summary&gt;
+    private IEnumerable TreeViewOfInts = new ValueDropdownList&lt;int&gt;()
+{
+    { &quot;Node 1/Node 1.1&quot;, 1 },
+    { &quot;Node 1/Node 1.2&quot;, 2 },
+    { &quot;Node 2/Node 2.1&quot;, 3 },
+    { &quot;Node 3/Node 3.1&quot;, 4 },
+    { &quot;Node 3/Node 3.2&quot;, 5 },
+    { &quot;Node 1/Node 3.1/Node 3.1.1&quot;, 6 },
+    { &quot;Node 1/Node 3.1/Node 3.1.2&quot;, 7 },
+    { &quot;Node 1&quot;, -1 },
+    { &quot;Node 2&quot;, -2 },
+    { &quot;Node 3&quot;, -3 },
+    { &quot;Node 4&quot;, -4 },
+};
+ 
+    /// &lt;summary&gt;
+    /// IsUniqueList为true 每个Item上面有一个勾选框
+    /// &lt;/summary&gt;
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, IsUniqueList = true, HideChildProperties = false)]
+    public List&lt;GameObject&gt; UniqueGameobjectList;
+    private static IEnumerable GetAllSceneObjects()
+    {
+        Func&lt;Transform, string&gt; getPath = null;
+        getPath = x =&gt; (x ? getPath(x.parent) + &quot;/&quot; + x.gameObject.name : &quot;&quot;);//三元运算符 其中X为Transform
+        return GameObject.FindObjectsOfType&lt;GameObject&gt;().Select(x =&gt; new ValueDropdownItem(getPath(x.transform), x));
+    }
+ 
+    /// &lt;summary&gt;
+    /// ExcludeExistingValuesInList 为 ture则选中的item不在出现在等待选择的列下拉表中
+    /// DrawDropdownForListElements 为 true  每个item都有一个下拉列表
+    /// &lt;/summary&gt;
+    [ValueDropdown(&quot;GetAllSceneObjects&quot;, IsUniqueList = false, DropdownTitle = &quot;Select Scene Object&quot;, DrawDropdownForListElements = false, ExcludeExistingValuesInList = true)]
+    public List&lt;GameObject&gt; UniqueGameobjectListMode2;
+ 
+ 
+    private static IEnumerable GetAllScriptableObjects()
+    {
+        return UnityEditor.AssetDatabase.FindAssets(&quot;t:ScriptableObject&quot;)
+            .Select(x =&gt; UnityEditor.AssetDatabase.GUIDToAssetPath(x))
+            .Select(x =&gt; new ValueDropdownItem(x, UnityEditor.AssetDatabase.LoadAssetAtPath&lt;ScriptableObject&gt;(x)));
+    }
+ 
+    private static IEnumerable GetAllSirenixAssets()
+    {
+        var root = &quot;Assets/Plugins/Sirenix/&quot;;
+ 
+        return UnityEditor.AssetDatabase.GetAllAssetPaths()
+            .Where(x =&gt; x.StartsWith(root))
+            .Select(x =&gt; x.Substring(root.Length))
+            .Select(x =&gt; new ValueDropdownItem(x, UnityEditor.AssetDatabase.LoadAssetAtPath&lt;UnityEngine.Object&gt;(root + x)));
+    }
+}
+</code></pre>
 ]]></content>
     </entry>
     <entry>
