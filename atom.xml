@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2021-12-19T14:18:57.324Z</updated>
+    <updated>2021-12-27T16:00:00.471Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
@@ -10,6 +10,15 @@
     <logo>https://anchengxiang.space/images/avatar.png</logo>
     <icon>https://anchengxiang.space/favicon.ico</icon>
     <rights>All rights reserved 2021, zhangxyiang_blog</rights>
+    <entry>
+        <title type="html"><![CDATA[Odin-按钮]]></title>
+        <id>https://anchengxiang.space/post/odin-buttons/</id>
+        <link href="https://anchengxiang.space/post/odin-buttons/">
+        </link>
+        <updated>2021-12-26T09:00:13.000Z</updated>
+        <content type="html"><![CDATA[<p>test</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Odin-基础]]></title>
         <id>https://anchengxiang.space/post/odin-ji-chu/</id>
@@ -569,8 +578,6 @@ public class ShowInInspector : MonoBehaviour
 }
 
 </code></pre>
-<figure data-type="image" tabindex="16"><img src="https://upload-images.jianshu.io/upload_images/7643202-d1f1b160ca9df58a.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img" loading="lazy"></figure>
-<p>可见，只有SerializeField特性的evenNumber保存下来了</p>
 <h3 id="title-attribute">Title Attribute</h3>
 <p>标题是用来在属性上面做一个粗体标题的</p>
 <pre><code class="language-c#">[Title(&quot;Titles and Headers&quot;)]
@@ -624,7 +631,7 @@ public int Expresion;
 public string Combined { get { return this.MyTitle + &quot; - &quot; + this.MySubtitle; } }
 
 </code></pre>
-<figure data-type="image" tabindex="17"><img src="https://s2.loli.net/2021/12/19/SCvyYN786KHqPwn.png" alt="image-20211219211431885" loading="lazy"></figure>
+<figure data-type="image" tabindex="16"><img src="https://s2.loli.net/2021/12/19/SCvyYN786KHqPwn.png" alt="image-20211219211431885" loading="lazy"></figure>
 <h3 id="type-filter-attribute">Type Filter Attribute</h3>
 <p>对输入的value 进行自定义过滤，只显示需要的类型</p>
 <h3 id="type-info-box-attribute">Type Info Box Attribute</h3>
@@ -654,10 +661,10 @@ public class TypeInfoBoxExample : MonoBehaviour
     }
 }
 </code></pre>
-<figure data-type="image" tabindex="18"><img src="https://s2.loli.net/2021/12/19/ERJh8CmVzD7LZgs.gif" alt="7643202-e3eb1974e6644abe.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="17"><img src="https://s2.loli.net/2021/12/19/ERJh8CmVzD7LZgs.gif" alt="7643202-e3eb1974e6644abe.gif" loading="lazy"></figure>
 <h3 id="validate-input-attribute">Validate Input Attribute</h3>
 <p>用于任何属性，并允自定义检查器，灵活实现多种监测规则。使用此选项可强制执行正确的值（提供对应的返回值）</p>
-<figure data-type="image" tabindex="19"><img src="https://s2.loli.net/2021/12/19/KnQkd2My1zR9HiX.png" alt="7643202-889cdd4afc6700a4.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="18"><img src="https://s2.loli.net/2021/12/19/KnQkd2My1zR9HiX.png" alt="7643202-889cdd4afc6700a4.png" loading="lazy"></figure>
 <pre><code class="language-c#">using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -740,7 +747,7 @@ public class ValidateInput : MonoBehaviour
 <p>Value Dropdown Attribute特性用于任何属性，并使用可配置选项创建下拉列表。使用此选项可为用户提供一组特定的选项供您选择。<br>
 也就是创建一些特殊的下拉条</p>
 <h5 id="membername也是唯一一个有参构造函数需要的属性有两种形式的drop下拉条一种是直接数值的另一种是key-value形式的">【MemberName】,也是唯一一个有参构造函数需要的属性，有两种形式的Drop下拉条，一种是直接数值的，另一种是Key-Value形式的</h5>
-<figure data-type="image" tabindex="20"><img src="https://s2.loli.net/2021/12/19/BNG7sAznx1uwifT.gif" alt="7643202-5133392a301e7482.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="19"><img src="https://s2.loli.net/2021/12/19/BNG7sAznx1uwifT.gif" alt="7643202-5133392a301e7482.gif" loading="lazy"></figure>
 <pre><code class="language-c#">    /*【MemberName】*/
     [PropertySpace(40, 0)]
     [ValueDropdown(&quot;TextureSizes&quot;)]
@@ -757,7 +764,7 @@ public class ValidateInput : MonoBehaviour
     };
 </code></pre>
 <h5 id="sortdropdownitems默认为false-开启后为下拉列表为根据key升序排序">【SortDropdownItems】默认为false 开启后为下拉列表为根据Key升序排序</h5>
-<figure data-type="image" tabindex="21"><img src="https://s2.loli.net/2021/12/19/Pl2h9UW6TktcF8y.gif" alt="7643202-0d2e87e0c595e834.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="20"><img src="https://s2.loli.net/2021/12/19/Pl2h9UW6TktcF8y.gif" alt="7643202-0d2e87e0c595e834.gif" loading="lazy"></figure>
 <pre><code class="language-c#">    /*【SortDropdownItems】默认为false 开启后为下拉列表为根据Key升序排序*/
     [PropertySpace(40, 0)]
     [ValueDropdown(&quot;SortList1&quot;)]
@@ -781,13 +788,13 @@ public class ValidateInput : MonoBehaviour
     };
 </code></pre>
 <h5 id="dropdowntitle给下来条提供一个标题">【DropdownTitle】给下来条提供一个标题</h5>
-<figure data-type="image" tabindex="22"><img src="https://s2.loli.net/2021/12/19/hvWAw1nFH63mr58.gif" alt="7643202-9a139d5edd540247.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="21"><img src="https://s2.loli.net/2021/12/19/hvWAw1nFH63mr58.gif" alt="7643202-9a139d5edd540247.gif" loading="lazy"></figure>
 <pre><code class="language-c#">    [PropertySpace(0, 40)]
     [ValueDropdown(&quot;TextureSizes&quot;, DropdownTitle = &quot;下拉条标题&quot;)]
     public int SomeSize5;
 </code></pre>
 <h5 id="dropdownheight下拉条高度">【DropdownHeight】下拉条高度</h5>
-<figure data-type="image" tabindex="23"><img src="https://s2.loli.net/2021/12/19/RY9P7dAcqVrsoED.gif" alt="7643202-8d497fb864acf9ad.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="22"><img src="https://s2.loli.net/2021/12/19/RY9P7dAcqVrsoED.gif" alt="7643202-8d497fb864acf9ad.gif" loading="lazy"></figure>
 <pre><code>    /*【DropdownWidth】下拉条的宽度*/
     [PropertySpace(0, 40)]
     [ValueDropdown(&quot;TextureSizes&quot;, DropdownWidth = 100)]
@@ -800,14 +807,14 @@ public class ValidateInput : MonoBehaviour
 public int SomeSize8;
 </code></pre>
 <h5 id="doubleclicktoconfirm需要双击才能确地选中的内容">【DoubleClickToConfirm】需要双击才能确地选中的内容</h5>
-<figure data-type="image" tabindex="24"><img src="https://s2.loli.net/2021/12/19/XzV7ECBuWv5H8ao.gif" alt="7643202-0522a8c8db841a5e.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="23"><img src="https://s2.loli.net/2021/12/19/XzV7ECBuWv5H8ao.gif" alt="7643202-0522a8c8db841a5e.gif" loading="lazy"></figure>
 <pre><code>    /*【DoubleClickToConfirm】需要双击才能确地选中的内容*/
     [PropertySpace(0, 40)]
     [ValueDropdown(&quot;TreeViewOfInts&quot;, DoubleClickToConfirm = true)]//需要双击才能选中
     public int SomeSize9;
 </code></pre>
 <p><strong>【HideChildProperties】是否隐藏此类型所含有的属性信息</strong></p>
-<figure data-type="image" tabindex="25"><img src="https://s2.loli.net/2021/12/19/SJvEMLi3Ydt4PCs.png" alt="7643202-f9351ae2fc862355.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="24"><img src="https://s2.loli.net/2021/12/19/SJvEMLi3Ydt4PCs.png" alt="7643202-f9351ae2fc862355.png" loading="lazy"></figure>
 <pre><code>/*【HideChildProperties】是否隐藏此类型所含有的属性信息*/
 [ValueDropdown(&quot;RangVector3&quot;, HideChildProperties = true)]//
 public Vector3 vector3HideChildProperties;
@@ -821,21 +828,21 @@ public IEnumerable&lt;Vector3&gt;  RangVector3()
 }
 </code></pre>
 <p><strong>【AppendNextDrawer】下拉条变成一个小的选择器，代替原有的宽型下拉条</strong></p>
-<figure data-type="image" tabindex="26"><img src="https://s2.loli.net/2021/12/19/KiO9QpPwIuTVnCv.gif" alt="7643202-132b3d1fe697a04a.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="25"><img src="https://s2.loli.net/2021/12/19/KiO9QpPwIuTVnCv.gif" alt="7643202-132b3d1fe697a04a.gif" loading="lazy"></figure>
 <pre><code>/*【AppendNextDrawer】下拉条变成一个小的选择器，代替原有的宽型下拉条*/
 [PropertySpace(0, 40)]
 [ValueDropdown(&quot;TreeViewOfInts&quot;, AppendNextDrawer = true)]//
 public int SomeSize11;
 </code></pre>
 <p><strong>【DisableGUIInAppendedDrawer】配合AppendNextDrawer使用，显示的数值为灰度状态，达到不可更改数值的目的</strong></p>
-<figure data-type="image" tabindex="27"><img src="https://s2.loli.net/2021/12/19/A29mVnUtYH1p6gZ.gif" alt="7643202-55796b6570049c75.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="26"><img src="https://s2.loli.net/2021/12/19/A29mVnUtYH1p6gZ.gif" alt="7643202-55796b6570049c75.gif" loading="lazy"></figure>
 <pre><code>/*【DisableGUIInAppendedDrawer】配合AppendNextDrawer使用，显示的数值为灰度状态，达到不可更改数值的目的*/
 [PropertySpace(0, 40)]
 [ValueDropdown(&quot;TreeViewOfInts&quot;, AppendNextDrawer = true, DisableGUIInAppendedDrawer = true)]//
 public int SomeSize12;
 </code></pre>
 <p><strong>【ExpandAllMenuItems】下拉条里面的条目是否全部展开</strong></p>
-<figure data-type="image" tabindex="28"><img src="https://s2.loli.net/2021/12/19/lQ1Mk9ANGSst4bD.gif" alt="7643202-01569c004ab367f8.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="27"><img src="https://s2.loli.net/2021/12/19/lQ1Mk9ANGSst4bD.gif" alt="7643202-01569c004ab367f8.gif" loading="lazy"></figure>
 <pre><code>/*【ExpandAllMenuItems】下拉条里面的条目是否全部展开*/
 [ValueDropdown(&quot;TreeViewOfInts&quot; , ExpandAllMenuItems = false)]//
 public int SomeSize13;
@@ -844,7 +851,7 @@ public int SomeSize13;
 public int SomeSize14;
 </code></pre>
 <p><strong>【IsUniqueList】在添加的列表Item前面添加勾选框，可以一次性勾选多个Item并添加</strong></p>
-<figure data-type="image" tabindex="29"><img src="https://s2.loli.net/2021/12/19/Gr2jdasQNSxzhm8.gif" alt="7643202-c01d00466668a841.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="28"><img src="https://s2.loli.net/2021/12/19/Gr2jdasQNSxzhm8.gif" alt="7643202-c01d00466668a841.gif" loading="lazy"></figure>
 <pre><code>/*【IsUniqueList】在添加的列表Item前面添加勾选框，可以一次性勾选多个Item并添加*/
 [ValueDropdown(&quot;GetAllSceneObjects&quot;, IsUniqueList = false)]
 public List&lt;GameObject&gt; UniqueGameobjectList0;
@@ -853,7 +860,7 @@ public List&lt;GameObject&gt; UniqueGameobjectList0;
 public List&lt;GameObject&gt; UniqueGameobjectList1;
 </code></pre>
 <p><strong>【ExcludeExistingValuesInList】添加列中不会显示已经选中的Item</strong></p>
-<figure data-type="image" tabindex="30"><img src="https://s2.loli.net/2021/12/19/EuGIc3tmpqBskRA.gif" alt="7643202-a494380d06e61060.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="29"><img src="https://s2.loli.net/2021/12/19/EuGIc3tmpqBskRA.gif" alt="7643202-a494380d06e61060.gif" loading="lazy"></figure>
 <pre><code>/*【ExcludeExistingValuesInList】添加列中不会显示已经选中的Item*/
 [ValueDropdown(&quot;GetAllSceneObjects&quot;)]
 public List&lt;GameObject&gt; UniqueGameobjectList2;
@@ -862,21 +869,21 @@ public List&lt;GameObject&gt; UniqueGameobjectList2;
 public List&lt;GameObject&gt; UniqueGameobjectList3;
 </code></pre>
 <p><strong>【DisableListAddButtonBehaviour】禁用下拉列表，以弹窗的形式弹出</strong></p>
-<figure data-type="image" tabindex="31"><img src="https://s2.loli.net/2021/12/19/S7opCz1W4ftDlOw.gif" alt="7643202-ce51f8559caf0457.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="30"><img src="https://s2.loli.net/2021/12/19/S7opCz1W4ftDlOw.gif" alt="7643202-ce51f8559caf0457.gif" loading="lazy"></figure>
 <pre><code>/*【DisableListAddButtonBehaviour】禁用下拉列表，以弹窗的形式弹出*/
 [PropertySpace(0, 40)]
 [ValueDropdown(&quot;GetAllSceneObjects&quot;, DisableListAddButtonBehaviour = true, IsUniqueList = true)]
 public List&lt;GameObject&gt; UniqueGameobjectList4;
 </code></pre>
 <p><strong>【DrawDropdownForListElements】已经添加的Item不会再出现Item下拉表</strong></p>
-<figure data-type="image" tabindex="32"><img src="https://s2.loli.net/2021/12/19/mcxIPCaKbd9RpsT.gif" alt="7643202-cc3b46a31df970df.gif" loading="lazy"></figure>
+<figure data-type="image" tabindex="31"><img src="https://s2.loli.net/2021/12/19/mcxIPCaKbd9RpsT.gif" alt="7643202-cc3b46a31df970df.gif" loading="lazy"></figure>
 <pre><code>/*【DrawDropdownForListElements】已经添加的Item不会再出现Item下拉表*/
 [PropertySpace(0, 40)]
 [ValueDropdown(&quot;GetAllSceneObjects&quot;, DrawDropdownForListElements = false)]
 public List&lt;GameObject&gt; UniqueGameobjectList5;
 </code></pre>
 <h5 id="numberofitemsbeforeenablingsearch查过指定数量的item则出现搜索框-默认是10">【NumberOfItemsBeforeEnablingSearch】查过指定数量的Item则出现搜索框。默认是10。</h5>
-<figure data-type="image" tabindex="33"><img src="https://upload-images.jianshu.io/upload_images/7643202-87b2e38d89c171cc.gif?imageMogr2/auto-orient/strip" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="32"><img src="https://upload-images.jianshu.io/upload_images/7643202-87b2e38d89c171cc.gif?imageMogr2/auto-orient/strip" alt="" loading="lazy"></figure>
 <pre><code class="language-cs">    /*【NumberOfItemsBeforeEnablingSearch】查过指定数量的Item则出现搜索框。默认是10。*/
     [ValueDropdown(&quot;GetAllSceneObjects&quot;, NumberOfItemsBeforeEnablingSearch =200)]
     public List&lt;GameObject&gt; UniqueGameobjectList6;
