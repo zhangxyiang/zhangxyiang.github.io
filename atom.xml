@@ -2,21 +2,192 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2021-12-27T16:00:00.471Z</updated>
+    <updated>2022-01-03T08:44:02.131Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
     <subtitle>分享与热爱</subtitle>
     <logo>https://anchengxiang.space/images/avatar.png</logo>
     <icon>https://anchengxiang.space/favicon.ico</icon>
-    <rights>All rights reserved 2021, zhangxyiang_blog</rights>
+    <rights>All rights reserved 2022, zhangxyiang_blog</rights>
     <entry>
         <title type="html"><![CDATA[Odin-按钮]]></title>
         <id>https://anchengxiang.space/post/odin-buttons/</id>
         <link href="https://anchengxiang.space/post/odin-buttons/">
         </link>
         <updated>2021-12-26T09:00:13.000Z</updated>
-        <content type="html"><![CDATA[<p>test</p>
+        <content type="html"><![CDATA[<h3 id="button">Button</h3>
+<p>用于为一个方法在Inspector中绘制一个触发该方法的功能按钮</p>
+<p>在Inspector上绘制各个按钮，如果有参数，默认折叠的方式展示</p>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2022/01/03/AHTi43jmch5IXyt.gif" alt="img" loading="lazy"></figure>
+<pre><code class="language-c#">    [Button]
+    private void Default()
+    {
+    }
+    [Button]
+    private void Default(float a, float b, GameObject c)
+    {
+    }
+ 
+    [Button]
+    private void Default(float t, float b, float[] c)
+    {
+    }
+</code></pre>
+<h5 id="以为为这个button指定一个名称而且也可以通过特殊字符引用一个字段作为名称">以为为这个button指定一个名称，而且也可以通过特殊字符$引用一个字段作为名称</h5>
+<figure data-type="image" tabindex="2"><img src="https://s2.loli.net/2022/01/03/1254wkp7ZHNKa6L.gif" alt="img" loading="lazy"></figure>
+<pre><code class="language-c#">    public string ButtonName = &quot;Dynamic button name&quot;;
+ 
+    public bool Toggle;
+ 
+    [Button(&quot;$ButtonName&quot;)]
+    private void DefaultSizedButton()
+    {
+        this.Toggle = !this.Toggle;
+    }
+</code></pre>
+<h5 id="可以通过特殊字符-写入方法体调用">可以通过特殊字符@ 写入方法体调用</h5>
+<figure data-type="image" tabindex="3"><img src="https://s2.loli.net/2022/01/03/EhANG6eMb5LwRcJ.gif" alt="img" loading="lazy"></figure>
+<pre><code class="language-c#">    [Button(&quot;@\&quot;Expression label: \&quot; + DateTime.Now.ToString(\&quot;HH:mm:ss\&quot;)&quot;)]
+    public void ExpressionLabel()
+    {
+        this.Toggle = !this.Toggle;
+    }
+</code></pre>
+<p>ButtonSizes指定不同尺寸大小的按钮</p>
+<figure data-type="image" tabindex="4"><img src="https://s2.loli.net/2022/01/03/XkcF3ZWgt5RUSf4.png" alt="img" loading="lazy"></figure>
+<pre><code class="language-c#">    [Button(ButtonSizes.Small), GUIColor(0.3f, 0.8f, 1)]
+    private void SmallButton()
+    {
+        this.Toggle = !this.Toggle;
+    }
+ 
+    [Button(ButtonSizes.Medium), GUIColor(0.4f, 0.4f, 1)]
+    private void MediumSizedButton()
+    {
+        this.Toggle = !this.Toggle;
+    }
+ 
+    [Button(ButtonSizes.Large), GUIColor(0.5f, 0.8f, 0.5f)]
+    private void LargeButton()
+    {
+        this.Toggle = !this.Toggle;
+    }
+ 
+    [Button(ButtonSizes.Gigantic),GUIColor(0.6f, 0.8f, 0)]
+    private void GiganticButton()
+    {
+        this.Toggle = !this.Toggle;
+    }
+</code></pre>
+<h5 id="也是自定义尺寸">也是自定义尺寸</h5>
+<figure data-type="image" tabindex="5"><img src="https://s2.loli.net/2022/01/03/dOKBoAg9clkMDyv.png" alt="img" loading="lazy"></figure>
+<pre><code class="language-c#">    [Button(90)]
+    private void CustomSizedButton()
+    {
+        this.Toggle = !this.Toggle;
+    }
+</code></pre>
+<p><strong>ButtonStyle指定展示样式</strong></p>
+<figure data-type="image" tabindex="6"><img src="https://s2.loli.net/2022/01/03/jCVrKmJe8oLGFHN.gif" alt="img" loading="lazy"></figure>
+<pre><code class="language-c#">    [Button(ButtonSizes.Medium, ButtonStyle.FoldoutButton)]
+    private int FoldoutButton(int a = 2, int b = 2)
+    {
+        return a + b;
+    }
+ 
+    [Button(ButtonSizes.Medium, ButtonStyle.FoldoutButton)]
+    private void FoldoutButton(int a, int b, ref int result)
+    {
+        result = a + b;
+    }
+ 
+    [Button(ButtonSizes.Large, ButtonStyle.Box)]
+    private void Box(float a, float b, out float c)
+    {
+        c = a + b;
+    }
+ 
+    [Button(ButtonSizes.Large, ButtonStyle.Box)]
+    private void Box(int a, float b, out float c)
+    {
+        c = a + b;
+    }
+    [Button(ButtonSizes.Large, ButtonStyle.CompactBox)]
+    public void CompactBox(int a, float b, out float c)
+    {
+        c = a + b;
+    }
+</code></pre>
+<h5 id="expanded如果有参数的控制是否强制展开折页去除折页方式">Expanded如果有参数的控制是否强制展开折页（去除折页方式）</h5>
+<figure data-type="image" tabindex="7"><img src="https://s2.loli.net/2022/01/03/g9EZbfGmPksepX1.png" alt="img" loading="lazy"></figure>
+<pre><code class="language-c#">    [Button(ButtonStyle.CompactBox, Expanded = true)]
+    private void CompactExpanded(float a, float b, GameObject c)
+    {
+    }
+ 
+    [Button(ButtonSizes.Medium, ButtonStyle.Box, Expanded = true)]
+    private void FullExpanded(float a, float b)
+    {
+    }
+</code></pre>
+<h3 id="buttongroup">ButtonGroup</h3>
+<p>用于可用于任何实例函数，并将按钮添加到组织为水平组的检查器中。使用此按钮可以将多个按钮组织在一个整齐的水平组中。</p>
+<figure data-type="image" tabindex="8"><img src="https://s2.loli.net/2022/01/03/rIsvaGqVnz6F7jC.png" alt="image-20220103163716051" loading="lazy"></figure>
+<pre><code class="language-c#">[ButtonGroup]
+private void A()
+{
+}
+
+[ButtonGroup]
+private void B()
+{
+}
+
+[ButtonGroup]
+private void C()
+{
+}
+
+[ButtonGroup]
+private void D()
+{
+}
+
+[Button(ButtonSizes.Large)]
+[ButtonGroup(&quot;My Button Group&quot;)]
+private void E()
+{
+}
+
+[GUIColor(0, 1, 0)]
+[ButtonGroup(&quot;My Button Group&quot;)]
+private void F()
+{
+}
+
+</code></pre>
+<h3 id="inlinebutton">InlineButton</h3>
+<p>用于将一个按钮添加到属性的末尾</p>
+<figure data-type="image" tabindex="9"><img src="https://s2.loli.net/2022/01/03/Dg2FLkqlAWu4UrO.png" alt="7643202-193149a82ab9a437.png" loading="lazy"></figure>
+<pre><code class="language-c#">// Inline Buttons:
+[InlineButton(&quot;A&quot;)]
+public int InlineButton;
+ 
+[InlineButton(&quot;A&quot;)]
+[InlineButton(&quot;B&quot;, &quot;Custom Button Name&quot;)]
+public int ChainedButtons;
+ 
+private void A()
+{
+    Debug.Log(&quot;A&quot;);
+}
+ 
+private void B()
+{
+    Debug.Log(&quot;B&quot;);
+}
+</code></pre>
 ]]></content>
     </entry>
     <entry>
