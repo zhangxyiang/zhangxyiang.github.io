@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2022-01-03T08:44:02.131Z</updated>
+    <updated>2022-02-27T10:25:02.021Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
@@ -10,6 +10,178 @@
     <logo>https://anchengxiang.space/images/avatar.png</logo>
     <icon>https://anchengxiang.space/favicon.ico</icon>
     <rights>All rights reserved 2022, zhangxyiang_blog</rights>
+    <entry>
+        <title type="html"><![CDATA[Odin标签小探索]]></title>
+        <id>https://anchengxiang.space/post/odin-biao-qian-xiao-tan-suo/</id>
+        <link href="https://anchengxiang.space/post/odin-biao-qian-xiao-tan-suo/">
+        </link>
+        <updated>2022-02-27T10:01:15.000Z</updated>
+        <content type="html"><![CDATA[<p>Odin在Unity编辑器扩展中的地位不必多说。只需简单的标签，Odin就能自动为我们实现之前需要大量编码才能实现的扩展。下面来探究下其背后的原理，在实践中体会Odin基于标签的设计思路的精妙和易于实用性。<br>
+我们知道，扩展Inspector需要用到CustomEditor标签和实现Editor子类来完成。</p>
+<p>下面是MyClass和MyClassInspector代码，我们再熟悉不过了。</p>
+<p>MyClass类</p>
+<pre><code class="language-csharp">Copypublic class MyClass : MonoBehaviour
+{
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}
+</code></pre>
+<p>MyClassInspector类</p>
+<pre><code class="language-csharp">Copy[CustomEditor(typeof(MyClass))]
+public class MyClassInspector :UnityEditor.Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        if (GUILayout.Button(&quot;btn&quot;))
+        {
+            OnBtnClick();
+        }
+    }
+
+    public void OnBtnClick()
+    {
+        Debug.Log(&quot;my class btn clicked&quot;);
+    }
+}
+</code></pre>
+<p>可以看到，Unity通过CustomEditor标签把Myclass和MyClassInspector绑定起来。<br>
+但我们使用Odin的时候，并不需要声明CustomEditor标签和实现Editor的子类，其中的奥秘在哪里呢。</p>
+<h3 id="unityeditorcustomeditorattributes是谜底">UnityEditor.CustomEditorAttributes是谜底<a href="https://www.cnblogs.com/terrynoya/p/15902487.html#726865349">#</a></h3>
+<p>git源码地址：https://github.com/Unity-Technologies/UnityCsReference/blob/e740821767d2290238ea7954457333f06e952bad/Editor/Mono/CustomEditorAttributes.cs<br>
+我们来看一下Rebuild函数，出现了关键的CustomEditor，大概可以理解为，遍历之后，在kSCustomEditors或者kSCustomMultiEditors内，存放了关于Myclass和MyClassInspector之间的映射。</p>
+<pre><code class="language-csharp">Copy internal static void Rebuild()
+        {
+            kSCustomEditors.Clear();
+            kSCustomMultiEditors.Clear();
+            var types = TypeCache.GetTypesWithAttribute&lt;CustomEditor&gt;();
+            foreach (var type in types)
+            {
+                object[] attrs = type.GetCustomAttributes(typeof(CustomEditor), false);
+
+                foreach (CustomEditor inspectAttr in  attrs)
+                {
+                    var t = new MonoEditorType();
+</code></pre>
+<p>下面我们动手做个试验来进行验证。<br>
+由于CustomEditorAttributes可见性是internal，我们需要利用反射调用内部的静态函数。</p>
+<pre><code class="language-ini">CopyCustomEditorAttributesType = typeof(UnityEditor.Editor).Assembly.GetType(&quot;UnityEditor.CustomEditorAttributes&quot;);
+</code></pre>
+<p>然后获得kSCustomEditors属性</p>
+<pre><code class="language-ini">CopyCustomEditorAttributesType_CustomEditors = CustomEditorAttributesType.GetField(&quot;kSCustomEditors&quot;, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+</code></pre>
+<p>我们打印一下ksCustomEditors的数据</p>
+<pre><code class="language-csharp">Copyvar datas = (IDictionary)CustomEditorAttributesType_CustomEditors.GetValue(null);
+foreach (var item in datas.Keys)
+{
+    Debug.Log(item);
+}
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2022/02/27/k2TgjpvPWxSmMzt.png" alt="2041003-20220216224302421-965687682.png" loading="lazy"></figure>
+<p>在log中我们发现了MyClass</p>
+<figure data-type="image" tabindex="2"><img src="https://s2.loli.net/2022/02/27/A9jW8Bg6C7vw4t2.png" alt="2041003-20220216224337855-639801893.png" loading="lazy"></figure>
+<p>下面我们写一个方法，来删除kSCustomEditors内的所有数据，然后看看会发生什么</p>
+<pre><code class="language-csharp">Copypublic static void ClearCustomEditors()
+{
+        ((IDictionary)CustomEditorAttributesType_CustomEditors.GetValue(null)).Clear();
+}
+</code></pre>
+<p>调用之后我们看到之前写的MyClass的Inspector已经没有按钮了。<br>
+<img src="https://s2.loli.net/2022/02/27/bf5yzGWXFdnrDZ7.png" alt="2041003-20220216224725204-943002374.png" loading="lazy"><br>
+事实上我们清除了所有CustomEditor的绑定关系，看一下RectTransform的Inspector也更原始了。<br>
+<img src="https://s2.loli.net/2022/02/27/pTZQIXBo3Uwcr8i.png" alt="2041003-20220216224829378-1144816288.png" loading="lazy"></p>
+<p>好在我们可以通过调用刚才的Rebuild方法重新建立绑定关系。</p>
+<pre><code class="language-kotlin">CopyCustomEditorAttributesType_Rebuild = CustomEditorAttributesType.GetMethod(&quot;Rebuild&quot;,BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+if (UnityVersion.IsVersionOrGreater(2019, 1))
+{
+    CustomEditorAttributesType_Rebuild.Invoke(null, null);
+    CustomEditorAttributesType_Initialized.SetValue(null, true);
+    return;
+}
+CustomEditorAttributesType_Initialized.SetValue(null, false);
+</code></pre>
+<h3 id="实现自己的标签功能">实现自己的标签功能<a href="https://www.cnblogs.com/terrynoya/p/15902487.html#1196311912">#</a></h3>
+<p>很自然的，我们可以在CustomEditorAttributes的ksCustomEditor属性中，加入我们想要的数据，实现绑定关系</p>
+<pre><code class="language-csharp">CopyMonoEditorType = CustomEditorAttributesType.GetNestedType(&quot;MonoEditorType&quot;, BindingFlags.Public | BindingFlags.NonPublic);
+MonoEditorType_InspectedType = MonoEditorType.GetField(&quot;m_InspectedType&quot;, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+MonoEditorType_InspectorType = MonoEditorType.GetField(&quot;m_InspectorType&quot;, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+public static void SetCustomEditor(Type inspectedType, Type editorType, bool isFallbackEditor,
+        bool isEditorForChildClasses, bool isMultiEditor)
+    {
+        object obj = Activator.CreateInstance(MonoEditorType);
+        MonoEditorType_InspectedType.SetValue(obj, inspectedType);
+        MonoEditorType_InspectorType.SetValue(obj, editorType);
+        AddEntryToDictList((IDictionary) CustomEditorAttributesType_CustomEditors.GetValue(null), obj, inspectedType);
+    }
+</code></pre>
+<p>下面写一个Button标签类</p>
+<pre><code class="language-csharp">Copypublic class ButtonAttribute:Attribute
+    {
+        public string Text;
+
+        public ButtonAttribute(string text)
+        {
+            Text = text;
+        }
+    }
+</code></pre>
+<p>新建一个MonoBehaviour类，模拟一个需要Button标签的业务逻辑</p>
+<pre><code class="language-csharp">Copypublic class NoCustomEditorAttributeClass : MonoBehaviour
+{
+    [Button(&quot;HowOdinAttributeWork&quot;)]
+    public void MyBtnClick()
+    {
+        Debug.Log(&quot;my btn clicked!!&quot;);
+    }
+    
+    [Button(&quot;btn2&quot;)]
+    public void Btn2()
+    {
+        Debug.Log(&quot;btn2&quot;);
+    }
+}
+</code></pre>
+<p>下面实现NoClassInspector，在OnInspectorGUI中，我们通过反射调用GetMethods方法，查看target的函数中，是否有ButtonAttribute标签，如果有，则绘制GUILayout.Button，然后method.Invoke实现标签对应的函数调用</p>
+<pre><code class="language-csharp">Copy public class NoClassInspector:UnityEditor.Editor
+    {
+        
+        public override void OnInspectorGUI()
+        {
+            // Debug.Log($&quot;target:{this.target}&quot;);
+            base.OnInspectorGUI();
+
+            var type = target.GetType();
+            var methods =  type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+            foreach (var method in methods)
+            {
+                var attr = method.GetCustomAttribute&lt;ButtonAttribute&gt;();
+                if (attr != null)
+                {
+                    if (GUILayout.Button(attr.Text))
+                    {
+                        method.Invoke(target,null);
+                    }                    
+                }
+            }
+        }
+    }
+</code></pre>
+<p>最后通过之前写好的SetCustomEditor建立NoCustomEditorAttributeClass和NoClassInspector之间的映射关系</p>
+<pre><code class="language-csharp">CopyCustomInspectorUtility.SetCustomEditor(typeof(NoCustomEditorAttributeClass),typeof(NoClassInspector),false,false,false);
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://s2.loli.net/2022/02/27/QSmu5dFWKj7n6zO.png" alt="2041003-20220216231139733-2060759608.png" loading="lazy"></figure>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Odin-按钮]]></title>
         <id>https://anchengxiang.space/post/odin-buttons/</id>
