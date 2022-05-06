@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2022-03-27T05:32:32.836Z</updated>
+    <updated>2022-05-06T17:21:56.447Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
@@ -10,6 +10,456 @@
     <logo>https://anchengxiang.space/images/avatar.png</logo>
     <icon>https://anchengxiang.space/favicon.ico</icon>
     <rights>All rights reserved 2022, zhangxyiang_blog</rights>
+    <entry>
+        <title type="html"><![CDATA[为Unity开发者快速入门Laya指南]]></title>
+        <id>https://anchengxiang.space/post/wei-unity-kai-fa-zhe-kuai-su-ru-men-laya-zhi-nan/</id>
+        <link href="https://anchengxiang.space/post/wei-unity-kai-fa-zhe-kuai-su-ru-men-laya-zhi-nan/">
+        </link>
+        <updated>2022-04-28T17:17:35.000Z</updated>
+        <content type="html"><![CDATA[<p>本指南将从Unity用户的视角来介绍Laya，并帮助你将Unity的开发经验应用到Laya的世界中。</p>
+<h2 id="编辑器">编辑器</h2>
+<p>下面分别是Unity编辑器和LayaBox的截图，我们用颜色标出了界面中的不同区域，并用相同颜色标出了拥有功能的区域。每个区域上还添加了名称，以便你了解它们在Laya语境中的称呼。可惜，LayaBox编辑器并不支持自定义布局，所以你无法通过拖动各个窗口来移动它们。</p>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2022/04/29/HTdMoNqwm9b6Sxv.png" alt="unity" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://s2.loli.net/2022/04/29/fOJL8Nhv3QHypYj.png" alt="Laya" loading="lazy"></figure>
+<h2 id="编辑资产">编辑资产</h2>
+<p>在Unity中，用户使用 Inspector 选项卡来编辑当前选中的资产。在LayaBox中，我们使用 <strong>资源属性设置</strong> 来展示当前选中对象的属性，比较复杂的编辑工作则有专门的窗口或选项卡来处理。想要编辑某个资产，会单独打开一个带有选项卡的窗口。但是只能同时打开一个弹窗。</p>
+<figure data-type="image" tabindex="3"><img src="https://s2.loli.net/2022/04/29/zTi7xwB4R9pOaKC.png" alt="image-20220429145615648" loading="lazy"></figure>
+<h2 id="术语简表">术语简表</h2>
+<p>下表左侧是Unity中的常见术语，右侧则是对应的（或差不多的）Laya术语。</p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>Unity</th>
+<th>Laya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gameplay类型</td>
+<td>Component</td>
+<td>组件</td>
+</tr>
+<tr>
+<td></td>
+<td>GameObject</td>
+<td>Node</td>
+</tr>
+<tr>
+<td></td>
+<td>Prefab</td>
+<td>预设</td>
+</tr>
+<tr>
+<td>编辑器界面</td>
+<td>Hierarchy Panel</td>
+<td>层级</td>
+</tr>
+<tr>
+<td></td>
+<td>Inspector</td>
+<td>属性</td>
+</tr>
+<tr>
+<td></td>
+<td>Project Browser</td>
+<td>工程</td>
+</tr>
+<tr>
+<td></td>
+<td>Scene View</td>
+<td>窗口</td>
+</tr>
+<tr>
+<td>网格体</td>
+<td>Mesh</td>
+<td>模型网格</td>
+</tr>
+<tr>
+<td></td>
+<td>Skineed Mesh</td>
+<td>谷歌网格体</td>
+</tr>
+<tr>
+<td>游戏界面</td>
+<td>UI</td>
+<td>UI组件</td>
+</tr>
+<tr>
+<td>动画</td>
+<td>Animation</td>
+<td>动画系统</td>
+</tr>
+<tr>
+<td>编程</td>
+<td>c#</td>
+<td>TS,AS,JS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="项目文件和文件">项目文件和文件</h2>
+<h3 id="怎么理解项目中的目录和文件">怎么理解项目中的目录和文件？</h3>
+<p>和 Unity 项目一样，Laya项目也保存在专门的目录结构中，并且有着自己的项目文件。你可以 <strong>双击</strong> <strong>.laya</strong> 文件打开虚幻编辑器并加载该项目，或者 <strong>点击右键</strong> 查看更多选项。项目目录包含不同子目录，保存了游戏的资产内容和源代码，以及各种配置文件和二进制文件。其中最重要的就是 <strong>bin</strong> 子目录。</p>
+<h3 id="我的资产应该放在哪里">我的资产应该放在哪里？</h3>
+<p>在Laya中，每个项目都有一个Assets文件夹。它类似于Unity项目的Asset目录，是你保存游戏资产的地方。假如你要在游戏中导入资产，只需要将资产拷贝到Assets目录，他们便会自动导入并出现在 <strong>工程</strong> 中。当使用外部程序修改这些资产时，编辑器中的资产也会自动更新。</p>
+<figure data-type="image" tabindex="4"><img src="https://s2.loli.net/2022/04/29/KaiRry9HtQdkGB7.png" alt="image-20220429150232730" loading="lazy"></figure>
+<h3 id="支持哪些常见文件格式">支持哪些常见文件格式？</h3>
+<p>Unity支持很多文件格式。Laya本质上是H5，所以H5支持啥，Laya几乎就支持啥。</p>
+<table>
+<thead>
+<tr>
+<th>资产类型</th>
+<th>支持的格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>贴图</td>
+<td>.png,.jpeg</td>
+</tr>
+<tr>
+<td>声音</td>
+<td>.mp3,.wav</td>
+</tr>
+<tr>
+<td>字体</td>
+<td>.ttf</td>
+</tr>
+<tr>
+<td>视频</td>
+<td>.mp4</td>
+</tr>
+</tbody>
+</table>
+<h3 id="场景是如何保存的">场景是如何保存的？</h3>
+<p>在Unity中，你把GameObjects放在场景中，然后将场景（Scene）保存为场景资产文件。Laya也有场景文件(.scene)，它类似于Unity中的场景。地图文件保存了关卡的数据、关卡中的对象，以及某些关卡特定的设置信息。</p>
+<h3 id="如何修改项目设置">如何修改项目设置？</h3>
+<p>所有项目设置都可以在主菜单 的 <strong>文件/项目设置</strong> 中找到。可以修改设置所需要的类库、场景设置、图集设置、编辑器设置等。</p>
+<h3 id="源文件在哪里">源文件在哪里？</h3>
+<p>在 Unity 中，用户习惯将 C# 的源文件放在资产目录中。</p>
+<p>Laya的工作机制有点不同。项目中的TS代码，你会在项目目录中找到一个src子目录，其中包含了代码文件.ts（如果你使用TS作为脚本语言）。</p>
+<h2 id="从gameobjects到node">从GameObjects到Node</h2>
+<h3 id="gameobject去哪里了">GameObject去哪里了？</h3>
+<p>在unity中，GameObject是可以放置在地图中的“东西”。在Laya中对应的概念是Node节点。在Laya中，你可以放置面板直接拖一个到场景中。</p>
+<p>你虽然可以通过Node节点来制作游戏，但Laya提供了各类特殊的Node节点，并预制了它们的特性，比如2D的基础精灵Sprite与3D的基础精灵Sprite3D都继承于Node，不仅于此，所有继承于Node的子类或孙类，也可称为节点，例如：Sprite节点，Image节点。</p>
+<p>节点中，无论是图片、文字、动画、模型等这种可见的对象还是不可见的对象，只要是继承于Node的子类或孙类都属于显示对象，例如音频节点SoundNode或者节点容器，这些不渲染显示的，也属于显示对象。</p>
+<p>显示列表则是一个抽象的概念，显示列表可以理解为节点树。因为，只有继承于Node的子类或孙类的节点对象，才可以添加子节点对象，而形成树状的显示列表结构。</p>
+<p>显示列表用于管理 LayaAir运行时显示的所有对象。需要注意的是，只有继承自Node的Sprite类，或者Sprite的子类或孙类才可以直接添加到舞台或其它节点下。因为，Sprite是最基本的显示图形的显示列表节点。哪怕是与Sprite同样直接继承于Node的兄弟类Sprite3D也不行，Sprite3D必须要添加到3D场景（Scene3D类）里，不能直接添加到舞台或其它节点下。</p>
+<h3 id="组件在哪里">组件在哪里？</h3>
+<p>在Unity中，你可以通过为GameObject添加组件来赋予其特定的功能。</p>
+<p>在Laya中，你也可以为节点添加组件。在场景中放置一个Node后，点击添加组件，然后选择一个组件来添加。也可以自己创建脚本组件添加上去。</p>
+<h3 id="从unity的prefabs到laya的预设">从Unity的Prefabs到Laya的预设</h3>
+<p>Unity 的工作流程是基于 预制件（prefab） 的。在 Unity 中，你一般是创建一系列带有组件的 GameObject，然后基于它们生成 Prefab。然后你在场景中放置 Prefab 的实例，或者在运行时将它们实例化。</p>
+<p>Laya中则可通过预设来工作。在Laya中，比如我们要制作一个自定义的Sprite预设组件，将页面中要制作成预设组件的元素设置好要用的属性值。</p>
+<figure data-type="image" tabindex="5"><img src="https://s2.loli.net/2022/05/07/RNKo2YihdQHJplu.png" alt="image-20220507001734217" loading="lazy"></figure>
+<p>然后点击右侧的保存预设按钮，将该Sprite节点下的全部组件保存为预设，修改名称后点击确定即可</p>
+<figure data-type="image" tabindex="6"><img src="https://s2.loli.net/2022/05/07/I3x7pVUwWHBu84M.png" alt="image-20220507001814333" loading="lazy"></figure>
+<p>点击确认保存后，在场景预设文件面板（prefab）中会生成一个.prefab为后缀的预设文件。同时场景界面中的组件颜色会发生改变（这个颜色代表该组件为自定义预设组件）</p>
+<figure data-type="image" tabindex="7"><img src="https://s2.loli.net/2022/05/07/9xENlg1SwoahFru.png" alt="image-20220507001910999" loading="lazy"></figure>
+<p>.prefab的预设文件可以在不同页面中直接拖入使用，如果想在某个界面中修改预设组件的属性值，也可以直接在该UI界面上对每个预设组件分别进行修改</p>
+<h3 id="unity中的script组件和monobehaviour去哪里">Unity中的Script组件和MonoBehaviour去哪里</h3>
+<p>在 Unity 中，你通过为 GameObject 添加脚本（Script）组件来添加 C# 脚本内容。你通过创建继承自 MonoBehavior 的类来定义脚本组件的功能。</p>
+<p>在Laya中也有类似的内容。你可以自由创建全新的组件类，并将它应用于任意的Node节点中。</p>
+<p><strong>Laya脚本的生命周期</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">生命周期方法</th>
+<th style="text-align:left">简要说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">onAwake</td>
+<td style="text-align:left">组件被激活后执行，此时所有节点和组件均已创建完毕，此方法只会执行一次</td>
+</tr>
+<tr>
+<td style="text-align:left">onEnable</td>
+<td style="text-align:left">组件被启用后执行，比如，节点被添加到舞台后执行</td>
+</tr>
+<tr>
+<td style="text-align:left">onStart</td>
+<td style="text-align:left">在第1次执行update之前执行，只会执行一次，</td>
+</tr>
+<tr>
+<td style="text-align:left">onUpdate</td>
+<td style="text-align:left">每帧更新时执行，尽量不要在这里写大循环逻辑或者使用getComponent方法</td>
+</tr>
+<tr>
+<td style="text-align:left">onLateUpdate</td>
+<td style="text-align:left">每帧更新之后执行，尽量不要在这里写大循环逻辑或者使用getComponent方法</td>
+</tr>
+<tr>
+<td style="text-align:left">onDisable</td>
+<td style="text-align:left">组件被禁用时执行，比如从节点从舞台移除后</td>
+</tr>
+<tr>
+<td style="text-align:left">onDestroy</td>
+<td style="text-align:left">手动调用节点销毁时执行</td>
+</tr>
+<tr>
+<td style="text-align:left">onReset</td>
+<td style="text-align:left">重置组件参数到默认值，如果重写了这个函数，则组件会被重置并且自动回收到对象池，方便下次复用，没有重置则不进行回收复用。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="runtime与脚本的使用区别">Runtime与脚本的使用区别</h3>
+<p>LayaAir的组件化开发，核心就是Runtime类与Script（脚本组件）类的合理运用，生命周期方法的使用。</p>
+<p>有不少开发者对IDE中的Runtime类和脚本组件类的区别不是太理解。</p>
+<p>Runtime类，其实就是UI继承类。</p>
+<p>UI继承类又分成两大种，一种是场景继承类，另一种是UI组件继承类。</p>
+<p>场景继承类，由于继承了整个场景，对于整个场景的节点查找与节点控制更为方便，所以，场景类通常的作用是管理者角色，负责当前场景的全局显示调控，不需要干具体游戏逻辑的活。</p>
+<p>而场景的脚本，在分工方面，尽量不去处理显示相关，显示控制直接交给场景继承类去协调。场景的脚本主要是负责逻辑调控。是逻辑控制器的角色。具体干活的都是节点脚本。每一个节点脚本负责各自节点的行为控制，在这些节点脚本里，无需耦合，只管好自己，做好自己的业务逻辑处理就行了。完全是单一职能的设计思想。</p>
+<p>组件继承类，通常是用于通用的组件显示效果。与负责真正项目业务逻辑的节点脚本不同，组件继承类是对UI组件本身能力的拓展补充，是通用的组件显示效果实现，例如，按钮在点击的时候，全都要实现一种点击缩放效果。那么就可以写一个继承了按钮的Runtime类，在这个类里去实现点击缩放。当绑定给按钮的Runtime上之后，那所有绑定了该继承类的节点，都会具有这个缩放效果。虽然他是给多个节点用的，但他继承于组件和对组件的扩展，本质上是对组件功能的丰富，脱离了产品具体的业务逻辑关联，也符合解耦与单一职责思想。</p>
+<p>所以，只有清晰的了解引擎的功能，才能做到职责清晰。</p>
+<h5 id="总结一下">总结一下，</h5>
+<p>场景的Runtime类，职责是对于整个场景显示的全局控制，比如全局开始与结束的显示，全局积分的改变等等。</p>
+<p>场景的脚本类，职责是场景中全部的逻辑控制，比如玩家点了开始，场景继承类中侦听这个点击操作，不是立即要开始游戏，而是要通知场景的脚本类，游戏开始了，场景的控制脚本才有权决定游戏要不要开始，什么逻辑下开始，下一步由谁出场、出场位置等等。</p>
+<p>节点的脚本类，负责具体的逻辑执行，一旦游戏的角色和NPC在场景中出现后，具体的攻击与伤害等等，都是各自负责处理，不要都堆到场景类中。比如方块受重力掉落，什么情况下反弹，什么情况下碎裂，这是由方块的脚本根据自己的碰撞反馈进行处理的，场景控制脚本无需关心。只有方块的逻辑脚本里，判断自己碰到了地板，才需要通知场景控制脚本：游戏结束了。场景控制脚本再去通知场景继承类：游戏结束了，把结束面板弹出来吧。</p>
+<p>所以，清楚了解各自的职能，分工明确，职责单一，就可以实现解耦的组件化开发。</p>
+<h2 id="如何在laya中编写代码">如何在Laya中编写代码</h2>
+<p>LayaAir2.0开始，支持自定义脚本到编辑器，方便扩展已有组件功能</p>
+<figure data-type="image" tabindex="8"><img src="https://s2.loli.net/2022/05/07/75xWQehiVZwBgJm.png" alt="script1" loading="lazy"></figure>
+<p>如果想在编辑器内展示脚本定义的属性，可用通过特殊注释来实现</p>
+<p>比如下面的脚本类：</p>
+<figure data-type="image" tabindex="9"><img src="https://s2.loli.net/2022/05/07/LfGbq2BY5dK4xoy.jpg" alt="script1" loading="lazy"></figure>
+<p>在IDE内显示如下：</p>
+<figure data-type="image" tabindex="10"><img src="https://s2.loli.net/2022/05/07/Jw1h7enV4vRcrqH.jpg" alt="script1" loading="lazy"></figure>
+<p>这样就可用在脚本里面设计显示参数，在IDE内输入参数，然后在脚本里面使用</p>
+<p>这种标记同时支持AS,JS,TS三种语言，甚至还可用只写标记，脚本本身没有具体实现（在继承属性时会用得到）</p>
+<figure data-type="image" tabindex="11"><img src="https://official.layabox.com/laya_data/LayaAir_TS/IDE/ScriptUse/componentscript/img/script3.jpg" alt="script1" loading="lazy"></figure>
+<p>一个完整的标签主要由下面几个部分：</p>
+<ul>
+<li>type IDE属性类型，此类型是指IDE属性类型，非真正的属性类型，不过大多情况下是一样的</li>
+<li>name IDE内显示的属性名称</li>
+<li>tips IDE内鼠标经过属性名称上后，显示的鼠标提示，如果没有则使用name（可选）</li>
+<li>default 输入框显示的默认值（可选）</li>
+</ul>
+<p>IDE默认提供了不少类型供脚本使用，主要参数类型如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">属性名称</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">name</td>
+<td style="text-align:left">属性显示名称，必须与变量名一致</td>
+</tr>
+<tr>
+<td style="text-align:left">tips</td>
+<td style="text-align:left">鼠标经过显示标签</td>
+</tr>
+<tr>
+<td style="text-align:left">type</td>
+<td style="text-align:left">类型：Int,Number,sNumber,String,Bool,Option,editOption,Check,Color,ColorArray,Node,Nodes,Prefab,SizeGrid,Vec,Vector,Ease</td>
+</tr>
+<tr>
+<td style="text-align:left">accept</td>
+<td style="text-align:left">String的关联属性，accept:res 为接收资源地址</td>
+</tr>
+<tr>
+<td style="text-align:left">acceptTypes</td>
+<td style="text-align:left">Node和accept的关联属性， 接收的类型，比如和节点使用RevoluteJoint,PrismaticJoint,RigidBody;与accept:res使用jpg,png,txt限制后缀</td>
+</tr>
+<tr>
+<td style="text-align:left">option</td>
+<td style="text-align:left">Option和editOption的关联属性 option:可选择列表,如aaa,bbb,ccc</td>
+</tr>
+<tr>
+<td style="text-align:left">min</td>
+<td style="text-align:left">Number和sNumber的最小值</td>
+</tr>
+<tr>
+<td style="text-align:left">max</td>
+<td style="text-align:left">Number和sNumber的最大值</td>
+</tr>
+<tr>
+<td style="text-align:left">label</td>
+<td style="text-align:left">Nodes的关联属性，展示的属性名( 可选) 如果有则根据labels确定长度 没有就显示长度输入框</td>
+</tr>
+<tr>
+<td style="text-align:left">types</td>
+<td style="text-align:left">Nodes的关联属性,每个元素的类型（可选）</td>
+</tr>
+<tr>
+<td style="text-align:left">xCount</td>
+<td style="text-align:left">Nodes的关联属性,水平方向显示多少个</td>
+</tr>
+<tr>
+<td style="text-align:left">sType</td>
+<td style="text-align:left">Nodes的关联属性,单个元素的类型</td>
+</tr>
+<tr>
+<td style="text-align:left">default</td>
+<td style="text-align:left">默认值</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-typescript"> /** @prop {name: resType, tips:&quot;abc&quot;,type:string,accept:res} */
+        resType:String =&quot;&quot;;
+        /** @prop {name:int1,tips:&quot;11&quot;,type:Int} */
+        number1:Number;
+        /** @prop {name:String,tips:&quot;abc&quot;,type:String} */
+        string1:String;
+        /** @prop {name:bool,tips:&quot;1,0&quot;,type:Bool}*/
+        bool1:Boolean;
+        /** @prop {name:Option,tips:&quot;opt&quot;,type:Option,option:&quot;aaa,bbb,ccc&quot;}*/
+        // 返回字符串
+        opt:String;
+        /** @prop {name:editOption,tips:&quot;editopt&quot;,type:EditOption,option:&quot;aaa,bbb,ccc&quot;}*/
+        // 返回字符串
+        editopt:String;
+                /** @prop {name:check,tips:&quot;ch11eck&quot;,type:Check}*/
+        // 返回bool 
+        check:Boolean;
+        /** @prop {name:color1,tips:&quot;opt&quot;,type:Color}*/
+        // 返回颜色值
+        color1:any;
+        /** @prop {name:snumber1,type:sNumber,min:10,max:100}*/
+        snumber1:Number = 11;
+        /** @prop {name:node1,type:Node}*/
+        node1:Node;
+        /** @prop {name:sizegrid1,type:SizeGrid}*/
+        sizegrid1:any;
+        /** @prop {name:colorarray,type:ColorArray}*/
+        colorarray:any;
+        /** @prop {name:vec1,type:Vec}*/   
+        vec1:any;
+        /** @prop {name:vector1,type:Vector,labes:abc,types:&quot;Node,String,Number,Boolean&quot;,xCount:2,sType:Number}*/
+        vector1:any;
+        /** @prop {name:nodes2,type:Nodes}*/  这一条必须选中组件上赋值才有效，在场景选择会失效
+        // public var nodes2:*;
+        /** @prop {name:ease1,type:Ease}*/
+        sase1:any;
+</code></pre>
+<p>部分显示效果如下：</p>
+<figure data-type="image" tabindex="12"><img src="https://official.layabox.com/laya_data/LayaAir_TS/IDE/ScriptUse/componentscript/img/111.png" alt="script1" loading="lazy"></figure>
+<h2 id="runtime的使用">RunTime的使用</h2>
+<p>在LayaAirIDE中资源面板下所有的组件均有runtime的属性，runtime是该组件运行时的逻辑类；相同组件可使用同一runtime类来实现相同的功能，比如不同页面上需要对相同的组件实现同一功能。<strong>需要注意的是组件的runtime逻辑类如果不继承组件自身，并且继承的对象中没有该组件的属性时，这个属性则会失效。</strong></p>
+<p><strong>runTime脚本与script脚本类似，不同的是runtime脚本的方式实现，继承页面，场景或组件类，实现逻辑。在IDE里面设置场景的Runtime属性即可和场景或对象进行关联</strong></p>
+<ul>
+<li><strong>相比script脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果。而script脚本获取只能通过this.owner.getChildByName(“xxx”) 等方式获取节点</strong></li>
+<li><strong>建议：如果是页面级的逻辑，需要频繁访问页面内多个元素，使用runtime继承式写法，如果是独立小模块，功能单一，建议用script脚本方法</strong></li>
+</ul>
+<h3 id="一-给页面中的组件设置runtime类">一、给页面中的组件设置runtime类</h3>
+<p>在页面管理目录下创建两个UI页面，分别叫MonkeyPage和BGPage。如下图，</p>
+<p>注意！！本例导出类型为分离模式，非文件模式可以生成UI类脚本，默认是文件模式，文件模式不会生成页面类。</p>
+<figure data-type="image" tabindex="13"><img src="https://s2.loli.net/2022/05/07/GBDjVeJwz9COakX.png" alt="1" loading="lazy"></figure>
+<p>两个UI页面中各拖入一张Image组件，设置runtime属性为game.ImageRunTime。(将脚本拖拽到runtime的script图标上)。如图1,2,3所示： （注意！本例导出类型为分离模式，会生成场景代码文件，默认是文件模式，文件模式不会生成代码类，如果不是非文件模式，就没法new 这个页面类)如图1图2所示：</p>
+<p><img src="https://s2.loli.net/2022/05/07/l9s7NF1pDGg4T2x.png" alt="1" loading="lazy">(图1)</p>
+<p><img src="https://s2.loli.net/2022/05/07/6WPiRXvEqLCyB3h.png" alt="2" loading="lazy">(图2)</p>
+<p>设置完成之后按F12保存导出UI，开始编写逻辑代码。</p>
+<h3 id="二-代码逻辑处理">二、代码逻辑处理</h3>
+<p>切换到代码模式下，</p>
+<p>然后在ImageRunTime类中编写我们想要实现的效果，比如实现一个点击缩放（类似按钮）的功能，全部代码如下所示：</p>
+<pre><code class="language-typescript"> /*
+    ImageRunTime逻辑类 
+    */
+    export default class ImageRunTime extends Laya.Image{
+        public scaleTime:number = 100;
+        constructor() {
+            super();
+            //设置组件的中心点
+            this.anchorX = this.anchorY = 0.5;
+            //添加鼠标按下事件侦听。按时时缩小按钮。
+            this.on(Laya.Event.MOUSE_DOWN,this,this.scaleSmall);
+            //添加鼠标抬起事件侦听。抬起时还原按钮。
+            this.on(Laya.Event.MOUSE_UP,this, this.scaleBig);
+            //添加鼠标离开事件侦听。离开时还原按钮。
+            this.on(Laya.Event.MOUSE_OUT,this, this.scaleBig);
+        }
+        private scaleBig():void
+        {
+            //变大还原的缓动效果
+            Laya.Tween.to(this, {scaleX:1,scaleY:1},this.scaleTime);
+        }
+        private scaleSmall():void
+        {
+            //缩小至0.8的缓动效果
+            Laya.Tween.to(this,{scaleX:0.8,scaleY:0.8},this.scaleTime);
+        }
+    }
+</code></pre>
+<p>在主运行类中实例化这两个UI界面，代码如下所示：</p>
+<pre><code class="language-typescript">import GameConfig from &quot;./GameConfig&quot;;
+import { ui } from &quot;./ui/layaMaxUI&quot;;
+class Main {
+    constructor() {
+        //根据IDE设置初始化引擎        
+        if (window[&quot;Laya3D&quot;]) Laya3D.init(GameConfig.width, GameConfig.height);
+        else Laya.init(GameConfig.width, GameConfig.height, Laya[&quot;WebGL&quot;]);
+        Laya[&quot;Physics&quot;] &amp;&amp; Laya[&quot;Physics&quot;].enable();
+        Laya[&quot;DebugPanel&quot;] &amp;&amp; Laya[&quot;DebugPanel&quot;].enable();
+        Laya.stage.scaleMode = GameConfig.scaleMode;
+        Laya.stage.screenMode = GameConfig.screenMode;
+        //打开调试面板（通过IDE设置调试模式，或者url地址增加debug=true参数，均可打开调试面板）
+        if (GameConfig.debug || Laya.Utils.getQueryString(&quot;debug&quot;) == &quot;true&quot;) Laya.enableDebugPanel();
+        if (GameConfig.stat) Laya.Stat.show();
+        Laya.alertGlobalError = true;
+        //激活资源版本控制，version.json由IDE发布功能自动生成，如果没有也不影响后续流程
+        Laya.ResourceVersion.enable(&quot;version.json&quot;, Laya.Handler.create(this, this.onVersionLoaded), Laya.ResourceVersion.FILENAME_VERSION);
+    }
+    onVersionLoaded(): void {
+        //激活大小图映射，加载小图的时候，如果发现小图在大图合集里面，则优先加载大图合集，而不是小图
+        Laya.AtlasInfoManager.enable(&quot;fileconfig.json&quot;, Laya.Handler.create(this, this.onConfigLoaded));
+    }
+    onConfigLoaded(): void {
+        //加载IDE指定的场景, 如果在编辑器中制作场景就打开下面一行注释，把实例页面的代码注掉
+        //GameConfig.startScene &amp;&amp; Laya.Scene.open(GameConfig.startScene);
+         //实例化BGPageUI页面
+         var bgPage: ui.BGPageUI = new ui.BGPageUI();
+         //为了能够清楚的看到这个页面所在的位置，在此设置设置一个背景色
+         bgPage.graphics.drawRect(0, 0, 300, 300, &quot;#ffcccc&quot;);
+         //添加到stage
+         Laya.stage.addChild(bgPage);
+         //实例化MonkeyPageUI页面
+         var monkeyPage: ui.MonkeyPageUI = new ui.MonkeyPageUI();
+         //为了能够清楚的看到这个页面所在的位置，在此设置设置一个背景色
+         monkeyPage.graphics.drawRect(0, 0, 300, 300, &quot;#ffcccc&quot;);
+         //添加到stage
+         Laya.stage.addChild(monkeyPage);
+         //设置第二个页面的坐标
+         monkeyPage.x = 350;
+    }
+}
+//激活启动类
+new Main();
+</code></pre>
+<p>以上是兼容1.0的代码。</p>
+<p>2.0也可以用如下方式，创建一个mainscene，把两个页面拖入场景中，设置背景颜色，如下图</p>
+<p>注意：设置页面场景背景颜色，只是设计场景时候的参照，实际运行并无效，需要在页面上绘制rect才会有效果</p>
+<p>此种方式可以用任意的4种导出模式。</p>
+<figure data-type="image" tabindex="14"><img src="https://official.layabox.com/laya_data/LayaAir_TS/IDE/ScriptUse/runtime/img/ide4.png" alt="2" loading="lazy"></figure>
+<p>然后按照代码注释里介绍的方法，用场景管理的方法运行项目</p>
+<p>最终运行效果如图0所示</p>
+<h3 id="三-如果runtime逻辑类继承的对象非自身组件">三、如果runtime逻辑类继承的对象非自身组件</h3>
+<p>在以上代码中我们演示了继承自身组件Image所实现的效果，如果继承一个Button组件类会出现什么情况呢？我们来操作看下。代码以及实现效果如下所示：</p>
+<pre><code class="language-typescript">module game {
+    /*
+    ImageRunTime逻辑类 
+    */
+    export class ImageRunTime extends Laya.Button{
+        public scaleTime:number = 100;
+        constructor() {
+            super();
+            //设置组件的中心点
+            this.anchorX = this.anchorY = 0.5;
+            ......
+        }
+        ......
+    }
+}
+
+</code></pre>
+<figure data-type="image" tabindex="15"><img src="https://official.layabox.com/laya_data/LayaAir_TS/IDE/ScriptUse/runtime/img/5.gif" alt="5" loading="lazy"></figure>
+<p>这时我们会发现UI页面上的资源显示的很怪异，这时因为按钮的skin默认是三态的，当Image的runtime逻辑类继承自Button组件后，它就不再是一个Image组件了，而是一个Button组件。</p>
+<h2 id="然后呢">然后呢？</h2>
+<p>感谢你阅读本指南！</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Odin标签小探索]]></title>
         <id>https://anchengxiang.space/post/odin-biao-qian-xiao-tan-suo/</id>
