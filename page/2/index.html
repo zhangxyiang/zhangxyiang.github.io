@@ -9,19 +9,50 @@
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
     <link rel="stylesheet" href="/styles/main.css">
     <link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/mdui/0.4.3/css/mdui.min.css">
+    <link rel="stylesheet" href="/media/css/index.css">
     <link rel="stylesheet" href="/media/live2d/css/live2d.css" />
     
+    <style>
+        #centerbg{
+            background-image: url(/media/img/centerbg2.jpg);
+        }
+        a {
+            color: #B9B9B9;
+        }
+    </style>
 </head>
-<body class=" mdui-appbar-with-toolbar  mdui-theme-primary-pink mdui-theme-accent-pink">
-        <header class="mdui-toolbar mdui-color-pink mdui-appbar-fixed mdui-appbar-scroll-toolbar-hide" style="z-index: 1000">
+<body class=" mdui-loaded">
+<header class="mdui-toolbar mdui-color-theme mdui-appbar-fixed mdui-appbar-scroll-toolbar-hide" style="z-index: 1000">
     <a href="javascript:;" mdui-drawer="{target: '#left-drawer',overlay:true}" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">menu</i></a>
     <span class="mdui-typo-title">zhangxyiang_blog</span>
     <div class="mdui-toolbar-spacer"></div>
 <!--    <a href="javascript:history.go(0);" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
     <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">more_vert</i></a>
 </header>
-
-        <div class="mdui-drawer mdui-color-white mdui-drawer-full-height mdui-drawer-close" id="left-drawer">
+<div class="meteor">
+    <div class="red" style="left:600px;"></div>
+    <div class="orange" style="left:700px;"></div>
+    <div class="yellow" style="left:900px;"></div>
+    <div class="green" style="left:1100px;"></div>
+    <div class="cyan" style="left:1260px;"></div>
+    <div class="blue" style="left:1400px;"></div>
+    <div class="purple" style="left:1500px;"></div>
+    <div class="red" style="left:0px;"></div>
+    <div class="orange" style="left:100px;"></div>
+    <div class="yellow" style="left:300px;"></div>
+    <div class="green" style="left:500px;"></div>
+    <div class="cyan" style="left:660px;"></div>
+    <div class="blue" style="left:800px;"></div>
+    <div class="purple" style="left:900px;"></div>
+    <div class="red" style="left:1200px;"></div>
+    <div class="orange" style="left:1300px;"></div>
+    <div class="yellow" style="left:1500px;"></div>
+    <div class="green" style="left:1700px;"></div>
+    <div class="cyan" style="left:1860px;"></div>
+    <div class="blue" style="left:2000px;"></div>
+    <div class="purple" style="left:2100px;"></div>
+</div>
+<div class="mdui-drawer mdui-color-white mdui-drawer-full-height mdui-drawer-close" id="left-drawer">
     <ul class="mdui-list">
         <li class="mdui-subheader">菜单</li>
         
@@ -52,23 +83,73 @@
     </ul>
 </div>
 
-        <div class="mdui-container">
-            <div class="mdui-row mdui-row-gapless">
-                <div class="k-container">
-                    <div class="head_card-offset"></div>
-                    
+<div class="headertop filter-grid" style="height: auto">
+    <figure id="centerbg" class="centerbg" style="">
+        <div class="focusinfo">
+            <div class="header-tou">
+                <a href=">">
+                    <img src="/images/avatar.png">
+                </a>
+            </div>
+            <div class="header-info">
+                <p>分享与热爱</p>
+            </div>
+            <div class="top-social">
+                
+                <li>
+                    <a href="https://wpa.qq.com/msgrd?v=3&amp;uin=1312719549&amp;site=qq&amp;menu=yes" target="_blank" title="Initiate chat ?">
+                        <div class="www" id="qq"></div>
+                    </a>
+                </li>
+                
+                
+                
+                 
+                
+                
+                
+                
+
+            </div>
+        </div>
+    </figure>
+</div>
+<div class="mdui-container">
+    <div class="mdui-row mdui-row-gapless">
+        <div class="k-container">
+            <div class="head_card-offset"></div>
+            <div class="head_card-offset"></div>
+            
     <div class="mdui-card">
         <div class="mdui-card-media">
-            <img src="https://anchengxiang.space/post-images/unity-scriptableobject.png"/>
+            <img src="https://learning-cdn-public-prd.unitychina.cn/20210814/learn/images/a6e00e08-0874-447d-a7a8-c265bba8945a__________1080p_title.png.400x0x1.webp"/>
             <div class="mdui-card-media-covered">
                 <div class="mdui-card-primary">
-                    <div class="mdui-card-primary-title">【Unity】ScriptableObject</div>
+                    <div class="mdui-card-primary-title">Unity移动游戏优化</div>
                     <div class="mdui-card-primary-subtitle"><h1 id="简介">简介</h1>
-<p>ScriptableObject是用来存储数据的一个<strong>资源文件</strong>，像是JSON、XML、文本文件这样的存储文件，可以用来存储数据。但是这里他在最开始的时候不需要再读文件，就想是JSON在游戏开始时，我们需要加载JSON文件中的数据，我们就需要读取这个文件，然后在赋值给对象。他就可以直接使用其中的数据。因为他是资源文件，所以他有着资源文件的特性，我们Resource.Load他就可以使用他了。</p>
+<p>优化 iOS 和 Android 应用程序是支撑整个开发周期的重要过程。随着移动硬件的不断发展，移动游戏的优化及其美术、游戏设计、音频和变现策略在塑造玩家体验方面发挥着关键作用。</p>
 </div>
                 </div>
                 <div class="mdui-card-actions" style="float:right;">
-                    <a href="https://anchengxiang.space/post/unity-scriptableobject/" class="mdui-btn mdui-ripple mdui-ripple-white">点击查看</a>
+                    <a href="https://anchengxiang.space/post/unity-yi-dong-you-xi-you-hua/" class="mdui-btn mdui-ripple mdui-ripple-white">点击查看</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="head_card-offset"></div>
+
+    <div class="mdui-card">
+        <div class="mdui-card-media">
+            <img src="https://i.loli.net/2021/08/27/LVoeUmbirYt2k65.png"/>
+            <div class="mdui-card-media-covered">
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title">贪心算法</div>
+                    <div class="mdui-card-primary-subtitle"><h1 id="算法解释">算法解释</h1>
+<p>贪心算法或贪心思想采用贪心的策略，保证<u>每次操作都是局部最优</u>的，从而使最后得到的结果是<u>全局最优的</u> 。</p>
+</div>
+                </div>
+                <div class="mdui-card-actions" style="float:right;">
+                    <a href="https://anchengxiang.space/post/tan-xin-suan-fa-1/" class="mdui-btn mdui-ripple mdui-ripple-white">点击查看</a>
                 </div>
             </div>
         </div>
@@ -76,16 +157,12 @@
     <div class="head_card-offset"></div>
 
 
-                </div>
-            </div>
-            <div class="mdui-row mdui-row-gapless">
-                <div class="k-container">
-                    
-
-                </div>
-            </div>
         </div>
-        <footer class="mdui-container footer ">
+    </div>
+    <div class="mdui-row">
+    </div>
+</div>
+<footer class="mdui-container footer ">
 <!--    <div class="head_card-offset"></div>-->
     <div class="mdui-row mdui-row-gapless">
         <div class="k-container">
@@ -133,6 +210,7 @@
 <script type="text/javascript" src="/media/live2d/js/live2d.js"></script>
 <script type="text/javascript" src="/media/live2d/js/message.js"></script>
 
-    </body>
+</body>
 <script src="//cdnjs.loli.net/ajax/libs/mdui/0.4.3/js/mdui.min.js"></script>
+<script src="/media/js/index.js"></script>
 </html>

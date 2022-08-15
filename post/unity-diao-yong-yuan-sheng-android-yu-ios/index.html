@@ -58,58 +58,183 @@
         <main id="main" class="site-main" role="main">
             <article id="post-1270" class="post-1270 post type-post status-publish format-standard hentry category-90 category-129 tag-149">
                 <header class="entry-header">
-                    <h1 class="entry-title">【Unity】ScriptableObject</h1>
-                    <p class="entry-census">发布于 2021-08-31</p>
+                    <h1 class="entry-title">Unity调用原生Android与IOS</h1>
+                    <p class="entry-census">发布于 2022-08-01</p>
                     <hr>
                 </header>
                 <div class="neko">
-                    <h1 id="简介">简介</h1>
-<p>ScriptableObject是用来存储数据的一个<strong>资源文件</strong>，像是JSON、XML、文本文件这样的存储文件，可以用来存储数据。但是这里他在最开始的时候不需要再读文件，就想是JSON在游戏开始时，我们需要加载JSON文件中的数据，我们就需要读取这个文件，然后在赋值给对象。他就可以直接使用其中的数据。因为他是资源文件，所以他有着资源文件的特性，我们Resource.Load他就可以使用他了。</p>
-<!-- more -->
-<p>其实可以简单的理解为把你所有的数据都用变量在一个类中声明，然后我们使用的时候，直接实例化这个类就好了。</p>
-<h1 id="优势">优势</h1>
+                    <h2 id="unity调用ios原生方法">Unity调用IOS原生方法</h2>
+<h3 id="ios-project目录介绍">IOS Project目录介绍</h3>
 <ul>
-<li>不会被unity序列化机制影响，故可以多场景共用。</li>
-<li>可以作为一个引用在脚本上，因为它是资源文件</li>
-<li>在实例化对象时用它来做配置文件降低了内存的消耗</li>
-<li>有自己的回调OnEnable、OnDisable、OnDestroy</li>
+<li>NativeiOSApp：原生iOS Xcode工程</li>
+<li>UnityIOSBuild：Unity打包出的xcode工程</li>
 </ul>
-<h1 id="解决了什么问题">解决了什么问题</h1>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2022/08/10/sQULPm4GH2ogK3z.png" alt="image-20220810150541487" loading="lazy"></figure>
+<h3 id="ios原生接入unity步骤">IOS原生接入Unity步骤</h3>
+<h4 id="1创建xcode-workspace">1.创建Xcode workspace</h4>
+<p>Xcode workspace允许同时进行多个项目的工作，并结合各个产品。</p>
 <ul>
-<li>ScriptableObject的数据存储在asset里面，退出时不会重置数据，就像unity里的材质，纹理等资源数据一样</li>
-<li>这些资源在实例化的时候是可以被引用，而不是复制</li>
-<li>可以在场景间共享</li>
-<li>在项目之间共享</li>
+<li>在<code>IOSProject/NativeiOSApp</code>目录打开 <code>NativeiOSApp.xcodeproj</code></li>
+<li>创建 workspace 并保存到<code>IOSProject</code>目录，例如命名为 both.xcworkspace. (File/New/Workspace)</li>
+<li>关闭 <code>NativeiOSApp.xcodeproj</code> 工程，所有的后续工作都将在刚刚创建的<code>both.xcworkspace</code>中完成</li>
+<li>添加 <code>IOSProject/NativeiOSApp/NativeiOSApp.xcodeproj</code> 和 <code>IOSProject/UnityIOSBuild/Unity-iPhone.xcodeproj</code>到第二步中创建的workspace中 (File/Add Files to &quot;both&quot;)</li>
 </ul>
-<h1 id="用法">用法</h1>
-<pre><code class="language-c#">using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-[Serializable]
-public class MyObj
-{
-    public int age;
-    public string name;
-}
-[CreateAssetMenu]
-public class MySciptObj : ScriptableObject
-{
-    public List&lt;MyObj&gt; myObjs;
+<figure data-type="image" tabindex="2"><img src="https://s2.loli.net/2022/08/10/XW5OTRJVN7gx9lU.png" alt="image-20220810151749410" loading="lazy"></figure>
+<h4 id="2添加unityframeworkframework">2.添加UnityFramework.framework</h4>
+<p>通过这一步，我们以framework的形式将Unity添加到NativeiOSApp中。</p>
+<ul>
+<li>
+<p>选择NativeiOSApp target</p>
+</li>
+<li>
+<p>在 &quot;General/Frameworks, Libraries, and Embedded  Content&quot; 点击<code>+</code></p>
+</li>
+<li>
+<p>添加Unity-iPhone/UnityFramework.framework</p>
+<figure data-type="image" tabindex="3"><img src="https://s2.loli.net/2022/08/10/V4DvBHAn2TGr7cz.png" alt="image-20220810152243981" loading="lazy"></figure>
+</li>
+<li>
+<p>在&quot;Build Phase/Link Binary With Libraries&quot;中，删除 UnityFramework.framework (选中点击 <code>_</code>)</p>
+</li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://s2.loli.net/2022/08/10/1FXVa5hRq9QyoE7.png" alt="image-20220810152535952" loading="lazy"></figure>
+<h4 id="3设置-unitycalliosh">3.设置 UnityCallIOS.h</h4>
+<p>NativeiOSAPP 需要实现UnityCalls.h中定义的 UnityCallsProtocol：</p>
+<ul>
+<li>找到并选中文件 <code>Unity-iPhone/Libraries/Plugins/iOS/NativeCallProxy.h</code></li>
+<li>勾选 UnityFramework 在 <code>Target Membership</code>栏，并设置为<strong>public</strong></li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://s2.loli.net/2022/08/10/QBDW893vaoyG2u1.png" alt="image-20220810153119416" loading="lazy"></figure>
+<h4 id="4设置-data-文件夹-为-unityframework">4.设置 Data 文件夹 为 UnityFramework</h4>
+<p>默认情况下，Data文件夹是Unity-iPhone的一部分，我们改变它，使所有东西都封装在一个单一的框架文件中。</p>
+<ul>
+<li>在<code>Target Membership</code>中勾选 UnityFramework</li>
+</ul>
+<figure data-type="image" tabindex="6"><img src="https://s2.loli.net/2022/08/10/Oq6mc5fdwHVNrK4.png" alt="image-20220810153446365" loading="lazy"></figure>
+<ul>
+<li>
+<p>(可选)如果想使用Unity-iPhone sheme，则需要通过从Unity-iPhone/MainApp/main.mm中调用，将UnityFramework指向数据所在的新位置。</p>
+<pre><code>[ufw setDataBundleId: &quot;com.unity3d.framework&quot;];
+// On Demand Resources are not supported in this case. To make them work instead of the calls above 
+// you need to copy Data folder to your native application (With script at Build Phases) and 
+// skip a calls above since by default Data folder expected to be in mainBundle.
+</code></pre>
+<figure data-type="image" tabindex="7"><img src="https://s2.loli.net/2022/08/10/UwbqQorKakRmvFW.png" alt="image-20220810153647545" loading="lazy"></figure>
+</li>
+</ul>
+<h3 id="实现nativecallproxyh中的接口">实现NativeCallProxy.h中的接口</h3>
+<p>在Unity-iPhone/Libraries/Plugins/iOS/NativeCallProxy.h文件中，定义了一个点击头像的接口 OnAvatarClicked</p>
+<pre><code class="language-c">#import &lt;Foundation/Foundation.h&gt;
 
-    public void Print()
-    {
-        for(int i=0,iMax=myObjs.Count;i&lt;iMax;i++)
-        {
-            Debug.Log(&quot;Name:&quot;+myObjs[i].name+&quot;Age:&quot;+myObjs[i].age);
-        }
-    }
-    public void Save(string name,int age)
-    {
-        myObjs.Add(new MyObj { name=name,age=age});
-    }
+@protocol UnityCallsProtocol
+
+@required
+- (void) OnAvatarClicked;
+//其他接口 函数
+@end
+
+__attribute__ ((visibility(&quot;default&quot;)))
+@interface UnityCallIOSLibAPI : NSObject
+// 在UnityFrameworkLoad之后的任何时候调用它来设置实现UnityCallsProtocol方法的对象
++(void) registerAPIforUnityCalls:(id&lt;UnityCallsProtocol&gt;) aProtocol;
+@end
+
+</code></pre>
+<p>在Unity-iPhone/Libraries/Plugins/iOS/NativeCallProxy.mm中的 <strong>OnAvatarClicked</strong>函数是Unity通过反射调用IOS的，所以，在NativeiOSApp中只要实现NativeCallProxy.h的接口，并在UnityFrameworkLoad之后的任何时候调用它来设置实现UnityCallsProtocol方法的对象，即可完成Unity调用IOS原生的方法。</p>
+<figure data-type="image" tabindex="8"><img src="https://s2.loli.net/2022/08/10/8iVvJN53hjfsktZ.png" alt="image-20220810154650396" loading="lazy"></figure>
+<p>实现了 OnAvatarClicked接口</p>
+<figure data-type="image" tabindex="9"><img src="https://s2.loli.net/2022/08/10/cW4pvTgVbdkeOXJ.png" alt="image-20220810154739200" loading="lazy"></figure>
+<h3 id="运行">运行</h3>
+<p>当我点击了Unity中左上角 Avatar按钮，原生IOS做出了回应</p>
+<figure data-type="image" tabindex="10"><img src="https://s2.loli.net/2022/08/10/A6nMXIyD3jUghV9.png" alt="image-20220810155000120" loading="lazy"></figure>
+<h2 id="unity调用android原生方法">Unity调用Android原生方法</h2>
+<h3 id="unity中配置">Unity中配置</h3>
+<ul>
+<li>PlayerSetting-&gt;Ohter Settings -&gt; Configuration section choose targeted architectures</li>
+</ul>
+<figure data-type="image" tabindex="11"><img src="https://s2.loli.net/2022/08/10/oJQdektU8jSgHBZ.png" alt="selectArchitectures" loading="lazy"></figure>
+<ul>
+<li>Build Settings 窗口 勾选 <code>Export Project</code></li>
+</ul>
+<img src="https://s2.loli.net/2022/08/10/EzeFWqZcP6XbO83.png" alt="exportProject" style="zoom:50%;" />
+<h3 id="android-project目录介绍">Android Project目录介绍</h3>
+<ul>
+<li>NativeAndroidApp:原生安卓工程</li>
+<li>UnityAndroidBuild:Unity打包出的安卓公测</li>
+</ul>
+<figure data-type="image" tabindex="12"><img src="https://s2.loli.net/2022/08/10/XLcFJyCfp2RqTvr.png" alt="image-20220810170721017" loading="lazy"></figure>
+<h3 id="android原生接入unity步骤">Android原生接入Unity步骤</h3>
+<h4 id="1在nativeandroidapp中添加unity-library模块">1.在NativeAndroidApp中添加Unity Library模块</h4>
+<p>执行以下操作，将导出的androidBuild/unityLibrary模块添加到Android Studio的NativeAndroidApp Gradle项目中。</p>
+<ul>
+<li>
+<p>用Android Studio打开 NativeAndroidApp</p>
+</li>
+<li>
+<p>打开 settings.gradle 文件</p>
+<ul>
+<li>
+<p>在主应用程序模块之后添加一个新项目，指向unityLibrary模块。</p>
+<pre><code>include ':unityLibrary'
+project(':unityLibrary').projectDir=new File('..\\UnityProject\\androidBuild\\unityLibrary')
+</code></pre>
+</li>
+<li>
+<p>并在dependencyResolutionManagement{repositories{块中添加以下内容</p>
+<pre><code>flatDir {
+  dirs &quot;${project(':unityLibrary').projectDir}/libs&quot;
 }
 </code></pre>
+<figure data-type="image" tabindex="13"><img src="https://s2.loli.net/2022/08/10/TECeuQiS4PlIGmJ.png" alt="image-20220810171518301" loading="lazy"></figure>
+</li>
+</ul>
+</li>
+<li>
+<p>打开 build.gradle(Module: NativeAndroidApp.app)文件</p>
+<ul>
+<li>
+<p>在dependencies{ 下添加一下内容</p>
+<pre><code>implementation project(':unityLibrary')
+implementation fileTree(dir: project(':unityLibrary').getProjectDir().toString() + ('\\libs'), include: ['*.jar'])
+</code></pre>
+<figure data-type="image" tabindex="14"><img src="https://s2.loli.net/2022/08/10/NlBJ8k5YZaq4xs3.png" alt="image-20220810171823402" loading="lazy"></figure>
+</li>
+<li>
+<p>在android{defaultConfig{ndk{ 中，根据第一步中unity配置情况添加内容，具体文档可以查看<a href="https://developer.android.com/ndk/guides/abis#sa">official android documentation</a>.	<img src="https://s2.loli.net/2022/08/10/M3pTigrvRDlNnbA.png" alt="image-20220810172336173" loading="lazy"></p>
+</li>
+</ul>
+</li>
+<li>
+<p>将导出的Unity项目根目录下的gradle.properties文件的内容复制到本地应用程序根目录下的gradle.properties文件。注意：如果你更新了Unity项目并重新导出，确保导出的项目中gradle.properties文件的内容没有改变。如果有的话--重复这个步骤。</p>
+<figure data-type="image" tabindex="15"><img src="https://s2.loli.net/2022/08/10/4PdQYZiaJpCKHgj.png" alt="exportedASProject" loading="lazy"></figure>
+</li>
+</ul>
+<figure data-type="image" tabindex="16"><img src="https://s2.loli.net/2022/08/10/7zxPLZwqhGiAXdk.png" alt="gradlePropertiesApp" loading="lazy"></figure>
+<ul>
+<li>
+<p>点击 &quot;Sync Now &quot;来进行项目同步，因为Gradle文件已经被修改。</p>
+</li>
+<li>
+<p>成功后，可以看到 unityLibrary</p>
+<figure data-type="image" tabindex="17"><img src="https://s2.loli.net/2022/08/10/cKr5JG3uiqRnWCv.png" alt="image-20220810172741535" loading="lazy"></figure>
+</li>
+</ul>
+<h3 id="实现iunitycallandroid接口">实现IUnityCallAndroid接口</h3>
+<p>在Unity工程的<code>IUnityCallAndroid.java</code>中定义了<code>OnAvatarClicked</code>接口</p>
+<figure data-type="image" tabindex="18"><img src="https://s2.loli.net/2022/08/10/bUtQojaEkgsZc1X.png" alt="image-20220810173216854" loading="lazy"></figure>
+<p>并创建了单例<code>UnityCallAndroid.java</code>,供Unity调用，只要原生Android实现IUnityCallAndroid.java接口，并在对于的Activity中初始化即可</p>
+<figure data-type="image" tabindex="19"><img src="https://s2.loli.net/2022/08/10/JFKsuAiHBSrXQdz.png" alt="image-20220810173621239" loading="lazy"></figure>
+<p>所以，创建文件(例如:MyUnityCallAndroid.java),实现接口</p>
+<figure data-type="image" tabindex="20"><img src="https://s2.loli.net/2022/08/10/THmMpC93vjyQwWk.png" alt="image-20220810173703769" loading="lazy"></figure>
+<p>并在MainUnityActivity.java中初始化unityLibrary中的UnityCallAndroid</p>
+<blockquote>
+<p>此处MainUnityActivity是原生Android进入Unity游戏时切换的Activity</p>
+</blockquote>
+<figure data-type="image" tabindex="21"><img src="https://s2.loli.net/2022/08/10/pvJSW15HGwEhnQz.png" alt="image-20220810174029621" loading="lazy"></figure>
+<h3 id="运行-2">运行</h3>
+<p>当我点击了Unity中左上角 Avatar按钮，原生Android做出了回应</p>
+<figure data-type="image" tabindex="22"><img src="https://s2.loli.net/2022/08/10/3RNhPJB1uQy6nET.png" alt="image-20220810174359585" loading="lazy"></figure>
+<figure data-type="image" tabindex="23"><img src="https://s2.loli.net/2022/08/10/smUEVad2KwgI1Fn.png" alt="image-20220810174212860" loading="lazy"></figure>
 
                 </div>
             </article>
@@ -119,20 +244,20 @@ public class MySciptObj : ScriptableObject
         <div class="mdui-container">
             <div class="mdui-row">
                 
-                <a href="https://anchengxiang.space/post/shadergraph-ji-chu/" class="mdui-ripple mdui-color-theme mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left">
+                <a href="https://anchengxiang.space/post/unity-yu-android-he-ios-de-shi-jian-hui-diao/" class="mdui-ripple mdui-color-theme mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left">
                     <div class="doc-footer-nav-text">
                         <i class="mdui-icon material-icons">arrow_back</i>
                         <span class="doc-footer-nav-direction mdui-hidden-xs-down">上一篇文章</span>
-                        <div class="doc-footer-nav-chapter mdui-hidden-xs-down">ShaderGraph基础</div>
+                        <div class="doc-footer-nav-chapter mdui-hidden-xs-down">Unity与Android和IOS的事件回调</div>
                     </div>
                 </a>
                 
                 
-                <a href="https://anchengxiang.space/post/unity-yi-dong-you-xi-you-hua/" class="mdui-ripple mdui-color-theme mdui-col-xs-10 mdui-col-sm-6 doc-footer-nav-right">
+                <a href="https://anchengxiang.space/post/mac-jenkins-bu-shu-yu-unity-liu-shui-xian-da-jian/" class="mdui-ripple mdui-color-theme mdui-col-xs-10 mdui-col-sm-6 doc-footer-nav-right">
                     <div class="doc-footer-nav-text">
                         <i class="mdui-icon material-icons">arrow_forward</i>
                         <span class="doc-footer-nav-direction">下一篇文章</span>
-                        <div class="doc-footer-nav-chapter">Unity移动游戏优化</div>
+                        <div class="doc-footer-nav-chapter">Mac Jenkins部署与Unity流水线搭建</div>
                     </div>
                 </a>
                 

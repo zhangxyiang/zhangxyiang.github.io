@@ -58,58 +58,272 @@
         <main id="main" class="site-main" role="main">
             <article id="post-1270" class="post-1270 post type-post status-publish format-standard hentry category-90 category-129 tag-149">
                 <header class="entry-header">
-                    <h1 class="entry-title">【Unity】ScriptableObject</h1>
-                    <p class="entry-census">发布于 2021-08-31</p>
+                    <h1 class="entry-title">Unity与Android和IOS的事件回调</h1>
+                    <p class="entry-census">发布于 2022-08-13</p>
                     <hr>
                 </header>
                 <div class="neko">
-                    <h1 id="简介">简介</h1>
-<p>ScriptableObject是用来存储数据的一个<strong>资源文件</strong>，像是JSON、XML、文本文件这样的存储文件，可以用来存储数据。但是这里他在最开始的时候不需要再读文件，就想是JSON在游戏开始时，我们需要加载JSON文件中的数据，我们就需要读取这个文件，然后在赋值给对象。他就可以直接使用其中的数据。因为他是资源文件，所以他有着资源文件的特性，我们Resource.Load他就可以使用他了。</p>
+                    <h2 id="unity与android的事件回调">Unity与Android的事件回调</h2>
+<h3 id="androidjavaproxy">AndroidJavaProxy</h3>
+<p>Unity找到Android所设定的接口，然后通过AndroidJavaProxy在C#中写一个回调类继承这个接口，并且重载里面的方法，然后声明一个这个回调类的对象，给Android Java传过去，然后在Java虚拟机里面运行的时候就是自己重定义的函数逻辑了。</p>
 <!-- more -->
-<p>其实可以简单的理解为把你所有的数据都用变量在一个类中声明，然后我们使用的时候，直接实例化这个类就好了。</p>
-<h1 id="优势">优势</h1>
-<ul>
-<li>不会被unity序列化机制影响，故可以多场景共用。</li>
-<li>可以作为一个引用在脚本上，因为它是资源文件</li>
-<li>在实例化对象时用它来做配置文件降低了内存的消耗</li>
-<li>有自己的回调OnEnable、OnDisable、OnDestroy</li>
-</ul>
-<h1 id="解决了什么问题">解决了什么问题</h1>
-<ul>
-<li>ScriptableObject的数据存储在asset里面，退出时不会重置数据，就像unity里的材质，纹理等资源数据一样</li>
-<li>这些资源在实例化的时候是可以被引用，而不是复制</li>
-<li>可以在场景间共享</li>
-<li>在项目之间共享</li>
-</ul>
-<h1 id="用法">用法</h1>
-<pre><code class="language-c#">using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-[Serializable]
-public class MyObj
-{
-    public int age;
-    public string name;
-}
-[CreateAssetMenu]
-public class MySciptObj : ScriptableObject
-{
-    public List&lt;MyObj&gt; myObjs;
+<h3 id="例广告加载">例：广告加载</h3>
+<p>在Android端定义好广告加载回调接口</p>
+<pre><code class="language-java">package cn.weli.supersdk.ad.callback;
 
-    public void Print()
+public interface IRewardedAdLoadCallback {
+    void onRewardVideoLoadFail(int errorCode, String errorMsg, String waterfallInfo);
+    void onRewardVideoAdLoad(String waterfallInfo, String requestId);
+    void onRewardVideoCached();
+}
+
+</code></pre>
+<p>以GroMore的广告回调为例，实现了GroMore的广告加载接口，然后在对应的回调中加入自定义的回调，以供Unity使用。</p>
+<pre><code class="language-jade">package cn.weli.supersdk.ad.callback;
+
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.bytedance.msdk.api.AdError;
+import com.bytedance.msdk.api.GMAdEcpmInfo;
+import com.bytedance.msdk.api.v2.ad.reward.GMRewardAd;
+
+import java.util.List;
+
+import cn.weli.supersdk.AppConstant;
+
+public class GMRewardedAdLoadCallback implements com.bytedance.msdk.api.v2.ad.reward.GMRewardedAdLoadCallback{
+    private String TAG = AppConstant.LOGTAG;
+    private GMRewardAd _rewardAd;
+    private IRewardedAdLoadCallback _rewardedAdListener;
+
+    public GMRewardedAdLoadCallback(GMRewardAd rewardAd, IRewardedAdLoadCallback rewardedAdListener)
     {
-        for(int i=0,iMax=myObjs.Count;i&lt;iMax;i++)
+        _rewardAd = rewardAd;
+        _rewardedAdListener = rewardedAdListener;
+    }
+
+    @Override
+    public void onRewardVideoLoadFail(@NonNull AdError adError) {
+        String adInfo = &quot;&quot;;
+        if (_rewardAd != null)
         {
-            Debug.Log(&quot;Name:&quot;+myObjs[i].name+&quot;Age:&quot;+myObjs[i].age);
+            adInfo = _rewardAd.getAdLoadInfoList().toString();
+            _rewardAd.destroy();
+        }
+        int code = 0;
+        String msg = &quot;&quot;;
+        if(adError != null)
+        {
+            code = adError.code;
+            msg = adError.message;
+        }
+        _rewardedAdListener.onRewardVideoLoadFail(code, msg, adInfo);
+    }
+
+    @Override
+    public void onRewardVideoAdLoad() {
+        // 获取本次waterfall加载中，加载失败的adn错误信息。
+        String adInfo = &quot;&quot;;
+        String requstId = &quot;&quot;;
+        if (_rewardAd != null)
+        {
+            adInfo = _rewardAd.getAdLoadInfoList().toString();
+            if (_rewardAd.getShowEcpm() != null)
+            {
+                requstId = _rewardAd.getShowEcpm().getRequestId();
+            }
+        }
+        _rewardedAdListener.onRewardVideoAdLoad(adInfo, requstId);
+        printLoadAdInfo();
+        printSHowAdInfo();
+    }
+
+    @Override
+    public void onRewardVideoCached() {
+        _rewardedAdListener.onRewardVideoCached();
+        printLoadAdInfo();
+        printSHowAdInfo();
+    }
+
+    //打印已经加载广告的信息
+    public void printLoadAdInfo() {
+        if (_rewardAd == null) {
+            return;
+        }
+        /**
+         * 获取已经加载的clientBidding ，多阶底价广告的相关信息
+         */
+        List&lt;GMAdEcpmInfo&gt; gmAdEcpmInfos = _rewardAd.getMultiBiddingEcpm();
+        if (gmAdEcpmInfos != null) {
+            for (GMAdEcpmInfo info : gmAdEcpmInfos) {
+                Log.e(TAG, &quot;***多阶+client相关信息*** AdNetworkPlatformId&quot; + info.getAdNetworkPlatformId()
+                        + &quot;  AdNetworkRitId:&quot; + info.getAdNetworkRitId()
+                        + &quot;  ReqBiddingType:&quot; + info.getReqBiddingType()
+                        + &quot;  PreEcpm:&quot; + info.getPreEcpm()
+                        + &quot;  LevelTag:&quot; + info.getLevelTag()
+                        + &quot;  ErrorMsg:&quot; + info.getErrorMsg()
+                        + &quot;  request_id:&quot; + info.getRequestId());
+            }
+        }
+
+        /**
+         * 获取实时填充/缓存池中价格最优的代码位信息即相关价格信息，每次只有一个信息
+         */
+        GMAdEcpmInfo gmAdEcpmInfo = _rewardAd.getBestEcpm();
+        if (gmAdEcpmInfo != null) {
+            Log.e(TAG, &quot;***实时填充/缓存池中价格最优的代码位信息*** AdNetworkPlatformId&quot; + gmAdEcpmInfo.getAdNetworkPlatformId()
+                    + &quot;  AdNetworkRitId:&quot; + gmAdEcpmInfo.getAdNetworkRitId()
+                    + &quot;  ReqBiddingType:&quot; + gmAdEcpmInfo.getReqBiddingType()
+                    + &quot;  PreEcpm:&quot; + gmAdEcpmInfo.getPreEcpm()
+                    + &quot;  LevelTag:&quot; + gmAdEcpmInfo.getLevelTag()
+                    + &quot;  ErrorMsg:&quot; + gmAdEcpmInfo.getErrorMsg()
+                    + &quot;  request_id:&quot; + gmAdEcpmInfo.getRequestId());
+        }
+
+        /**
+         * 获取获取当前缓存池的全部信息
+         */
+        List&lt;GMAdEcpmInfo&gt; gmCacheInfos = _rewardAd.getCacheList();
+        if (gmCacheInfos != null) {
+            for (GMAdEcpmInfo info : gmCacheInfos) {
+                Log.e(TAG, &quot;***缓存池的全部信息*** AdNetworkPlatformId&quot; + info.getAdNetworkPlatformId()
+                        + &quot;  AdNetworkRitId:&quot; + info.getAdNetworkRitId()
+                        + &quot;  ReqBiddingType:&quot; + info.getReqBiddingType()
+                        + &quot;  PreEcpm:&quot; + info.getPreEcpm()
+                        + &quot;  LevelTag:&quot; + info.getLevelTag()
+                        + &quot;  ErrorMsg:&quot; + info.getErrorMsg()
+                        + &quot;  request_id:&quot; + info.getRequestId());
+            }
         }
     }
-    public void Save(string name,int age)
+
+    public void printSHowAdInfo() {
+        if (_rewardAd == null) {
+            return;
+        }
+
+        GMAdEcpmInfo gmAdEcpmInfo = _rewardAd.getShowEcpm();
+        if (gmAdEcpmInfo == null) {
+            return;
+        }
+        Log.e(TAG, &quot;展示的广告信息 ： adNetworkPlatformName: &quot; + gmAdEcpmInfo.getAdNetworkPlatformName() + &quot;   adNetworkRitId：&quot; + gmAdEcpmInfo.getAdNetworkRitId() + &quot;   preEcpm: &quot; + gmAdEcpmInfo.getPreEcpm() + &quot;   reqBiddingType: &quot; + gmAdEcpmInfo.getReqBiddingType());
+    }
+}
+
+</code></pre>
+<p>随后在Android中AdMgr.java中写好初始化接口的方法</p>
+<pre><code>public void LoadRewarded(final String unitId, int orientation, IRewardedAdLoadCallback lis)
     {
-        myObjs.Add(new MyObj { name=name,age=age});
+        _rewardedAd.LoadRewardedAd(unitId, orientation, lis);
+    }
+
+    public void LoadRewardedServerJudge(final String unitId, int orientation, IRewardedAdLoadCallback lis, String extraInfo)
+    {
+        _rewardedAd.LoadRewardedAdServerJudge(unitId, orientation, lis, extraInfo);
+    }
+</code></pre>
+<p>在Unity中，通过AndroidJavaProxy实现Android中的IRewardedAdLoadCallback接口</p>
+<pre><code class="language-c#">#region rewarded load listener
+
+        private sealed class GMRewardedAdLoadCallback : AndroidJavaProxy
+        {
+            private readonly IRewardedAdLoadCallback listener;
+
+            public GMRewardedAdLoadCallback(IRewardedAdLoadCallback listener)
+                : base(&quot;cn.weli.supersdk.ad.callback.IRewardedAdLoadCallback&quot;)
+            {
+                this.listener = listener;
+            }
+
+            public void onRewardVideoLoadFail(int errorCode, string errorMsg, string waterfallInfo)
+            {
+                AppBoot.Updater.ExecuteUpdateAction(() =&gt; this.listener?.OnRewardVideoLoadFail(errorCode, errorMsg, waterfallInfo));
+            }
+
+            public void onRewardVideoAdLoad(string waterfallInfo, string requestId)
+            {
+                AppBoot.Updater.ExecuteUpdateAction(() =&gt; this.listener?.OnRewardVideoAdLoad(waterfallInfo, requestId));
+            }
+
+            public void onRewardVideoCached()
+            {
+                AppBoot.Updater.ExecuteUpdateAction(() =&gt; this.listener?.OnRewardVideoCached());
+            }
+        }
+
+        public interface IRewardedAdLoadCallback
+        {
+            void OnRewardVideoLoadFail(int errorCode, string errorMsg, string waterfallInfo);
+            void OnRewardVideoAdLoad(string waterfallInfo, string requestId);
+            void OnRewardVideoCached();
+        }
+
+#endregion
+</code></pre>
+<p>并在合适的时候，Unity调用AdMgr.java中的LoadRewardedServerJudge函数，实现Unity监听Android中的事件回调</p>
+<pre><code class="language-c#">public void LoadRewardAd_Gromore(AdSlotEnum adSlot, Action success = null, Action fail = null)
+        {
+            //Log.Error($&quot;LoadRewardAd_Gromore&quot;);
+            IsRewardAdReady = false;
+            string unitId = GetSlotId(adSlot);
+            var customBannerListener = new RewardedAdLoadCallback(fail, null, () =&gt; { IsRewardAdReady = true; success?.Invoke(); });
+            var androidListener = new GMRewardedAdLoadCallback(customBannerListener);
+            string extraInfo = string.Empty;
+            extraInfo += &quot;{&quot;;
+            extraInfo += &quot;app_key:&quot;;
+            extraInfo += Weli.WeliNetEarnConfig.Instance.GetAppId();
+            extraInfo += &quot;,ver_code:&quot;;
+            extraInfo += AppConfig.Instance.VersionCode.ToString();
+            extraInfo += &quot;,uid:&quot;;
+            extraInfo += AppBoot.DataRecord.GetString(&quot;uid&quot;);
+            extraInfo += &quot;}&quot;;
+            extraInfo = Encrypt.DESEnCode(extraInfo, &quot;weli0420&quot;);
+  					//此处初始化Android中的回调
+            AdMgr_Android.Call(&quot;LoadRewardedServerJudge&quot;, unitId, 1, androidListener, extraInfo);
+        }
+</code></pre>
+<h2 id="unity与ios的事件回调">Unity与IOS的事件回调</h2>
+<h3 id="monopinvokecallback">MonoPInvokeCallback</h3>
+<p>这个属性对静态函数有效，它被Mono的超前编译器用来生成必要的代码，以支持本地调用回到托管代码中。</p>
+<p>在常规的ECMA CIL程序中，这种情况会自动发生，不需要特别标记什么，但在纯超前编译中，编译器需要知道哪些方法将从非托管代码中调用。</p>
+<p>在当前版本的Xamarin.iOS中，只有静态函数可以从非托管代码中被回调。</p>
+<p>你必须指定该代码将被调用的委托的类型。下面的例子显示了使用这种情况的场景。</p>
+<p><strong>例子：</strong></p>
+<p>Sample.mm</p>
+<pre><code class="language-cpp">extern &quot;C&quot; {
+    // C#函数的函数指针
+    typedef void (*cs_callback)(int);
+
+    void sampleMethod4(cs_callback callback) {
+        callback(9);
     }
 }
 </code></pre>
+<p>Sample.cs</p>
+<pre><code class="language-csharp">using System.Runtime.InteropServices;
+using AOT;
+
+public class Sample {
+    delegate void callback_delegate(int val);
+
+    [DllImport(&quot;__Internal&quot;)]
+    private static extern void sampleMethod4(callback_delegate callback);
+
+    //回调函数，必须MonoPInvokeCallback并且是static
+    [MonoPInvokeCallback(typeof(callback_delegate))]
+    private static void cs_callback(int val) {
+        UnityEngine.Debug.Log (&quot;cs_callback : &quot; + val);
+    }
+
+    private static void sampleMethod4Invoker() {
+        //直接把函数传过去
+        sampleMethod4 (cs_callback);
+    }
+}
+</code></pre>
+<p>C#的静态方法，作为一个函数指针发给Objective-C。Objective-C方面收到这个函数指针过后也可以不直接调用，放到全局变量里面，随时可以调用。</p>
 
                 </div>
             </article>
@@ -119,20 +333,14 @@ public class MySciptObj : ScriptableObject
         <div class="mdui-container">
             <div class="mdui-row">
                 
-                <a href="https://anchengxiang.space/post/shadergraph-ji-chu/" class="mdui-ripple mdui-color-theme mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left">
-                    <div class="doc-footer-nav-text">
-                        <i class="mdui-icon material-icons">arrow_back</i>
-                        <span class="doc-footer-nav-direction mdui-hidden-xs-down">上一篇文章</span>
-                        <div class="doc-footer-nav-chapter mdui-hidden-xs-down">ShaderGraph基础</div>
-                    </div>
-                </a>
+                <div class="mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left"></div>
                 
                 
-                <a href="https://anchengxiang.space/post/unity-yi-dong-you-xi-you-hua/" class="mdui-ripple mdui-color-theme mdui-col-xs-10 mdui-col-sm-6 doc-footer-nav-right">
+                <a href="https://anchengxiang.space/post/unity-diao-yong-yuan-sheng-android-yu-ios/" class="mdui-ripple mdui-color-theme mdui-col-xs-10 mdui-col-sm-6 doc-footer-nav-right">
                     <div class="doc-footer-nav-text">
                         <i class="mdui-icon material-icons">arrow_forward</i>
                         <span class="doc-footer-nav-direction">下一篇文章</span>
-                        <div class="doc-footer-nav-chapter">Unity移动游戏优化</div>
+                        <div class="doc-footer-nav-chapter">Unity调用原生Android与IOS</div>
                     </div>
                 </a>
                 

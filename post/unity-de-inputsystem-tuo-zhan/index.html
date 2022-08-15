@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>zhangxyiang_blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css">
+    <link rel="stylesheet" href="/media/css/post.css">
+    <link rel="stylesheet" href="/media/live2d/css/live2d.css" />
+    
+</head>
+<body class=" mdui-appbar-with-toolbar  mdui-theme-primary-pink mdui-theme-accent-pink">
+<header class="mdui-toolbar mdui-color-pink mdui-appbar-fixed mdui-appbar-scroll-toolbar-hide" style="z-index: 1000">
+    <a href="javascript:;" mdui-drawer="{target: '#left-drawer',overlay:true}" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">menu</i></a>
+    <span class="mdui-typo-title">zhangxyiang_blog</span>
+    <div class="mdui-toolbar-spacer"></div>
+<!--    <a href="javascript:history.go(0);" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+    <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">more_vert</i></a>
+</header>
+
+<div class="mdui-drawer mdui-color-white mdui-drawer-full-height mdui-drawer-close" id="left-drawer">
+    <ul class="mdui-list">
+        <li class="mdui-subheader">菜单</li>
+        
+        <li class="mdui-list-item mdui-ripple">
+            <a href="/" class="mdui-list-item-content">首页</a>
+        </li>
+        
+        <li class="mdui-list-item mdui-ripple">
+            <a href="/archives" class="mdui-list-item-content">归档</a>
+        </li>
+        
+        <li class="mdui-list-item mdui-ripple">
+            <a href="/tags" class="mdui-list-item-content">标签</a>
+        </li>
+        
+        <li class="mdui-list-item mdui-ripple">
+            <a href="/post/about" class="mdui-list-item-content">关于</a>
+        </li>
+        
+        <li class="mdui-list-item mdui-ripple">
+            <a href="/post/shuoshuo" class="mdui-list-item-content">说说</a>
+        </li>
+        
+        <li class="mdui-list-item mdui-ripple">
+            <a href="/post/share" class="mdui-list-item-content">收藏分享</a>
+        </li>
+        
+    </ul>
+</div>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main" role="main">
+            <article id="post-1270" class="post-1270 post type-post status-publish format-standard hentry category-90 category-129 tag-149">
+                <header class="entry-header">
+                    <h1 class="entry-title">Unity的InputSystem拓展</h1>
+                    <p class="entry-census">发布于 2022-05-17</p>
+                    <hr>
+                </header>
+                <div class="neko">
+                    <h2>简介</h2>
+<p>这篇文章会讲述如何在Unity的原始输入系统基础之上封装一个更加健壮且可扩展的输入系统，这里的Unity的原始输入是指<code>UnityEngine.Input</code>，针对Input的封装目的有点类似于Unity新版本的输入系统<code>InputSystem</code>。</p>
+<!-- more -->
+<h2>为什么要封装原始输入？</h2>
+<p>首先看一段简单的代码</p>
+<pre><code>using UnityEngine;
+public class Player: MonoBehaviour{
+    void Update(){
+        // 检测输入
+        if(Input.GetMouseButtonDown(0)){
+            Fire();     // 开火
+        }else if(Input.GetKeyDown(KeyCode.Space)){
+            Jump();     // 跳跃
+        }else if(Input.GetAxis("Horizontal") != 0){
+            Move();     // 移动
+        }
+    }
+}
+</code></pre>
+<p>上述代码可能在测试阶段时候用到，但是它无法用到实战中，它主要有三个问题。</p>
+<ul>
+<li>功能和按键绑死
+<p>这样的代码方式不支持改键。</p></li></p>
+<li><p>需要额外的条件来阻断输入
+<p>这个问题可能并不是所有的游戏都会有，在某些游戏中，也许玩家打开了某个弹窗。那么当我们打开这个窗口的时候，玩家的操作此时应该是被阻断的，也就是玩家此时不可操作，除非关闭此弹窗。上述代码要想在打开弹窗时阻断玩家输入，需要额外增加一个参数。所以我们理所当然的希望控制器内部有一个参数用来阻断所有的输入。</p></li></p>
+<li><p>控制效果没有通用性
+<p>现在很多游戏都会针对多个平台发布，同时支持在PC或者主机，甚至移动端中体验，这就要求我们的控制器同时支持多个类型的控制器，并且可以根据控制方式的不同切换控制策略。比如键盘鼠标的很多操作可以直接通过鼠标来实现，但是手柄操作会麻烦很多。</p></li></p>
+</ul>
+<h2>CodeReview</h2>
+<h3>按键映射</h3>
+<p>既然按键和功能绑定了，我们就需要解绑，也就是说我们希望按键是一个变量。所有的按键都是通过<code>KeyCode</code>来记录的，所以任何一个按键输入，都应该保存一个<code>KeyCode</code>值，这样只要我们重设这个变量，就可以实现按键的切换了。
+<pre><code>public class KeyboardKey{
+    private KeyCode key;
+    public KeyboardKey(KeyCode k){
+        this.key = k;
+    }
+    public void resetKey(KeyCode k){
+        this.key = k;
+    }
+}
+</code></pre>
+<p>上述的类只是从<strong>让按键成为一个可以替换的变量</strong>的想法而编写的，而且由于Input是一个静态类，所以我们可以直接通过这个类来封装三种不同的检测。</p>
+<pre><code>public class KeyboardKey{
+    private KeyCode key;
+    public bool isDown{
+        get =&gt; Input.GetKeyDown(key);
+    }
+    public bool isUp{
+        get =&gt; Input.GetKeyUp(key);
+    }
+    public bool isPushing{
+        get =&gt; Input.GetKeyDown(key);
+    }
+    public KeyboardKey(KeyCode k){
+        this.key = k;
+    }
+    public void resetKey(KeyCode k){
+        this.key = k;
+    }
+}
+</code></pre>
+<p>但是单纯的将KeyCode封装起来并不能产生映射的作用，这只是一个基础而已。也就是我们还需要先将玩家所有的操作或者其他什么UI的操作先写成枚举类型，然后将这些枚举值映射成<code>KeyboardKey</code></p>
+<pre><code>public enum PlayerOperations{
+    FIRE,
+    JUMP,
+    Run,
+  //...
+}
+public class ControllerBase&lt;T&gt; where T: System.Enum{
+    /* 将所有的映射都写到字典中，以方便改键 */
+    private Dictionary&lt;T, KeyboardKey&gt; keyMaps;
+} 
+</code></pre>
+<p>上述的<code>PlayerOperations</code>就是玩家所有可以进行的操作，可以不断地补充的操作，那么我们将这些作为键值填充到<code>ControllerBase</code>的字典中去，这样就产生了从PlayerOperations到KeyboardKey的映射，此后我们检测按键的输入时，就只需要输入一个PlayerOperations值即可，当我们要改键时，输入PlayerOperations，然后查询到对应的KeyboardKey，改变这个KeyboardKey的KeyCode值即可。</p>
+<p>这样看起来还不错，不过还忽略了一个非常重要的因素。并不是所有的按键都是键盘，还有的输入是一个程度值，比如<code>Input.GetAxis(&quot;Horizontal&quot;)</code>就是一个-1到1的值，以及鼠标也有按键，轮滑，鼠标位置等输入。这些统统都要用同一个枚举类型来检测的话，我们就需要准备多个字典来存储了，当检测不同类型的按键时，就到不同类型的字典中去查询。</p>
+<p>这样，我们仍然用的是一个统一的控制器，只是检测的内容发生了改变。所以先增加多个对不同按键的封装，这里我们要注意的是，并不是说，针对鼠标和键盘的操作我们一定要区分开，虽然它们检测的按键不同，一个是<code>KeyCode</code>类型的值，一个是<code>int</code>类型的值，检测用的函数也不一样，一个是<code>GetKeyDown</code>，一个是<code>GetMouseButtonDown</code>，但其实非常的类似。所以这两个操作是可以合并为同一个类型的。统称为<code>PushKey</code></p>
+<p>我们可以先定义<code>PushKey</code>基类，并据此来实现<code>KeyboardKey</code>和<code>MouseKey</code></p>
+<pre><code>public abstract class PushKey{
+    public abstract bool isDown{get;}
+    public abstract bool isUp{get;}
+    public abstract bool isPushing{get;}
+}
+public class KeyboardKey: PushKey{
+    private KeyCode key;
+    public override bool isDown{get =&gt; Input.GetKeyDown(key); }
+    public override bool isUp{get =&gt; Input.GetKeyUp(key); }
+    public override bool isPushing{get =&gt; Input.GetKey(key); }
+    public KeyboardKey(KeyCode key){
+        this.key = key;
+    }
+    public void resetKey(KeyCode key){
+        this.key = key;
+    }
+}
+public class MouseKey: PushKey{
+    private int key;
+    public override bool isDown{get =&gt; Input.GetMouseButtonDown(key); }
+    public override bool isUp{get =&gt; Input.GetMouseButtonUp(key); }
+    public override bool isPushing{get =&gt; Input.GetMouseButton(key); }
+    public MouseKey(int key){
+        this.key = key;
+    }
+    public void resetKey(int key){
+        this.key = key;
+    }
+} 
+</code></pre>
+<p>那么此时PushKey就涵盖了手柄、键盘和鼠标的大部分的基础操作。接着让我们继续封装轴输入、滚轮和鼠标位置三种特殊的输入。滚轮的值是一个<code>Vector2</code>类型，不过我们要的往往是纵轴滚轮或者横轴滚轮，不会同时检测，所以我个人认为滚轮拆分为两个<code>float</code>值更合适一些。那么同时轴输入也是一个<code>float</code>值，所以这两个可以被合并为<code>ValueInput</code></p>
+<pre><code>public abstract class ValueInput{
+    public abstract float value{get;}
+}
+public class ScrollInputX: ValueInput{
+    public override float value{get =&gt; Input.mouseScrollDelta.x; }
+}
+public class ScrollInputY: ValueInput{
+    public override float value{get =&gt; Input.mouseScrollDelta.y; }
+}
+public class AxisInput: ValueInput{
+    private string axisName;
+    public override float value{get =&gt; Input.GetAxis(axisName); }
+    public AxisInput(string name){
+        this.axisName = name;
+    }
+    public void resetName(string name){
+        this.axisName = name;
+    }
+} 
+
+
+</code></pre>
+<p>由于鼠标滚轮是一个指定的输入，所以并不需要和什么键位绑定。同理，鼠标位置也是一个概念。由于只有鼠标位置这一类是<code>Vector2</code>类型的输入，所以直接自成一体即可。</p>
+<pre><code>public class MousePosition{
+    public Vector2 pos{get =&gt; Input.mousePosition; }
+}
+</code></pre>
+<p>这样三类输入都封装完毕了（暂时不考虑移动端的输入情况），我们可以重新调整<code>ControllerBase</code>的代码了。</p>
+<pre><code>public enum PlayerOperations{
+    FIRE,
+    JUMP,
+    //...
+}
+public class ControllerBase&lt;T&gt; where T: System.Enum{
+    /* 将所有的映射都写到字典中，以方便改键 */
+
+
+    private Dictionary&lt;T, PushKey&gt; pushKeyMaps;
+    private Dictionary&lt;T, ValueInput&gt; valueInputMaps;
+    private Dictionary&lt;T, MousePosition&gt; mousePositionMaps;
+    public ControllerBase(){
+        pushKeyMaps = new Dictionary&lt;T, PushKey&gt;();
+        valueInputMaps = new Dictionary&lt;T, ValueInput&gt;();
+        mousePositionMaps = new Dictionary&lt;T, MousePosition&gt;();
+    }
+    
+    public bool isKeyDown(T key){
+        return pushKeyMaps[key].isDown;
+    }
+    public bool isKeyUp(T key){
+        return pushKeyMaps[key].isUp;
+    }
+    public bool isKeyPushing(T key){
+        return pushKeyMaps[key].isPushing;
+    }
+    public float value(T key){
+        return valueInputMaps[key].value;
+    }
+    public Vector2 pos(T key){
+        return mousePositionsMaps[key].pos;
+    }
+
+}
+</code></pre>
+<h3>针对于阻断的策略</h3>
+<p><code>ControllerBase</code>并不是一个可以直接使用的控制器，它还没有被阻断，所以<code>ControllerBase</code>应该被作为一个核心输入，放到一个可以自我阻断的控制器当中<code>ControllerBlocker</code>，有一个简单的要求就是，我们只希望初始化一个<code>ControllerBase</code>，毕竟再初始化一个基础控制器实在是多此一举了，这要求<code>ControllerBlocker</code>的阻断是自我屏蔽，而非屏蔽<code>ControllerBase</code>的输入</p>
+<p>对于那些已经被阻断的输入，就默认输出<code>false</code>或者<code>0</code></p>
+<pre><code>public class ControllerBlocker&lt;T&gt;{
+    private ControllerBase&lt;T&gt; sourceInput;
+    private Func&lt;T, float&gt; __fetch_value;
+    private Func&lt;T, bool&gt; __fetch_keydown;
+    private Func&lt;T, bool&gt; __fetch_keyup;
+    private Func&lt;T, bool&gt; __fetch_keypushing;
+    private Func&lt;T, Vector2&gt; __fetch_pos;
+
+
+    public ControllerBlocker&lt;T&gt;(ControllerBase&lt;T&gt; src){
+        this.sourceInput = src;
+    }
+    private float __disabled_value(T key){
+        return 0;
+    }
+    private bool __disabled_pushkey(T key){
+        return false;
+    }
+    private Vector2 __disabled_pos(T key){
+        return Vector2.zero;
+    }
+    
+    /* 对外的API */
+    public void setEnabled(bool value){
+        if(value){
+            __fetch_value = sourceInput.value;
+            __fetch_keydown = sourceInput.isKeyDown;
+            __fetch_keyup = sourceInput.isKeyUp;
+            __fetch_keypushing = sourceInput.isKeyPushing;
+            __fetch_pos = sourceInput.pos;
+        }else{
+            __fetch_value = __disabled_value;
+            __fetch_keydown = __disabled_pushkey;
+            __fetch_keyup = __disabled_pushkey;
+            __fetch_keypushing = __disabled_pushkey;
+            __fetch_pos = __disabled_pos;
+        }
+    }
+    public bool isKeyDown(T key){
+        return __fetch_keydown(key);
+    }
+    public bool isKeyUp(T key){
+        return __fetch_up(key);
+    }
+    public bool isKeyPushing(T key){
+        return __fetch_keypushing(key);
+    }
+    public float value(T key){
+        return __fetch_value(key);
+    }
+    public Vector2 pos(T key){
+        return __fetch_pos(key);
+    }
+
+} 
+</code></pre>
+<p>这样，通过<code>setEnabled</code>函数我们就可以控制<code>ControllerBlocker</code>的开关了，这种实现方式可能并不是最好的，不过这个部分只要能够完成对输入的阻断就可以了。实现方式可以轻松的替换为不同的策略。</p>
+<h3>关于多类型控制策略</h3>
+<p>在考虑针对不同的被控制对象来调整策略之前，我们应该先建立一个控制管理系统来注册所有的按键，所以先给<code>ControllerBase</code>增加一些重载函数用于注册不同的按键</p>
+<pre><code>public class ControllerBase&lt;T&gt;{
+
+
+    //.. properties
+    
+    //.. methods
+    
+    // register functions
+    public void register(T key, PushKey pushKey){
+        if(pushKeyMaps.Contains(key)){
+            pushKeyMaps[key] = pushKey;
+        }else{
+            pushKeyMaps.Add(key, pushKey);
+        }
+    }
+    public void register(T key, ValueInput valueInput){
+        if(valueInputMaps.Contains(key)){
+            valueInputMaps[key] = valueInput;
+        }else{
+            valueInputMaps.Add(key, valueInput);
+        }
+    }
+    public void register(T key, MousePosition pos){
+        if(mousePositionMaps.Contains(key)){
+            mousePositionMaps[key] = pos;
+        }else{
+            mousePositionMaps.Add(key, pos);
+        }
+    }
+
+}
+接着，构建一个控制管理系统，用于初始化基础控制器，并向其中注册按键，以及提供阻断器的载体。
+
+public class ControllerManager{
+    private ControllerBase&lt;PlayerOperations&gt; sourceInput;
+
+    public ControllerManager(){
+        sourceInput = new ControllerBase&lt;PlayerOpations&gt;();
+    
+        // 注册所有的按键
+        sourceInput.register(PlayerOpertaions.JUMP, new KeyboardKey(KeyCode.Space));
+        sourceInput.register(PlayerOperations.FIRE, new MouseKey(0));
+    }
+
+}
+</code></pre>
+<p>那么到此为止，这个简易系统就完成的差不多了，总的来说没有太复杂的部分，就是一些基础的封装。那么我们还需要在这个基础之上，提供游戏中所需要的控制器原型。</p>
+<p>这个控制器原型指的是，让操作只专注于玩家要操作的那部分内容。假设用手柄来玩游戏，遇到在商店购买道具，或者打开背包等情景时，其实并不希望关注到这些操作绑定的按键是什么，也不希望知道操作的具体枚举值是什么，只希望由针对商店的操作衍生出一个虚拟的控制器原型，当游戏开始时，将这个原型分发给各个要被控制的对象。</p>
+<img src="https://s2.loli.net/2022/06/20/oYjPw9VM67kTdUH.png" alt="img" />
+<p>将阻断器作为输入再放到控制器原型中，由原型挑选出关注的按键，以此构建出一个固定的上层控制器。这样，无论下层的控制按键或者控制器原型如何改变，上层控制器始终不变，对于其他任何一个UI实体或者被控制的实体来说，只需要在初始化这个单位的时候给它绑定一个控制器原型，并在需要启动它的时候打开阻断器的开关即可。</p>
+<p>作为案例的话，我们可以尝试将商店控制器原型实现出来。假设对于商店的控制器，我们只需要上下左右选择商品，确认购买一个，取消退出商店，不考虑更复杂的操作，可以先抽象出商店的控制器，然后在<code>PlayOpertaions</code>中增加枚举值来代表这些操作。</p>
+<pre><code>public enum PlayerOperations{
+
+
+    // player controller
+    FIRE,
+    JUMP,
+
+
+    // for store controller or other ui controller
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+    ENSURE,
+    CANCEL,
+
+}
+
+public interface IStoreController{
+    bool left{get;}
+    bool right{get;}
+    bool up{get;}
+    bool down{get;}
+    bool ensure{get;}
+    bool cancel{get;}
+    void setEnabled(bool value);
+}
+</code></pre>
+<p>注意将你要绑定的按键先注册到基础控制器中。</p>
+<pre><code>public class ControllerManager{
+    private ControllerBase&lt;PlayerOperations&gt; sourceInput;
+
+
+    public ControllerManager(){
+        sourceInput = new ControllerBase&lt;PlayerOpations&gt;();
+    
+        // 注册玩家控制器按键
+        sourceInput.register(PlayerOpertaions.JUMP, new KeyboardKey(KeyCode.Space));
+        sourceInput.register(PlayerOperations.FIRE, new MouseKey(0));
+        // here has more..
+
+
+        // 注册商店控制器或其他UI控制器（键盘）
+        sourceInput.register(PlayerOperations.LEFT, new KeyboardKey(KeyCode.A));
+        sourceInput.register(PlayerOperations.RIGHT, new KeyboardKey(KeyCode.D));
+        sourceInput.register(PlayerOperations.UP, new KeyboardKey(KeyCode.W));
+        sourceInput.register(PlayerOperations.DOWN, new KeyboardKey(KeyCode.S));
+        sourceInput.register(PlayerOperations.ENSURE, new KeyboardKey(KeyCode.Space));
+        sourceInput.register(PlayerOperations.CANCEL, new KeyboardKey(KeyCode.Escape));
+    }
+
+}
+</code></pre>
+<p>有了按键注册，有了控制器原型，可以开始实现一个商店控制器的实例了。注意，由于我们注册的按键都是键盘的，所以我们的这个实例也应该是键盘的，手柄控制器需要根据商店控制器原型来构建新的类。</p>
+<pre><code>public class StoreControllerKM&lt;T&gt;: IStoreController{
+    private ControllerBlocker&lt;T&gt; blocker;
+    public StoreControllerKM(ControllerBlocker&lt;T&gt; blocker){
+        this.blocker = blocker;
+    }
+    public void setEnabled(bool value){
+        blocker.setEnabled(value);
+    }
+    public bool left{ get =&gt; blocker.isKeyDown(PlayerOperations.LEFT); }
+    public bool right{get =&gt; blocker.isKeyDown(PlayerOperations.RIGHT); }
+    public bool up{get =&gt; blocker.isKeyDown(PlayerOperations.UP); }
+    public bool down{get =&gt; blocker.isKeyDown(PlayerOperations.DOWN); }
+    public bool ensure{get =&gt; blocker.isKeyDown(PlayerOperations.ENSURE); }
+    public bool cancel{get =&gt; blocker.isKeyDown(PlayerOperations.CANCEL); }
+}
+</code></pre>
+<p>这样，所有的下层元素都被封装到了控制器原型，对于上层对象来说，只需要关注控制器的具体操作即可。当然，实际开发中我们其实不用具体的分商店控制器或者背包控制器啥的，因为UI的控制大多数都是通过这几个按键来实现的，所以很多UI都是可以通用的。尽管我们可能初始化多个阻断器和多个原型控制器，但是也只用到了一个基础控制器而已。</p>
+<p>之后我们在控制管理系统里初始化这个控制器原型，后续游戏管理器可以先初始化控制管理系统，然后在创建其他实体单位的时候，将每个控制器原型分发给不同的实体对象，并根据游戏状态来阻断这些控制器的输入。一般来说，同一时间只会有一个或者两个控制器活跃。</p>
+<pre><code>public class ControllerManager{
+    private ControllerBase&lt;PlayerOperations&gt; sourceInput;
+    internal IStoreController storeControllerKM;
+
+
+    public ControllerManager(){
+        sourceInput = new ControllerBase&lt;PlayerOpations&gt;();
+    
+        // 注册玩家控制器按键
+        sourceInput.register(PlayerOpertaions.JUMP, new KeyboardKey(KeyCode.Space));
+        sourceInput.register(PlayerOperations.FIRE, new MouseKey(0));
+        // here has more..
+
+
+        // 注册商店控制器或其他UI控制器（键盘）
+        sourceInput.register(PlayerOperations.LEFT, new KeyboardKey(KeyCode.A));
+        sourceInput.register(PlayerOperations.RIGHT, new KeyboardKey(KeyCode.D));
+        sourceInput.register(PlayerOperations.UP, new KeyboardKey(KeyCode.W));
+        sourceInput.register(PlayerOperations.DOWN, new KeyboardKey(KeyCode.S));
+        sourceInput.register(PlayerOperations.ENSURE, new KeyboardKey(KeyCode.Space));
+        sourceInput.register(PlayerOperations.CANCEL, new KeyboardKey(KeyCode.Escape));
+    
+        storeControllerKM = new StoreControllerKM&lt;PlayerOperations&gt;(new ControllerBlocker&lt;PlayerOperations&gt;());
+    }
+
+}
+</code></pre>
+
+                </div>
+            </article>
+        </main>
+    </div>
+    <div class="doc-footer-nav mdui-color-theme">
+        <div class="mdui-container">
+            <div class="mdui-row">
+                
+                <a href="https://anchengxiang.space/post/mac-jenkins-bu-shu-yu-unity-liu-shui-xian-da-jian/" class="mdui-ripple mdui-color-theme mdui-col-xs-2 mdui-col-sm-6 doc-footer-nav-left">
+                    <div class="doc-footer-nav-text">
+                        <i class="mdui-icon material-icons">arrow_back</i>
+                        <span class="doc-footer-nav-direction mdui-hidden-xs-down">上一篇文章</span>
+                        <div class="doc-footer-nav-chapter mdui-hidden-xs-down">Mac Jenkins部署与Unity流水线搭建</div>
+                    </div>
+                </a>
+                
+                
+                <a href="https://anchengxiang.space/post/wei-unity-kai-fa-zhe-kuai-su-ru-men-laya-zhi-nan/" class="mdui-ripple mdui-color-theme mdui-col-xs-10 mdui-col-sm-6 doc-footer-nav-right">
+                    <div class="doc-footer-nav-text">
+                        <i class="mdui-icon material-icons">arrow_forward</i>
+                        <span class="doc-footer-nav-direction">下一篇文章</span>
+                        <div class="doc-footer-nav-chapter">为Unity开发者快速入门Laya指南</div>
+                    </div>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+    <br>
+    
+        
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+    var gitalk = new Gitalk({
+        clientID: '150ba9e7787eee11b4a9',
+        clientSecret: 'f83f910be8cbb8f71812f3f4391061348b4edbd1',
+        repo: 'zhangxyiang.github.io',
+        owner: 'zhangxyiang',
+        admin: ['zhangxyiang'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+    })
+
+    gitalk.render('gitalk-container')
+
+</script>
+
+        
+
+        
+    
+    
+    <div id="vue_app">
+        <!--头像-->
+        <div class="mdui-card">
+            <!-- 卡片头部，包含头像、标题、副标题 -->
+            <div class="mdui-card-header">
+                <img style="cursor:pointer" @click="avatarOpen" class="mdui-card-header-avatar" :src="avatar"/>
+                <div class="mdui-card-header-title">评论列表</div>
+                <div class="mdui-card-header-subtitle"><-点击图标可以更换头像哦！！~~</div>
+            </div>
+        </div>
+        <br/>
+
+        <!--发表评论框-->
+        <reply @submit="replySubmit"></reply>
+
+        <!--评论列表-->
+        <div v-for="(v,k) in list">
+            <br>
+            <div class="mdui-card">
+                <!-- 卡片头部，包含头像、标题、副标题 -->
+                <div class="mdui-card-header">
+                    <img class="mdui-card-header-avatar" :src="v.attributes.img"/>
+                    <div v-if="v.attributes.website" class="mdui-text-color-theme mdui-card-header-title mdui-typo">
+                        <a target="view_window" :href="v.attributes.website">{{v.attributes.nickname}}</a>
+                        <span v-if="v.attributes.is_author" class="mdui-text-color-theme">（博主）</span>
+                    </div>
+                    <div v-else class="mdui-card-header-title">
+                        <span>{{v.attributes.nickname}}</span>
+                        <span v-if="v.attributes.is_author" class="mdui-text-color-theme">（博主）</span>
+                    </div>
+                    <div class="mdui-card-header-subtitle">{{time_format("Y年m月d日 H点s分",v.attributes.time)}}</div>
+                </div>
+
+                <!-- 卡片的内容 -->
+                <div class="mdui-card-content" v-html="v.attributes.txt"></div>
+
+                <div>
+                    <ul class="mdui-list" v-for="vv in JSON.parse(v.attributes.reply_son)">
+                        <li class="mdui-list-item">
+                            <div class="mdui-list-item-avatar"><img :src="vv.img"/></div>
+                            <div class="mdui-list-item-content"  style="height: auto">
+                                <div v-if="vv.website" class="mdui-list-item-title mdui-typo">
+                                    <a target="view_window" :href="vv.website" class="mdui-text-color-theme">{{vv.nickname}}</a>
+                                    <span v-if="vv.is_author" class="mdui-text-color-theme">（博主）</span>
+                                    <span class="mdui-typo-caption-opacity">{{time_format("Y年m月d日 H点s分",vv.time)}}</span>
+                                </div>
+                                <div v-else class="mdui-list-item-title">
+                                    {{vv.nickname}}
+                                    <span v-if="vv.is_author" class="mdui-text-color-theme">（博主）</span>
+                                    <span class="mdui-typo-caption-opacity">{{time_format("Y年m月d日 H点s分",vv.time)}}</span>
+                                </div>
+                                <div class="mdui-list-item-text mdui-typo">
+                                    <a v-if="vv.reply_website" :href="vv.reply_website" target="view_window" class="mdui-typo">@{{vv.reply_nickname}}</a>
+                                    <a v-else class="mdui-typo">@{{vv.reply_nickname}}</a>：
+                                    <span class="reply_son" v-html="vv.txt"></span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button
+                                        @click="reply2(k,vv.id,vv.nickname,vv.email,vv.website)"
+                                        class="mdui-btn mdui-text-color-pink"
+                                >
+                                    回复
+                                </button>
+                            </div>
+                        </li>
+                        <li class="mdui-divider-inset mdui-m-y-0"></li>
+                    </ul>
+                </div>
+
+                <div class="mdui-card-actions">
+                    <button
+                            @click="reply2(k,v.id,v.attributes.nickname,v.attributes.email,v.attributes.website)"
+                            style="float:right "
+                            class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+                    >
+                        回复
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div style="text-align:center" v-if="list.length!=0">
+            <button @click="loadMore" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">加载更多</button>
+        </div>
+
+        <!--回复的弹窗-->
+        <div class="mdui-dialog" id="reply_mode">
+            <div class="mdui-dialog-title">
+                <span>回复</span>
+                <span class="mdui-text-color-theme">@{{replyList.nickname}}</span>
+                <span style="float:right ">
+                    <button class="mdui-btn"  @click="reply2Close">取消回复</button>
+                </span>
+            </div>
+            <reply @submit="reply2Submit"/>
+        </div>
+
+        <!--选头像的弹窗-->
+        <div class="mdui-dialog" id="avatar_mode">
+            <div class="mdui-dialog-title">
+                选择头像
+                <span style="float:right ">
+                    <button class="mdui-btn"  @click="avatarClose">取消选择</button>
+                </span>
+            </div>
+            <avatar @choice="avatarChoice"></avatar>
+        </div>
+    </div>
+    <object data="/media/js/modular/reply/reply.html" width="0" height="0" id="reply_object"></object>
+    <object data="/media/js/modular/emoji/emoji.html" width="0" height="0" id="emoji_object"></object>
+    <object data="/media/js/modular/avatar/avatar.html" width="0" height="0" id="avatar_object"></object>
+    
+</div>
+<footer class="mdui-container footer ">
+<!--    <div class="head_card-offset"></div>-->
+    <div class="mdui-row mdui-row-gapless">
+        <div class="k-container">
+            <img width="100%" src="/media/img/skirt.png">
+        </div>
+    </div>
+
+    <div class="site-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+</footer>
+<div id="landlord" style="left:5px;bottom:0px;">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+    <div class="live_talk_input_body">
+        <div class="live_talk_input_name_body">
+            <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off" placeholder="你的名字" />
+        </div>
+        <div class="live_talk_input_text_body">
+            <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off" placeholder="要和我聊什么呀？"/>
+            <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+    </div>
+    <input name="live_talk" id="live_talk" value="1" type="hidden" />
+    <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn"></div>
+        <div class="live_ico_item type_talk" id="showTalkBtn"></div>
+        <div class="live_ico_item type_music" id="musicButton"></div>
+        <div class="live_ico_item type_youdu" id="youduButton"></div>
+        <div class="live_ico_item type_quit" id="hideButton"></div>
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden" />
+        <audio src="" style="display:none;" id="live2d_bgm" data-bgm="0" preload="none"></audio>
+        <input name="live2dBGM" value="https://img.apa70.com/123.mp3" type="hidden">
+        <input name="live2dBGM" value="https://img.apa70.com/123.mp3" type="hidden">
+        <input id="duType" value="douqilai,l2d_caihong" type="hidden">
+    </div>
+</div>
+<div id="open_live2d">召唤伊斯特瓦尔</div>
+<script>
+    var message_Path = '/media/live2d/';//资源目录，如果目录不对请更改
+    var talkAPI = "";//如果有类似图灵机器人的聊天接口请填写接口路径
+</script>
+<!--<script src="/media/js/jquery-3.3.1.min.js"></script>-->
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="/media/live2d/js/live2d.js"></script>
+<script type="text/javascript" src="/media/live2d/js/message.js"></script>
+
+</body>
+<script src="//cdn.jsdelivr.net/npm/mdui@1.0.0/dist/js/mdui.min.js"></script>
+<script src="/media/layer/layer.js"></script>
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.11.1/dist/av-min.js"></script>
+<script src="//unpkg.com/vue@next"></script>
+<script>
+    
+    //初始化leancloud的SDK
+    AV.init({
+        appId: "li7qpJaxng2vCnV6tIwiqWgf-gzGzoHsz",
+        appKey: "BHYlgoaVHiOXoTmzbvx3JJ0O",
+        serverURL: "https://li7qpjax.lc-cn-n1-shared.com"
+    });
+    
+</script>
+<script type="module" src="/media/js/post.js"></script>
+</html>
