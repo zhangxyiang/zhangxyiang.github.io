@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://anchengxiang.space</id>
     <title>zhangxyiang_blog</title>
-    <updated>2022-08-15T02:36:44.012Z</updated>
+    <updated>2022-08-15T03:17:36.122Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://anchengxiang.space"/>
     <link rel="self" href="https://anchengxiang.space/atom.xml"/>
@@ -3148,6 +3148,689 @@ public class MySciptObj : ScriptableObject
     public void Save(string name,int age)
     {
         myObjs.Add(new MyObj { name=name,age=age});
+    }
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unity移动游戏优化]]></title>
+        <id>https://anchengxiang.space/post/unity-yi-dong-you-xi-you-hua/</id>
+        <link href="https://anchengxiang.space/post/unity-yi-dong-you-xi-you-hua/">
+        </link>
+        <updated>2021-08-29T07:41:10.000Z</updated>
+        <summary type="html"><![CDATA[<h1 id="简介">简介</h1>
+<p>优化 iOS 和 Android 应用程序是支撑整个开发周期的重要过程。随着移动硬件的不断发展，移动游戏的优化及其美术、游戏设计、音频和变现策略在塑造玩家体验方面发挥着关键作用。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h1 id="简介">简介</h1>
+<p>优化 iOS 和 Android 应用程序是支撑整个开发周期的重要过程。随着移动硬件的不断发展，移动游戏的优化及其美术、游戏设计、音频和变现策略在塑造玩家体验方面发挥着关键作用。</p>
+<!-- more -->
+<p><a href="https://learn.u3d.cn/tutorial/mobile-game-optimization?tab=overview#611644ef7c7ccd001f70a2d4">原地址</a>:<a href="https://learn.u3d.cn/tutorial/mobile-game-optimization?tab=overview#611644ef7c7ccd001f70a2d4">https://learn.u3d.cn/tutorial/mobile-game-optimization?tab=overview#611644ef7c7ccd001f70a2d4</a></p>
+<h1 id="性能分析">性能分析</h1>
+<p><a href="https://docs.unity3d.com/cn/current/Manual/Profiler.html">Unity Profiler</a><a href="https://docs.unity3d.com/Manual/Profiler.html?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a>可帮助检测运行时出现任何延迟或冻结的原因，或帮助了解特定帧（时间点）发生了什么。默认启用 CPU 和内存跟踪。如果对游戏有特定需求（例如，大量使用物理系统或基于音乐的游戏玩法），可以监控其他性能分析器模块，如渲染器、音频、物理系统等。</p>
+<p>通过选中 <strong>Development Build</strong> 和 <strong>Autoconnect Profiler</strong> 来针对设备构建应用程序，或手动连接以加快应用程序启动速度。</p>
+<p>选择要分析的目标。Record 按钮会跟踪应用程序运行几秒钟（ 默认为 300 帧）。如果需要捕获更长时间， 请转到 <strong>Unity &gt; Preferences &gt; Analysis &gt; Profiler &gt; Frame Count</strong> 增大该值（最高可调整到 2000）。这意味着 Unity 编辑器必须执行更多的 CPU 工作、占用更多内存，但根据特定场景，这可能会很有用。</p>
+<figure data-type="image" tabindex="1"><img src="https://i.loli.net/2021/08/29/P39FfEwRHqDVuAp.png" alt="image-20210829162252877" loading="lazy"></figure>
+<h2 id="cpu-usage-profiler-模块">CPU Usage Profiler 模块</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><strong>类别</strong></th>
+<th style="text-align:left"><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Rendering</strong></td>
+<td style="text-align:left">应用程序花费多少时间来渲染图形。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Scripts</strong></td>
+<td style="text-align:left">应用程序花费多少时间来运行脚本。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Physics</strong></td>
+<td style="text-align:left">应用程序在物理引擎上花费多少时间。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Animation</strong></td>
+<td style="text-align:left">应用程序花费多少时间来动画化应用程序中带蒙皮的网格渲染器 (Skinned Mesh Renderers)、游戏对象和其他组件。这还包括针对 Animation 组件和 Animator 组件所用的系统进行计算所花费的时间。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>GarbageCollector</strong></td>
+<td style="text-align:left">应用程序花费多少时间来运行<a href="https://docs.unity3d.com/cn/current/ScriptReference/Scripting.GarbageCollector.html">垃圾回收器</a>。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>VSync</strong></td>
+<td style="text-align:left">应用程序每帧花费多少时间来等待 <a href="https://docs.unity3d.com/cn/current/ScriptReference/Application-targetFrameRate.html">targetFrameRate</a> 或下一个要同步的 VBlank。此时间基于 <a href="https://docs.unity3d.com/cn/current/ScriptReference/QualitySettings-vSyncCount.html">QualitySettings.vSyncCount</a> 值、目标帧率或者 VSync 设置（即运行应用程序的平台的默认或强制最大值）。有关 VSync 的更多信息，请参阅本文档中的<a href="https://docs.unity3d.com/cn/current/Manual/ProfilerCPU.html#samples">渲染和 VSync 样本</a>部分。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Global Illumination</strong></td>
+<td style="text-align:left">应用程序在光照中花费多少时间。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>UI</strong></td>
+<td style="text-align:left">应用程序花费多少时间来显示其 UI。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Others</strong></td>
+<td style="text-align:left">应用程序在不属于任何其他类别的代码中花费多少时间。此事件包括整个 EditorLoop 或者是 Editor 中对运行模式进行性能分析时的性能分析开销等方面。</td>
+</tr>
+</tbody>
+</table>
+<figure data-type="image" tabindex="2"><img src="https://i.loli.net/2021/08/29/eUnHcZjpSx2siQ4.png" alt="image-20210829162649224" loading="lazy"></figure>
+<p>这是一种基于 instrumentation 的性能分析器，它分析显式包装在<a href="https://docs.unity3d.com/ScriptReference/Unity.Profiling.ProfilerMarker.html?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a><a href="https://docs.unity3d.com/ScriptReference/Unity.Profiling.ProfilerMarker.html">ProfileMarkers</a> 中的代码时序（例如 Monobehaviour 的 Start 或 Update 方法，或特定的 API 调用）。此外，当使用<a href="https://docs.unity3d.com/cn/current/Manual/ProfilerWindow.html">深度性能分析</a>设置时，Unity 可以分析脚本代码中每个函数调用的开始和结束，以准确告诉您应用程序的哪一部分导致运行速度变慢（但这会带来额外的开销）。</p>
+<p>在对游戏进行性能分析时，我们建议您涵盖游戏的尖峰和平均帧开销。了解和优化每一帧执行的高开销操作，对运行帧率低于目标帧率的应用程序更有用。在寻找尖峰时，首先探索高开销操作（例如，物理系统、AI、动画）和垃圾收集。</p>
+<p>在窗口中单击来分析特定帧。然后，使用 <strong>Timeline</strong> 或 <strong>Hierarchy</strong> 视图 ：</p>
+<ul>
+<li><strong>Hierarchy</strong> 显示分组到一起的 ProfileMarkers 的层次结构。这让您可以基于时间成本（以毫秒为单位，<strong>Time ms</strong> 和 <strong>Self ms</strong>）对样本进行排序。您还可以计算该帧中函数的<strong>调用</strong>次数和托管堆内存 (<strong>GC Alloc</strong>)。</li>
+<li><strong>Timeline</strong> 显示特定帧时间的可视化明细。这让您可以直观了解活动之间以及跨不同线程的关系。使用它可以确定应用程序受 CPU 限制还是受 GPU 限制。</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://i.loli.net/2021/08/29/blNZMsfRy7P3nqk.png" alt="img" loading="lazy"></figure>
+<p>有关 Unity Profiler 的完整概述，请单击<a href="https://docs.unity3d.com/cn/current/Manual/Profiler.html">此处</a>。对于刚刚接触性能分析的人士，也可以观看 <a href="https://resources.unity.com/optimizing-your-game-with-unity/introduction-to-profiling">Unity 性能分析简介</a>。</p>
+<p>在优化项目中的任何内容之前，请先保存 Profiler .data 文件。然后实施更改，并比较修改前后保存的 .data。按照“分析、优化和比较”的方式来提高性能。反复进行这一过程。</p>
+<p><strong>及早并经常进行性能分析</strong></p>
+<p>Unity Profiler 可提供关于应用程序的性能信息，但如果您不使用它，它也帮不了您。请在开发早期对项目进行性能分析，而不仅仅是在即将发布时。一旦出现问题或尖峰，立即展开调查。为项目开发一个“性能签名 (performance signature)”，将能够更轻松地发现新问题。</p>
+<p><strong>不要盲目优化</strong></p>
+<p>不要猜测或假设是什么拖累了游戏性能。使用 Unity Profiler 和特定平台的工具找出导致延迟的具体原因。</p>
+<p>此外，并非本指南中介绍的所有优化都适用于您的应用程序。在别的项目中具有良好效果的措施可能对您的项目不起作用。找出真正的瓶颈，然后集中精力解决问题。</p>
+<p><strong>在目标设备上进行性能分析</strong></p>
+<p>虽然在编辑器中进行性能分析可以非常粗略地了解游戏中不同系统的相对性能，但什么也比不上在真机上进行性能分析。尽可能在目标设备上对开发构建版本进行性能分析。记住，请针对计划支持的最低规格的设备进行性能分析和优化。</p>
+<p>仅仅依靠 Unity Profiler 无法了解引擎的每一个部分。幸运的是，iOS 和 Android 都包含可帮助您测试性能的原生工具 ：</p>
+<ul>
+<li>在 iOS 上，可以使用 <a href="https://developer.apple.com/documentation/xcode/">Xcode</a> 和 <a href="https://help.apple.com/instruments/mac/current/#/dev7b09c84f5">Instruments</a>。</li>
+<li>在 Android 上，可以使用 <a href="https://developer.android.com/studio/intro">Android Studio</a> 和 <a href="https://developer.android.com/studio/profile/android-profiler">Android Profiler</a>。</li>
+</ul>
+<p>某些硬件还可以利用其他性能分析工具（例如 <a href="https://developer.arm.com/tools-and-software/graphics-and-gaming/arm-mobile-studio">Arm Mobile Studio</a>、<a href="https://software.intel.com/content/www/us/en/develop/documentation/vtune-help/top.html">Intel VTune</a> 和 <a href="https://developer.qualcomm.com/software/snapdragon-profiler">Snapdragon Profiler</a>）。有关更多信息，请参阅<a href="https://learn.unity.com/tutorial/profiling-applications-made-with-unity">对使用 Unity 创建的应用程序进行性能分析</a>。</p>
+<p><strong>使用 Profile Analyzer</strong></p>
+<p>通过该工具，可以聚合多个 Profiler 数据帧，然后找到感兴趣的帧。想在对项目做出更改后查看 Profiler 有何变化？ Compare 视图允许您加载和比较两个数据集，这对于测试更改结果是否有所改进至关重要。可通过 Unity Package Manager 获取 <a href="https://docs.unity3d.com/Packages/com.unity.performance.profile-analyzer%401.0/manual/index.html">Profile Analyzer</a>。</p>
+<figure data-type="image" tabindex="4"><img src="https://i.loli.net/2021/08/29/WRBuIS1h92FGjkn.png" alt="img" loading="lazy"></figure>
+<center>需要更深入地了解帧和标记数据？ Profile Analyzer 可弥补现有 Profiler 之不足。</center>
+<p><strong>满足每帧的特定时间预算要求</strong></p>
+<p>根据每秒目标帧数 (fps)，每一帧都有时间预算。理想情况下，以 30 fps 运行的应用程序允许每帧用时约 33.33 ms (1000 ms/30 fps)。如果目标为 60 fps，则每帧用时上限为 16.66 ms。</p>
+<p>但是，对于移动设备，不能始终使用这么长时间，否则设备会过热，操作系统会对 CPU 和 GPU 进行热节流。我们建议只使用约 65% 的可用时间，以便在帧之间留出冷却时间。目标为 30 fps 时，典型的帧预算为每帧约 22 ms，60 fps 时为 11 ms 左右。</p>
+<p>设备可以在短时间内超出该标准（例如，过场动画或加载序列），但不能长时间超标。</p>
+<p><strong>确定应用程序受GPU</strong> <strong>限制</strong> <strong>(GPU-bound)</strong> <strong>还是受</strong> <strong>CPU</strong> <strong>限制</strong> <strong>(CPU-bound)</strong></p>
+<p>Profiler 可以告诉您 ：罪魁祸首是 CPU 耗时超出了分配的帧预算，还是在于 GPU。</p>
+<p>如果看到 <strong>Gfx.WaitForCommands</strong> 标记，说明渲染线程已准备就绪，但可能正在等待主线程上的某个瓶颈。</p>
+<p>如果经常遇到 <strong>Gfx.WaitForPresent</strong>，说明主线程已准备就绪，但正在等待 GPU 渲染帧。</p>
+<p><strong>考虑设备温度</strong></p>
+<p>大多数移动设备不像台式机那样具有主动冷却功能。物理热量水平会直接影响性能。</p>
+<p>如果设备运行得很热，即使没有导致问题，Profiler 也可能报告性能不佳。请在短时间内进行性能分析，以保持设备凉爽和模拟真实世界的情况，从而应对性能分析产生的开销。</p>
+<p><strong>在最低规格设备上进行测试</strong></p>
+<p>市面上有各种各样的 iOS 和 Android 设备。请在希望应用程序支持的最低规格的设备上测试项目。</p>
+<h1 id="内存">内存</h1>
+<p>Unity 为用户生成的代码和脚本采用了自动内存管理。小块数据（如值类型的局部变量）分配在栈上。大块数据和长期存储分配在托管堆上。</p>
+<p>垃圾收集器 (GC) 会定期识别并释放未使用的堆内存。虽然这是自动运行的，但检查堆中所有对象的过程可能导致游戏卡顿或运行缓慢。</p>
+<p>优化内存使用量意味着注意何时分配和解除分配堆内存，并尽可能减小垃圾收集的影响。</p>
+<p>有关更多信息，请参阅<a href="https://docs.unity3d.com/cn/current/Manual/BestPracticeUnderstandingPerformanceInUnity4-1.html">了解托管堆</a>。</p>
+<figure data-type="image" tabindex="5"><img src="https://i.loli.net/2021/08/29/dKC3qgOfLR2bemZ.png" alt="img" loading="lazy"></figure>
+<center>在内存性能分析器中捕获、检查和比较快照。</center>
+<p><strong>使用内存性能分析器</strong></p>
+<p>这个独立的附加组件（在 Package Manager 中作为实验性包或预览包提供）可以拍摄托管堆内存的快照，帮助发现碎片、内存泄漏等问题。</p>
+<p>在 Tree Map 视图中单击，可跟踪持有内存的原生对象的变量。在这里，可以识别常见的内存使用问题，例如纹理过大或资源重复。</p>
+<p>观看如何使用 <a href="https://www.youtube.com/watch?v=I9wB4Cvgz5g">Unity 中的内存性能分析器</a>来改善内存使用量。还可以查看官方的<a href="https://docs.unity3d.com/Packages/com.unity.memoryprofiler@0.2/manual/index.html">内存性能分析器文档</a>。</p>
+<p><strong>减少垃圾收集 (GC) 的影响</strong></p>
+<p>Unity 使用 <a href="https://www.hboehm.info/gc/">Boehm-Demers-Weiser 垃圾收集器</a>，它会停止运行程序代码，并且仅在其完成所有工作后才恢复正常执行。<br>
+要注意某些不必要的堆分配，这可能会导致 GC 尖峰 ：</p>
+<ul>
+<li>
+<p><strong>字符串</strong>在 C# 中，字符串是引用类型，而不是值类型。减少不必要的字符串创建或操作。避免解析基于字符串的数据文件，例如 JSON 和 XML ；改用 ScriptableObject 或 MessagePack、Protobuf 等格式存储数据。如果需要在运行时构建字符串，请使用 <a href="https://docs.microsoft.com/zh-cn/dotnet/api/system.text.stringbuilder?redirectedfrom=MSDN&amp;view=net-5.0">StringBuilder</a> 类。</p>
+</li>
+<li>
+<p><strong>Unity 函数调用</strong>请注意，某些函数会创建堆分配。缓存数组引用，不要在循环中分配数组。此外，请使用某些避免产生垃圾的函数 ；例如，使用 <strong>GameObject.CompareTag</strong> 而不是手动将字符串与 <strong>GameObject.tag</strong> 进行比较<br>
+（返回新字符串会产生垃圾）。</p>
+</li>
+<li>
+<p><strong>装箱</strong>避免传递值类型变量来代替引用类型变量。这会创建临时对象，以及随之而来的潜在垃圾，例如，<strong>int i = 123; object o = i</strong> 会将值类型隐式转换为类型对象。</p>
+</li>
+<li>
+<p><strong>协程</strong>虽然 <strong>yield</strong> 不会产生垃圾，但创建新的 <strong>WaitForSeconds</strong> 对象会。缓存并重用 <strong>WaitForSeconds</strong> 对象，而不要在 <strong>yield</strong> 行中创建它。</p>
+</li>
+<li>
+<p><strong>LINQ 和正则表达式</strong>它们幕后都会进行装箱，从而产生垃圾。如果性能很重要，请避免使用 LINQ 和正则表达式。如有可能，定时收集垃圾<br>
+如果确定垃圾收集冻结不会影响游戏中的某个特定点，则可以使用 System.GC.Collect<br>
+触发垃圾收集。<br>
+有关在哪些地方可以通过这样做而受益的示例，请参阅了解自动内存管理。<br>
+使用增量式垃圾收集器拆分GC 工作负载<br>
+增量式垃圾收集使用多个短得多的程序执行中断，而不是单次长时间的中断，将工作负载分布到多个帧上。如果垃圾收集影响了性能，可以尝试启用该选项，看看它能否显著减少 GC 尖峰问题。使用 Profile Analyzer 验证对应用程序的改善。</p>
+</li>
+</ul>
+<p><strong>如有可能，定时收集垃圾</strong></p>
+<p>如果确定垃圾收集冻结不会影响游戏中的某个特定点，则可以使用 <strong>System.GC.Collect</strong> 触发垃圾收集。</p>
+<p>有关在哪些地方可以通过这样做而受益的示例，请参阅<a href="https://docs.unity3d.com/cn/current/Manual/UnderstandingAutomaticMemoryManagement.html">了解自动内存管理</a>。</p>
+<p><strong>使用增量式垃圾收集器拆分GC 工作负载</strong></p>
+<p>增量式垃圾收集使用多个短得多的程序执行中断，而不是单次长时间的中断，将工作负载分布到多个帧上。如果垃圾收集影响了性能，可以尝试启用该选项，看看它能否显著减少 GC 尖峰问题。使用 Profile Analyzer 验证对应用程序的改善。</p>
+<figure data-type="image" tabindex="6"><img src="https://i.loli.net/2021/08/29/6jYBdAWERciFOIw.png" alt="img" loading="lazy"></figure>
+<center>使用增量式垃圾收集器减少 GC 尖峰。</center>
+<h1 id="自适应性能">自适应性能</h1>
+<p>通过 Unity 和 Samsung 的<a href="https://developer.samsung.com/codelab/game/adaptive-performance/overview.html">自适应性能</a>，可以监测设备的散热和功率状态，确保您能准备好去适当地做出反应。当用户玩了很长一段时间后，您可以动态减少细节级别 (LOD)偏差，帮助游戏继续流畅运行。自适应性能允许开发者以可控的方式提高性能，同时保持图形保真度。 虽然可以使用自适应性能 API 来微调应用程序，但该包也提供自动模式。在这些模式下，自适应性能根据几个关键指标来确定游戏设置 ：</p>
+<ul>
+<li>基于前几帧的所需帧率</li>
+<li>设备温度水平</li>
+<li>设备临近触发热事件</li>
+<li>设备限制（CPU 或 GPU）</li>
+</ul>
+<p>这四个指标决定了设备的状态，自适应性能将对调整后的设置进行微调，以减少瓶颈。这是通过提供一个整数值（称为索引器）来描述设备的状态来完成的。</p>
+<figure data-type="image" tabindex="7"><img src="https://i.loli.net/2021/08/29/mkLQdSCFeUc5GH9.png" alt="img" loading="lazy"></figure>
+<center>请注意，自适应性能仅适用于 Samsung 设备。</center>
+<p>要了解有关自适应性能的更多信息， 请查看我们在 Package Manager 中提供的<a href="https://docs.unity3d.com/Packages/com.unity.adaptiveperformance@2.1/manual/samples-guide.html">示例</a>（选择 <strong>Package Manager &gt; Adaptive Performance &gt; Samples</strong>）。每个示例都与特定的缩放器交互，因此可以了解不同的缩放器对游戏有何影响。我们还建议您查看<a href="https://docs.unity3d.com/Packages/com.unity.adaptiveperformance@2.1/manual/user-guide.html">最终用户文档</a>，以详细了解自适应性能配置以及如何直接与该 API交互。</p>
+<p><strong>编程和代码架构</strong></p>
+<p>Unity PlayerLoop 包含与游戏引擎核心交互的函数。这种树状结构包括许多处理初始化和每帧更新的系统。所有脚本都将依赖该 PlayerLoop 来创建游戏玩法。</p>
+<p>在进行性能分析时，可以看到项目的所有用户代码都位于 PlayerLoop 下（编辑器组件位于 EditorLoop 下）。</p>
+<h1 id="编程和代码架构">编程和代码架构</h1>
+<p>Unity PlayerLoop 包含与游戏引擎核心交互的函数。这种树状结构包括许多处理初始化和每帧更新的系统。所有脚本都将依赖该 PlayerLoop 来创建游戏玩法。</p>
+<p>在进行性能分析时，可以看到项目的所有用户代码都位于 PlayerLoop 下（编辑器组件位于 EditorLoop 下）。</p>
+<figure data-type="image" tabindex="8"><img src="https://i.loli.net/2021/08/29/hTsYqw26bxrfCzy.png" alt="img" loading="lazy"></figure>
+<center>自定义脚本、设置和图形会显著影响每一帧的计算和在屏幕上渲染的时间。</center>
+<p>可以按照以下提示和技巧优化脚本。</p>
+<p><strong>了解Unity Playerloop</strong></p>
+<p>确保了解 Unity 的帧循环的<a href="https://docs.unity3d.com/cn/current/Manual/ExecutionOrder.html">执行顺序</a>。每个 Unity 脚本都将按预定顺序运行多个事件函数。您应该了解 <strong>Awake</strong>、<strong>Start</strong>、<strong>Update</strong> 及其他创建脚本生命周期的函数之间的区别。</p>
+<p>有关事件函数的具体执行顺序，请参阅<a href="https://docs.unity3d.com/cn/current/Manual/ExecutionOrder.html">脚本生命周期流程图</a>。</p>
+<figure data-type="image" tabindex="9"><img src="https://i.loli.net/2021/08/29/qd3VxY5eSyXmpfG.png" alt="img" loading="lazy"></figure>
+<center>了解 PlayerLoop 和脚本的生命周期。</center>
+<p><strong>尽可能减少每帧运行的代码</strong></p>
+<p>考虑代码是否必须每一帧都运行。将不必要的逻辑移出 <strong>Update</strong>、 <strong>LateUpdate</strong> 和 <strong>FixedUpdate</strong>。可在这些事件函数中方便地放置必须每帧更新的代码，但应提取出任何不需要以这种频率更新的逻辑。尽可能只在情况发生改变时才执行逻辑。</p>
+<p>如果确实 需要使用 <strong>Update</strong>，可以考虑每 <em>n</em> 帧运行一次代码。这是一种应用时间切片 （将繁重的工作负载分布到多个帧的常用技术）的方法。在下面的示例中，我们每三帧运行一次 <strong>ExampleExpensiveFunction</strong>：</p>
+<pre><code class="language-c#">private int interval = 3;
+
+void Update()
+｛
+    if (Time.frameCount % interval == 0)
+    ｛
+        ExampleExpensiveFunction();
+    ｝
+｝
+</code></pre>
+<p><strong>避免在</strong> <strong>Start/Awake</strong> <strong>中处理复杂逻辑</strong></p>
+<p>加载第一个场景时，将为每个对象调用以下函数 ：</p>
+<ul>
+<li><strong>Awake</strong></li>
+<li><strong>OnEnable</strong></li>
+<li><strong>Start</strong></li>
+</ul>
+<p>在应用程序渲染其第一帧之前，避免在这些函数中处理代价高昂的逻辑。否则，可能会增加不必要的加载时间。</p>
+<p>有关加载第一个场景的详细信息，请参阅<a href="https://docs.unity3d.com/cn/current/Manual/ExecutionOrder.html">事件函数的执行顺序</a>。</p>
+<p><strong>避免空Unity</strong> <strong>事件</strong></p>
+<p>即使是空的 MonoBehaviour 也需要资源，因此应删除空的 <strong>Update</strong> 或 <strong>LateUpdate</strong> 方法。</p>
+<p>如果使用这些方法进行测试，请使用预处理器指令 ：</p>
+<pre><code class="language-c#">#if UNITY_EDITOR
+void Update()
+｛
+｝
+#endif
+</code></pre>
+<p>这样，您可以在编辑器中随意使用 <strong>Update</strong> 进行测试，而不会在构建版本中遗留不必要的开销。</p>
+<p><strong>删除调试日志语句</strong></p>
+<p>日志语句（尤其是在 <strong>Update</strong>、<strong>LateUpdate</strong> 或 <strong>FixedUpdate</strong> 中）可能会降低性能。在进行构建之前，请禁用<strong>日志</strong>语句。</p>
+<p>为了更轻松地执行该操作，可以考虑配合预处理指令创建一个<a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.conditionalattribute?view=net-5.0"> </a><a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.conditionalattribute?view=net-5.0">Conditional 属性</a>。例如，创建如下所示的自定义类 ：</p>
+<pre><code class="language-c#">public static class Logging
+｛
+  [System.Diagnostics.Conditional(“ENABLE_LOG”)]
+  static public void Log(object message)
+  ｛
+    UnityEngine.Debug.Log(message);
+  ｝
+｝
+</code></pre>
+<figure data-type="image" tabindex="10"><img src="https://i.loli.net/2021/08/29/qepVWfIyYn9JCQj.png" alt="img" loading="lazy"></figure>
+<center>添加自定义预处理器指令可对脚本进行分区。</center>
+<p>使用自定义类生成日志消息。如果在 <strong>Player Settings</strong> 中禁用 <strong>ENABLE_LOG</strong> 预处理器，您的所有 <strong>Log</strong> 语句都会立即消失。</p>
+<p><strong>使用哈希值而不是字符串参数</strong></p>
+<p>Unity 不使用字符串名称对 Animator、Material 和 Shader 属性进行内部寻址。为了加快速度，所有属性名称都经过哈希处理为属性 ID，实际上是这些 ID 用于寻址属性。</p>
+<p>每当在 Animator、Material 或 Shader 上使用 Set 或 Get 方法时，请使用整数值方法而非字符串值方法。字符串方法只执行字符串哈希处理，然后将经过哈希处理的 ID 转发给整数值方法。</p>
+<p>对于 Animator 属性名称，使用<a href="https://docs.unity3d.com/ScriptReference/Animator.StringToHash.html?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a><a href="https://docs.unity3d.com/ScriptReference/Animator.StringToHash.html">Animator.StringToHash</a>，对于 Material 和 Shader 属性名称，使用 <a href="https://docs.unity3d.com/ScriptReference/Shader.PropertyToID.html">Shader.PropertyToID</a>。</p>
+<p><strong>选择正确的数据结构</strong></p>
+<p>随着每一帧迭代成千上万次，所选择的数据结构可能存在累积效应会导致高效或低效。是否使用 List、Array 或 Dictionary 来处理集合会更合理？在 C# 中，请以<a href="https://msdn.microsoft.com/en-us/library/7y3x785f"> </a><a href="https://docs.microsoft.com/en-us/dotnet/standard/collections/?redirectedfrom=MSDN">MSDN 数据结构指南</a>作为常规指南来选择正确的数据结构。</p>
+<p><strong>避免在运行时添加组件</strong></p>
+<p>在运行时调用 <strong>AddComponent</strong> 需要一些开销。每当在运行时添加组件时，Unity 都必须检查是否有重复项或是否需要其他组件。</p>
+<p>对设置好所需组建的<a href="https://docs.unity3d.com/cn/current/Manual/Prefabs.html">预制件进行实例化</a>，通常性能表现更优异。</p>
+<p><strong>缓存游戏对象和组件</strong></p>
+<p><strong>GameObject.Find</strong>、<strong>GameObject.GetComponent</strong> 和 <strong>Camera.main</strong>（ 在 2020.2之前的版本中）可能开销较大，应避免在 <strong>Update</strong> 方法中调用它们。而应在 <strong>Start</strong> 中调用它们，并且缓存相应结果。</p>
+<p>例如，下面演示低效使用重复的 <strong>GetComponent</strong> 调用 ：</p>
+<pre><code class="language-c#">void Update()
+｛
+  Renderer myRenderer = GetComponent&lt;Renderer&gt;(); 
+  ExampleFunction(myRenderer);
+｝
+</code></pre>
+<p>如果函数结果已缓存，就可以仅调用 <strong>GetComponent</strong> 一次。缓存的结果可以在 <strong>Update</strong> 中重用，无需再调用 <strong>GetComponent</strong>。</p>
+<pre><code class="language-c#">private Renderer myRenderer; 
+void Start()
+｛
+  myRenderer = GetComponent&lt;Renderer&gt;();
+｝
+void Update()
+｛
+  ExampleFunction(myRenderer);
+｝
+</code></pre>
+<p><strong>使用对象池</strong></p>
+<p><strong>Instantiate</strong> 和 <strong>Destroy</strong> 可能生成垃圾和垃圾收集 (GC) 尖峰，通常是一个缓慢的过程。请不要频繁初始化和销毁游戏对象（例如，从枪射出子弹），而应使用预分配的对象<a href="https://en.wikipedia.org/wiki/Object_pool_pattern">池</a>，这样可以重用和回收。</p>
+<figure data-type="image" tabindex="11"><img src="https://i.loli.net/2021/08/29/PyWOr5uzHNFTgwB.png" alt="img" loading="lazy"></figure>
+<center>在本示例中，ObjectPool 创建 20 个 PlayerLaser 实例以供重用。</center>
+<figure data-type="image" tabindex="12"><img src="https://i.loli.net/2021/08/29/hy9s2EiV1b3kanA.png" alt="img" loading="lazy"></figure>
+<center>PlayerLaser 对象的池处于不活动状态，已准备好可以发射。</center>
+<p>在 CPU 尖峰不那么明显的时候，在游戏中某个点（如在菜单屏幕出现时）创建可重用的实例。通过集合跟踪对象“池”。在游戏过程中，只是在需要时启用下一个可用实例，禁用对象而不是销毁对象，然后将其返回池。</p>
+<p>这样可减少项目中托管分配的数量，可以防止垃圾收集问题。</p>
+<p><a href="https://docs.unity3d.com/Manual/ProfilerWindow.html">在此</a>了解如何在 Unity 中创建简单对象池系统。</p>
+<p><strong>使用ScriptableObject</strong></p>
+<p>在 <strong>ScriptableObject</strong> 中而不是 MonoBehaviour 中存储不变的值或设置。ScriptableObject 这种资源只需设置一次就可以在项目中一直使用。它不能直接附加到游戏对象。</p>
+<p>在 ScriptableObject 中创建字段来存储值或设置，然后在 Monobehaviour 中引用该 ScriptableObject。</p>
+<figure data-type="image" tabindex="13"><img src="https://i.loli.net/2021/08/29/PlUMYBpQ6JrfKo3.png" alt="img" loading="lazy"></figure>
+<center>在此示例中，名为 Inventory 的 ScriptableObject 为各种游戏对象保存设置。</center>
+<p>使用 ScriptableObject 的这些字段可以防止每次使用该 Monobehaviour 实例化对象时出现不必要的数据重复。</p>
+<p>观看此 <a href="https://www.bilibili.com/video/BV1Ni4y1E75u">ScriptableObject 简介</a>教程了解 ScriptableObject 可以如何帮助项目开发。也可以<a href="https://docs.unity3d.com/cn/current/Manual/class-ScriptableObject.html">在此</a>查找文档</p>
+<h1 id="项目配置">项目配置</h1>
+<p>有一些项目设置会影响移动端性能。</p>
+<p><strong>降低或禁用Accelerometer Frequency</strong></p>
+<p>Unity 每秒对移动端的加速度计进行几次池操作。如果在应用程序中不会使用，请将其禁用，或者降低其频率，从而提升性能。</p>
+<figure data-type="image" tabindex="14"><img src="https://i.loli.net/2021/08/29/fEtk58gbn76iN3c.png" alt="img" loading="lazy"></figure>
+<center>如果在移动游戏中不会使用 Accelerometer Frequency，请务必将其禁用。</center>
+<p><strong>禁用不必要的</strong> <strong>Player</strong> <strong>或Quality</strong> <strong>设置</strong></p>
+<p>在 <strong>Player</strong> 设置中，对不支持的平台禁用 <strong>Auto Graphics API</strong>，以便防止生成过多着色器变体。如果应用程序不支持，对较旧的 CPU 禁用 <strong>Target Architectures</strong>。</p>
+<p>在 <strong>Quality</strong> 设置中，禁用不需要的质量级别。</p>
+<p><strong>禁用不必要的物理设置</strong></p>
+<p>如果游戏不使用物理设置，请取消选中 <strong>Auto Simulation</strong> 和 <strong>Auto Sync Transforms</strong>。否则它们会降低应用程序运行速度，却并无任何可见的好处。</p>
+<p><strong>选择正确的帧率</strong></p>
+<p>移动端项目必须在帧率和电池续航时间以及热节流之间获得平衡。不需要将设备限值推向 60 fps，可以折衷以 30 fps 运行。Unity 默认移动端为 30 fps。</p>
+<p>您也可以通过 <strong>Application.targetFrameRate</strong> 在运行时动态调整帧率。例如，您甚至可以将缓慢或相对静止的场景降至 30 fps 以下，而将玩游戏时的 fps 设置保留为较高值。</p>
+<p><strong>避免使用过多层级</strong></p>
+<p>拆分层级！在层级视图中如果游戏对象不需要嵌套，请简化父子化。较少的层级关系将受益于多线程刷新场景中的变换 (Transform)。复杂层级关系会发生不必要的变换 (Transform) 计算以及更多垃圾收集开销。</p>
+<p>请参阅<a href="https://mp.weixin.qq.com/s/R7RBYhw2SD5muyAV7xkIZw">优化层级关系</a>和此 <a href="https://www.youtube.com/watch?v=W45-fsnPhJY&amp;t=794s">Unite 报告</a>了解变换 (Transform) 的最佳实践。</p>
+<p><strong>变换一次，而非两次</strong></p>
+<p>另外，移动变换 (Transform) 时，使用<a href="https://docs.unity3d.com/ScriptReference/Transform.SetPositionAndRotation.html?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a><a href="https://docs.unity3d.com/ScriptReference/Transform.SetPositionAndRotation.html">Transform.SetPositionAndRotation</a> 可以一次就同时更新位置和旋转。这样可以避免两次修改变换（Transform）的开销。</p>
+<p>如果需要在运行时<a href="https://docs.unity3d.com/ScriptReference/Object.Instantiate.html">初始化</a>游戏对象，一项简单的优化是在初始化过程中父子化和重新定位 ：</p>
+<pre><code class="language-c#">GameObject.Instantiate(prefab, parent);
+GameObject.Instantiate(prefab, parent, position, rotation);
+</code></pre>
+<p>有关 Object.Instantiate 的更多详细信息，请参阅<a href="https://docs.unity3d.com/ScriptReference/Object.Instantiate.html">脚本 API</a>。</p>
+<p><strong>假设Vsync</strong> <strong>已启用</strong></p>
+<p>移动平台不渲染半帧。即使在编辑器中禁用 Vsync (<strong>Project Settings &gt; Quality</strong>)， Vsync 在硬件级别也处于启用状态。如果 GPU 无法足够快地刷新，将保持当前帧，从而有效降低每秒帧数。</p>
+<h1 id="资源">资源</h1>
+<p>资源管线可以大幅影响应用程序的性能。经验丰富的技术美术师可以帮助您的团队定义和增强资源格式、规范以及导入设置。</p>
+<p>不要依赖于默认设置。使用平台特定的覆盖选项卡可以优化纹理和网格几何体等资源。如果设置不正确，则可能造成较大的编译版本大小、较长的构建时间，以及较差的内存使用量。可以考虑使用预设功能来帮助为特定项目自定义基准设置，以确保最优设置。</p>
+<p>请参阅<a href="https://docs.unity3d.com/cn/current/Manual/ImportingAssets.html">此艺术资源最佳实践指南</a>了解更多详细信息，或者在 Unity Learn 上了解有关<a href="https://learn.unity.com/course/arm-he-unity-lian-he-tui-chu-gua-yong-yu-yi-dong-ying-yong-cheng-xu-de-3d-mei-zhu-you-hua">适用于移动应用程序的 3D 美术优化</a>的课程。</p>
+<p><strong>正确导入纹理</strong></p>
+<p>纹理会占用大部分内存，因此，导入设置非常重要。通常，请遵循以下指导原则 ：</p>
+<ul>
+<li><strong>减小 Max Size</strong> <strong>：使用能生成视觉上可接受的结果的最低设置。这种非破坏性方式，可以快速降低纹理内存。</strong></li>
+<li><strong>使用</strong> <strong>2</strong> <strong>的幂</strong> <strong>(POT)</strong> <strong>：Unity</strong> <strong>要求移动端纹理压缩格式</strong> （PVRCT 或 ETC）采用 POT 纹理尺寸。</li>
+<li><strong>制作纹理图集</strong>将多个纹理放置到单个纹理中，可以减少绘制调用和加快渲染速度。使用<a href="https://docs.unity3d.com/Manual/class-SpriteAtlas.html?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a><a href="https://docs.unity3d.com/cn/current/Manual/class-SpriteAtlas.html">Unity 精灵图集</a> 或第三方 <a href="https://www.codeandweb.com/texturepacker">Texture Packer</a> 可以制作纹理图集。</li>
+<li><strong>关闭</strong> <strong>Read／Write Enabled</strong> <strong>选项</strong>如果启用，此选项在 CPU 和 GPU 可寻址内存中都会创建副本，纹理会占用双倍内存。大多数情况下，应保持此选项为禁用状态。如果要在运行时生成纹理，请通过 <strong>Texture2D.Apply</strong> 强制执行，并且传入设置为 <strong>true</strong> 的 <strong>makeNoLongerReadable</strong>。</li>
+<li><strong>禁用不必要的</strong> <strong>Mip Map</strong>屏幕上大小保持不变的纹理（如 2D 精灵和 UI 图形），Mip Map 不是必需的，对于与摄像机的距离会变化的 3D 模型，请保留 Mip Map为启用状态。</li>
+</ul>
+<figure data-type="image" tabindex="15"><img src="https://i.loli.net/2021/08/29/gy1Tm4vAwqir258.png" alt="img" loading="lazy"></figure>
+<center>正确的纹理导入设置有助于优化版本大小。</center>
+<p><strong>压缩纹理</strong></p>
+<p>考虑以下使用相同模型和纹理的两个实例。左侧的设置几乎使用右侧设置八倍的内存量，但并没有改善视觉质量。</p>
+<figure data-type="image" tabindex="16"><img src="https://i.loli.net/2021/08/29/VGinLBgkeQ63lyY.png" alt="img" loading="lazy"></figure>
+<center>未压缩的纹理需要更多内存。</center>
+<p>对 iOS 和 Android 都使用自适应可伸缩纹理压缩 (ATSC)。绝大多数开发目标最低规格设备游戏都支持 ATSC 压缩。</p>
+<p>唯一的例外是 ：</p>
+<ul>
+<li>适用于面向 A7 设备或更低规格的 iOS 游戏（例如 iPhone 5、5S 等）— 使用 PVRTC</li>
+<li>适用于面向 2016 之前的设备的 Android 游戏 — 使用 ETC2（Ericsson 纹理压缩）</li>
+</ul>
+<p>如果压缩格式（如 PVRTC 和 ETC）的质量不够高，并且目标平台不完全支持 ASTC，请尝试采用 16 位纹理而不是 32 位纹理。</p>
+<p>请参阅手册了解有关<a href="https://docs.unity3d.com/cn/current/Manual/class-TextureImporterOverride.html">各平台的推荐纹理压缩格式</a>的更多信息。</p>
+<p><strong>调整网格导入设置</strong></p>
+<p>与纹理很像，如果导入时不小心，网格可能占用过多内存。要尽可能减少网格占用的内存，请执行以下操作 ：</p>
+<ul>
+<li><strong>压缩网格</strong>高性能压缩可以减少占用磁盘空间（但不会影响运行时的内存）。请注意，网格量化可能造成不准确，因此应试验不同的压缩级别，从而找到适合模型的压缩级别。</li>
+<li><strong>禁用</strong> <strong>Read／Write</strong> 如果启用此选项，内存中会有重复网格，网格的一个副本在系统内存中，另一个在 GPU 内存中。大多数情况下，应将其禁用（在 Unity 2019.2 以及更早版本中，此选项默认为选中状态）。<br>
+`- <strong>禁用骨骼和</strong> <strong>BlendShape</strong>如果网格不需要骨架或 BlendShape 动画，请尽可能禁用这些选项。</li>
+<li><strong>尽可能禁用法线和切线</strong>如果确信网格的材质不需要法线或切线，请取消选中这些选项，以节省更多内存。</li>
+<li><img src="https://i.loli.net/2021/08/29/WFVir17LtshukJM.png" alt="img" loading="lazy"></li>
+</ul>
+<center>检查网格导入设置。</center>
+<p><strong>检查多边形数量</strong></p>
+<p>分辨率越高的模型，需要的内存使用量越大，并且可能占用更长的 GPU 时间。您的背景几何体是否需要五十万个多边形？考虑减少所选 DCC 包中的模型。删除摄像机的视角看不到的多边形。使用纹理和法线贴图而不是高密度网格来实现精细的细节。</p>
+<p><strong>使用AssetPostprocessor</strong> <strong>自动执行导入设置。</strong></p>
+<p>利用 <a href="https://docs.unity3d.com/ScriptReference/AssetPostprocessor.html">AssetPostprocessor</a> 可以在导入资源时运行脚本。这样，您可以在导入模型、纹理、音频等之前和 / 或之后对设置进行自定义。</p>
+<p><strong>使用可寻址资源系统</strong></p>
+<p><a href="http://docs.unity3d.com/Packages/com.unity.addressables@1.18/manual/index.html">可寻址资源系统</a>提高一种简化的方法来管理内容，按“地址”或别名加载资源包。这种统一的系统从本地路径或远程内容分发网络 (CDN) 执行异步加载。</p>
+<figure data-type="image" tabindex="18"><img src="https://i.loli.net/2021/08/29/Ywb7K6jupyeflPN.png" alt="img" loading="lazy"></figure>
+<p>如果将非代码资源（模型、纹理、预制件、音频，甚至整个场景）拆分为<a href="https://docs.unity3d.com/cn/current/Manual/AssetBundlesIntro.html">资源包</a>，则可以将它们分为可下载内容 (DLC)。</p>
+<p>然后，使用 Addressables 为移动端应用程序创建较小的初始构建版本。<a href="https://unity.cn/product/cloud-content-delivery">云端资源分发</a>可承载您的游戏内容并随着玩家的游戏进展将内容分发至玩家。</p>
+<figure data-type="image" tabindex="19"><img src="https://i.loli.net/2021/08/29/HIcvg2StdXhJL9R.png" alt="img" loading="lazy"></figure>
+<center>使用可寻址资源系统按“地址”加载资源。</center>
+<p>单击<a href="https://unity.com/cn/how-to/simplify-your-content-management-addressables">此处</a>查看可寻址资源系统如何简化资源管理。</p>
+<h1 id="图形和gpu优化">图形和GPU优化</h1>
+<p>每一帧，Unity 都需要确定必须渲染哪些对象，然后创建绘制调用。绘制调用是调用图形 API 来绘制对象（如三角形），而批处理是要一起执行的一组绘制调用。</p>
+<p>随着项目变得更加复杂，您需要用管线来优化 GPU 的工作负载。<strong>通用渲染管线</strong> <strong>(URP)</strong> 目前使用单通道前向渲染器将高质量图形传输给移动平台（未来版本中将提供延迟渲染功能）。来自游戏主机和 PC 的、基于物理的光照和材质也可以缩放为适合手机或平板电脑。</p>
+<p>以下指导原则可以帮助您提高图形处理速度。</p>
+<p><strong>批处理执行绘制调用</strong></p>
+<p>将要绘制的对象组合为批次，可以尽可能减少在批次中绘制每个对象所需的状态更改。这种方式通过减少渲染对象的 CPU 开销，可以改善性能。Unity 可以使用以下几种方法将多个对象组合为较少的批次 ：</p>
+<ul>
+<li>
+<p><strong>动态批处理</strong>对于小网格，Unity 在 CPU 上分组和转换顶点，然后一次性绘制它们。注意 ：只在有足够低复杂度网格（少于 900 个顶点属性和不超过 300 个顶点）时使用这一方法。动态批处理程序不会对更大的网格进行批处理，如果启用会浪费 CPU 时间在每一帧都去查找要批处理的小网格。</p>
+</li>
+<li>
+<p><strong>静态批处理</strong>对于不移动的几何体，Unity 可以减少所有共享相同材质的网格的绘制调用。它比动态批处理更有效，但使用更多内存。</p>
+</li>
+<li>
+<p><strong>GPU</strong> <strong>实例化 ：如果有大量相同的对象，这种方法通过图像硬件对它们进行更有效地批处理。</strong></p>
+</li>
+<li>
+<p><strong>SRP</strong> <strong>批处理 ：在</strong> <strong>Advanced</strong> <strong>下面的</strong> <strong>Universal Render Pipeline Asset</strong> <strong>中启用</strong> <a href="https://mp.weixin.qq.com/s/-4Bhxtm_L5paFFAv8co4Xw">SRP Batcher</a>。这样可以<a href="https://mp.weixin.qq.com/s/-4Bhxtm_L5paFFAv8co4Xw">大幅提高 CPU 渲染速度</a>，具体取决于场景。</p>
+<figure data-type="image" tabindex="20"><img src="https://i.loli.net/2021/08/29/R4fDaLphwsmOdZA.png" alt="img" loading="lazy"></figure>
+</li>
+</ul>
+<center>组织游戏对象，以便利用这些批处理方法。</center>
+<p><strong>使用帧调试器</strong> <strong>(Frame Debugger)</strong></p>
+<p><a href="https://docs.unity3d.com/cn/current/Manual/FrameDebugger.html">帧调试器</a>介绍每一帧是如何通过各绘制调用构建的。这是非常重要的工具，可以解决着色器属性问题，帮助您分析游戏渲染方式。</p>
+<p>第一次使用帧调试器？<a href="https://learn.unity.com/tutorial/working-with-the-frame-debugger">此处</a>可查看该简介。</p>
+<figure data-type="image" tabindex="21"><img src="https://i.loli.net/2021/08/29/ThMmEKd972Y3Hxc.png" alt="img" loading="lazy"></figure>
+<center>帧调试器将每一帧分到不同的步骤中。</center>
+<p><strong>避免使用过多动态光线</strong></p>
+<p>与旧版前向渲染器相比，URP 可以减少绘制调用的数量。避免向移动端应用程序添加过多动态光线。考虑采用其他方式，如对动态网格使用自定义着色器效果和光照探针，以及对静态网格使用烘焙光照。</p>
+<p>对于 URP 的特定限制以及内置渲染管线实时光照，请参阅此<a href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.4/manual/universalrp-builtin-feature-comparison.html">功能对比表</a>。</p>
+<p><strong>禁用阴影</strong></p>
+<p>阴影投射可按 MeshRenderer 和光线禁用。尽可能禁用阴影可以减少绘制调用。</p>
+<p>您也可以通过向简单网格应用模糊纹理或在角色下面应用四边形来创建伪阴影。另外，可以使用自定义着色器创建模糊阴影。</p>
+<figure data-type="image" tabindex="22"><img src="https://i.loli.net/2021/08/29/DgkYFuS1KEn47Xe.png" alt="img" loading="lazy"></figure>
+<center>禁用阴影投射可以减少绘制调用。</center>
+<p><strong>将光照烘焙到光照贴图中</strong></p>
+<p>使用全局光照 (GI) 向静态几何体添加动态光照。使用 <strong>Contribute GI</strong> 标记对象，以便您可以将高质量的光照存储为光照贴图的形式。</p>
+<p>这样，烘焙阴影和光照的渲染不会影响运行时性能。渐进式 CPU 和 GPU 光照贴图可以加快全局光照的烘焙。</p>
+<figure data-type="image" tabindex="23"><img src="https://i.loli.net/2021/08/29/foDIsnRxvBZezNm.png" alt="img" loading="lazy"></figure>
+<center>启用 Contribute GI。</center>
+<figure data-type="image" tabindex="24"><img src="https://i.loli.net/2021/08/29/Vn2oNAThlWbFXO7.png" alt="img" loading="lazy"></figure>
+<center>调整 Lightmapping Settings (Windows > Rendering > Lighting Settings) 和 Lightmap 大小，从而限制内存使用量。</center>
+<p>请参阅<a href="https://docs.unity3d.com/cn/current/Manual/Lightmapping.html">手册指南</a>和<a href="https://unity.com/cn/how-to/advanced/optimize-lighting-mobile-games">有关光照优化的文章</a>了解如何开始在 Unity 中使用光照贴图。</p>
+<p><strong>使用光源层</strong></p>
+<p>对于多光源的复杂场景，将对象分层，然后限定每个光源对特定剔除遮罩 (culling mask) 的影响。</p>
+<figure data-type="image" tabindex="25"><img src="https://i.loli.net/2021/08/29/XI3Y95TgfKmh4Fs.png" alt="img" loading="lazy"></figure>
+<center>层可以限制光源对特定剔除遮罩的影响。</center>
+<p><strong>对移动对象使用光照探针</strong></p>
+<p>光照探针存储场景中的空白空间的烘焙光照信息并且提供高质量的光照（直接和间接）。它们使用球谐函数，这种函数的计算速度比动态光照快很多。</p>
+<figure data-type="image" tabindex="26"><img src="https://i.loli.net/2021/08/29/TRKEGWpaQcJx4wd.png" alt="img" loading="lazy"></figure>
+<center>光照探针照亮背景中的动态对象。</center>
+<p><strong>使用细节级别</strong> <strong>(lOD)</strong></p>
+<p>随着对象移向远处，<a href="https://docs.unity3d.com/cn/current/Manual/LevelOfDetail.html">细节级别</a>可以将它们切换为使用更简单的网格，以及更简单的材质和着色器，从而帮助提高 GPU 性能。</p>
+<p>请参阅 Unity Learn 上的<a href="https://learn.unity.com/tutorial/working-with-lods">使用 LOD 级别</a>课程了解更多详细信息。</p>
+<figure data-type="image" tabindex="27"><img src="https://i.loli.net/2021/08/29/wbdqvU3la1yfP4G.png" alt="img" loading="lazy"></figure>
+<center>使用 LOD Group 的网格示例。</center>
+<figure data-type="image" tabindex="28"><img src="https://i.loli.net/2021/08/29/RCnobkK3FAZfl4u.png" alt="img" loading="lazy"></figure>
+<center>源网格，以不同分辨率建模。</center>
+<p><strong>使用遮挡剔除来移除隐藏的对象</strong></p>
+<p>隐藏在其他对象之后的对象仍然可能渲染和使用资源。使用遮挡剔除可以将它们丢弃。摄像机之外的视锥体剔除 (frustum culling) 是自动执行的，遮挡剔除 (occlusion culling) 是则要经过烘焙过程。只需将对象标记为<strong>静态遮挡物</strong>或<strong>被遮挡物</strong>，然后通过 <strong>Window &gt; Rendering &gt; Occlusion Culling</strong> 对话框进行烘焙。尽管不是所有场景都适合，剔除在很多情况下都能改善性能。</p>
+<p>请参阅<a href="https://learn.unity.com/tutorial/6110d62eedbc2a331150f8d0">使用遮挡剔除</a>教程了解更多信息。</p>
+<p><strong>避免使用移动端原生分辨率</strong></p>
+<p>手机和平板电脑越来越高级，新生代设备往往采用极高的分辨率。</p>
+<p>使用 <strong>Screen.SetResolution(width, height, false)</strong> 可降低输出分辨率，提升一定的性能。配置多个分辨率，在质量和速度之间找到最佳平衡。</p>
+<p><strong>限制摄像机的使用</strong></p>
+<p>每个摄像机都会产生开销，无论它是否在做有意义的工作。只在有必要渲染时才使用摄像机组件。在低端移动平台，每个摄像机最多可以使用 1 ms CPU 时间。</p>
+<p><strong>保持着色器简单</strong></p>
+<p>通用渲染管线包含几个轻量级光照和无光照着色器，它们已针对移动平台进行了优化。让着色器变体的数量尽可能保持较少的状态，这样可以大幅减少运行时内存使用量。如果默认 URP 着色器不满足需要，可以使用 <a href="https://unity.com/cn/shader-graph">Shader Graph</a> 自定义材质的外观。请参阅<a href="https://unity.com/cn/shader-graph">此处</a>了解如何使用 Shader Graph 以可视化的方式构建着色器。</p>
+<figure data-type="image" tabindex="29"><img src="https://i.loli.net/2021/08/29/zoQAnxeJp2myrBc.png" alt="img" loading="lazy"></figure>
+<center>使用 Shader Graph 创建自定义着色器。</center>
+<p><strong>尽可能减少过度绘制和Alpha</strong> <strong>混合</strong></p>
+<p>避免绘制不必要的透明或半透明图像。这种方式导致的过度绘制和 Alpha 混合会极大影响移动平台。不要重叠几乎看不到的图像或效果。可以使用 <a href="https://docs.unity3d.com/cn/current/Manual/RenderDocIntegration.html">RenderDoc</a> 图形调试器检查过度绘制。</p>
+<p><strong>限制后期处理效果</strong></p>
+<p>全屏幕<a href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.3/manual/integration-with-post-processing.html">后期处理</a>效果（如发光）会极大降低性能。请在游戏的美术设计中谨慎使用这些效果。</p>
+<figure data-type="image" tabindex="30"><img src="https://i.loli.net/2021/08/29/4TUSc9h35RPZCOX.png" alt="img" loading="lazy"></figure>
+<center>在移动应用程序中使用简单后期处理。</center>
+<p><strong>小心使用 Renderer.material</strong></p>
+<p>在脚本中访问 <strong>Renderer.material</strong> 会复制材质并返回对新副本的引用。这会破坏任何已包含该材质的现有批次。如果要访问批次中对象的材质，请改用 <a href="https://docs.unity3d.com/ScriptReference/Renderer-sharedMaterial.html"><strong>Renderer.sharedMaterial</strong></a>。</p>
+<p><strong>优化</strong> <strong>SkinnedMeshRenderer</strong></p>
+<p>蒙皮网格的渲染开销很大。确保每一个使用 <strong>SkinnedMeshRenderer</strong> 的对象都是需要它的。如果游戏对象只在某些时候需要动画，请使用 <strong>BakeMesh</strong> 函数将蒙皮网格冻结在静态姿势中，并在运行时切换为简单的 <strong>MeshRenderer</strong>。</p>
+<p><strong>尽可能减少反射探针</strong></p>
+<p><a href="https://docs.unity3d.com/cn/current/Manual/class-ReflectionProbe.html">反射探针</a>可以创建逼真的反射，但在批处理中，它的开销巨大。使用低分辨率立方体贴图、剔除遮罩和纹理压缩可以改善运行时性能。</p>
+<h1 id="用户界面">用户界面</h1>
+<p><a href="https://docs.unity3d.com/Packages/com.unity.ugui@1.0/manual/index.html">Unity UI</a> (UGUI) 常常是性能问题的来源。Canvas 组件生成和更新 UI 组件的网格并向 GPU 发出绘制调用。它的运行开销很大，因此，在使用 UGUI 时，请注意以下因素。</p>
+<p><strong>划分画布</strong></p>
+<p>如果是包含成千上万个元素的大型画布，更新单个 UI 元素就必须更新整个画布，这可能会造成 CPU 尖峰。</p>
+<p>利用 UGUI 的功能可以支持多个画布。根据 UI 元素的更新频率要求，划分这些元素。将静态 UI 元素保留在单独的画布上，将同时更新的动态元素保留在较小的子画布上。</p>
+<p>确保每个画布中的 UI 元素都有相同的 Z 值、材质和纹理。</p>
+<p><strong>隐藏不可见的UI</strong> <strong>元素</strong></p>
+<p>可能有些 UI 元素（如仅当角色收到伤害时才出现的生命值血条）只偶尔在游戏中出现。如果不可见的 UI 元素是活动的，它仍然可能使用绘制调用。显式禁用所有不可见的 UI 组件，在需要时再重新启用。</p>
+<p>如果只需要关闭画布的可见性，请禁用 Canvas 组件而不是游戏对象。这样就不必重新构建网格和顶点。</p>
+<p><strong>限制GraphicRaycaster</strong> <strong>和禁用Raycast Target</strong></p>
+<p>输入事件（如屏上触摸或单击）需要 <strong>GraphicRaycaster</strong> 组件。它只是循环处理屏幕上的每个输入点，检查它是否在 UI 的 RectTransform 之内。</p>
+<p>从层级视图的顶层画布中移除默认的 <strong>GraphicRaycaster</strong>。只向需要交互的各元素（按钮、滚动矩形等）添加 <strong>GraphicRaycaster</strong>。</p>
+<figure data-type="image" tabindex="31"><img src="https://i.loli.net/2021/08/29/yKDbnwctCpTRZoN.png" alt="img" loading="lazy"></figure>
+<center>禁用在默认情况下处于活动状态的 Ignore Reversed Graphics。</center>
+<p>另外，在所有不需要 <strong>Raycast Target</strong> 的 UI 文本和图像上将其禁用。如果是包含很多元素的复杂 UI，所有这些小更改都可以减少不必要的计算。</p>
+<figure data-type="image" tabindex="32"><img src="https://i.loli.net/2021/08/29/JOcwlodeWya3Q6q.png" alt="img" loading="lazy"></figure>
+<center>尽可能禁用 Raycast Target。</center>
+<p><strong>避免使用布局组</strong></p>
+<p>布局组的更新很低效，应少量使用。如果内容是动态的，应完全避免不用，而是使用锚点进行比例布局。或者，创建自定义代码，在<a href="https://docs.unity3d.com/Packages/com.unity.ugui%401.0/manual/UIAutoLayout.html?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a><a href="https://docs.unity3d.com/Packages/com.unity.ugui@1.0/manual/UIAutoLayout.html">Layout Group</a> 组件设置 UI 之后，将该组件禁用。</p>
+<p>如果动态元素确实需要使用布局组（水平、垂直、网格），应避免嵌套它们，从而改善性能。</p>
+<figure data-type="image" tabindex="33"><img src="https://i.loli.net/2021/08/29/sUtugLDliCkE9Tm.png" alt="img" loading="lazy"></figure>
+<center>布局组会降低性能，尤其是在嵌套时。</center>
+<p><strong>避免使用大型列表和网格视图</strong></p>
+<p>大型列表和网格视图开销很大。如果需要创建大型列表或网格视图（如包含成百上千项目的物品栏屏幕），可以考虑重复使用较小的 UI 元素池，而不是为每个项目都创建 UI 元素。请参阅此示例<a href="https://github.com/boonyifei/ScrollList"> </a><a href="https://github.com/boonyifei/ScrollList">GitHub 项目</a>了解实际方法。</p>
+<p><strong>避免大量使用重叠元素</strong></p>
+<p>对大量 UI 元素（如卡牌游戏中堆叠的卡牌）分层会造成过度绘制。自定义代码在运行时将分层元素合并到更少的元素和批次中。</p>
+<p><strong>使用多种分辨率和宽高比</strong></p>
+<p>现在，移动设备使用的分辨率和屏幕大小极为不同，创建<a href="https://docs.unity3d.com/Packages/com.unity.ugui@1.0/manual/HOWTO-UIMultiResolution.html">不同的 UI 版本</a>可以按设备提供最佳体验。</p>
+<p>使用<a href="https://docs.unity3d.com/Manual/com.unity.device-simulator.html">设备模拟器</a>可以预览 UI 在各种受支持的设备上的呈现。您也可以在<a href="https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/GettingStartedwithiOSSimulator/GettingStartedwithiOSSimulator.html%23//apple_ref/doc/uid/TP40012848-CH5-SW10"> </a><a href="https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/GettingStartedwithiOSSimulator/GettingStartedwithiOSSimulator.html#//apple_ref/doc/uid/TP40012848-CH5-SW10">XCode</a> 和 <a href="https://developer.android.com/studio/run/managing-avds">Android Studio</a> 中创建虚拟设备。</p>
+<figure data-type="image" tabindex="34"><img src="https://i.loli.net/2021/08/29/Lp93JNux75dFWOU.png" alt="img" loading="lazy"></figure>
+<center>使用设备模拟器预览各种屏幕格式。</center>
+<p><strong>使用全屏UI</strong> <strong>时，隐藏其他全部内容</strong></p>
+<p>如果暂停屏幕或者启动屏幕遮住场景中的其他全部内容，则禁用摄像机对 3D 场景的渲染。同样，禁用隐藏在顶层画布之后的所有背景画布元素。</p>
+<p>由于不需要以 60 fps 的帧率进行更新，可以考虑在全屏 UI 过程中降低 <strong>Application.targetFrameRate。</strong></p>
+<p><strong>将摄像机分配给世界空间画布和摄像机空间画布</strong></p>
+<p>将 <strong>Event</strong> 或 <strong>Render Camera</strong> 字段留空会使 Unity 填充 <strong>Camera</strong>.<strong>main</strong>，这会导致不必要的开销。</p>
+<p>尽可能使画布 <strong>RenderMode</strong> 采用 <strong>Screen Space - Overlay</strong>，这样就不需要摄像机。</p>
+<figure data-type="image" tabindex="35"><img src="https://i.loli.net/2021/08/29/LiBVwUj8Q19M5Fl.png" alt="img" loading="lazy"></figure>
+<center>使用世界空间 (World Space) 渲染模式时，请务必填充 Event Camera。</center>
+<h1 id="音频">音频</h1>
+<p>尽管音频通常不会造成性能瓶颈，还是可以进行优化以节省内存。</p>
+<p><strong>尽量使用单声道声音剪辑</strong></p>
+<p>如果要使用 3D 空间音频， 请以单声道 (single channel) 的形式创作声音剪辑，或者启用 Force To Mono 设置。在运行时定位使用的多声道声音会扁平化为单声道源，因此会增加 CPU 开销和浪费内存。</p>
+<p><strong>尽可能使用原始未压缩WAV</strong> <strong>文件作为源资源</strong></p>
+<p>如果使用任何压缩格式（如 MP3 或 Vorbis），Unity 会将其解压并在构建时重新压缩。这样会导致两个有损通道，从而降低最终质量。</p>
+<p><strong>压缩剪辑并降低压缩比特率</strong></p>
+<p>通过压缩减小剪辑的大小和内存使用量 ：</p>
+<ul>
+<li>对大多数声音使用 <strong>Vorbis</strong>（或者对不循环的声音使用 <strong>MP3</strong>）。</li>
+<li>对常用的短声音使用 <strong>ADPCM</strong>（如脚步声、枪声）。相比于未压缩的 PCM，这样可以减小文件大小，在播放时又可以很快解码。</li>
+</ul>
+<p>移动设备上的音效最高为 22,050 Hz。使用较低设置通常对最终质量影响很小，当然，请使用您自己的耳朵来判断。</p>
+<figure data-type="image" tabindex="36"><img src="https://i.loli.net/2021/08/29/vay1Hh78qmknJOB.png" alt="img" loading="lazy"></figure>
+<center>优化 AudioClip 的导入设置。</center>
+<p><strong>选择正确的加载类型</strong></p>
+<p>每个剪辑大小的设置都不同。</p>
+<ul>
+<li><strong>小剪辑</strong> <strong>(&lt; 200 kb)</strong> 应采用 <strong>Decompress on Load</strong>。将声音解压缩为原始 16 位 PCM 音频数据，会导致 CPU 开销和内存占用，因此，这仅适用于短声音。</li>
+<li><strong>中等剪辑</strong> <strong>(&gt;= 200 kb)</strong> <strong>应保持为</strong> <strong>Compressed in Memory。</strong></li>
+<li><strong>大文件 如:背景音乐</strong>应设置为 <strong>Streaming</strong>。否则，整个资源会一次性加载到内存中。</li>
+</ul>
+<p><strong>从内存中卸载静音的音频源</strong> <strong>(AudioSources)</strong></p>
+<p>实现静音按钮时，不要只是将音量设置为 0。可以<strong>销毁</strong> <strong>AudioSource</strong> 组件，从而将其从内存中卸载，这样，播放器不需要过于频繁地切换开关。</p>
+<h1 id="动画">动画</h1>
+<p>Unity 的 <a href="https://docs.unity3d.com/cn/current/Manual/AnimationOverview.html">Mecanim 动画系统</a>相当复杂。尽可能限制在移动设备上使用下面的设置。</p>
+<p><strong>使用通用还是人形骨架</strong></p>
+<p>默认情况下，Unity 通过通用骨架导入动画模型，但在动画化角色时，开发人员常常切换为人形骨架。</p>
+<p>人形骨架每一帧（即使未使用）都计算反向动力学和动画重定向，占用的 CPU 时间比等效的通用骨架多 30-50%。如果不需要这些特定人形骨架功能，请使用通用骨架。</p>
+<p><strong>避免过多使用</strong> <strong>Animator</strong></p>
+<p>Animator 主要用于人形角色，但也常用于动画化单个值（如 UI 元素的 Alpha 通道）。<a href="https://www.youtube.com/watch?v=W45-fsnPhJY&amp;t=1968s">避免过多使用 Animator</a>，尤其是与 UI 元素结合使用。只要可能，对移动设备使用旧版 Animation 组件。</p>
+<p>考虑创建补间函数或者使用第三方库来实现简单动画（如 DOTween）。</p>
+<figure data-type="image" tabindex="37"><img src="https://i.loli.net/2021/08/29/WauY7AVgMXF86xG.png" alt="img" loading="lazy"></figure>
+<center>Animator 可能开销较大。</center>
+<h1 id="物理">物理</h1>
+<p>Unity 的内置物理系统 (Nvidia PhysX) 在移动设备上开销较大。下面的提示可以帮助您每秒减少更多帧。</p>
+<p><strong>优化设置</strong></p>
+<p>在 PlayerSettings 中，尽可能选中 <strong>Prebake Collision Meshes</strong>。</p>
+<figure data-type="image" tabindex="38"><img src="https://i.loli.net/2021/08/29/mAxC9EOe3NHk6pP.png" alt="img" loading="lazy"></figure>
+<p><strong>请务必同时编辑</strong> <strong>Physics</strong> <strong>设置</strong> <strong>(Project Settings &gt; Physics)。尽可能简化</strong> <strong>Layer Collision Matrix。</strong></p>
+<p>禁用 <strong>Auto Sync Transforms</strong> 并启用 <strong>Reuse Collision Callbacks。</strong></p>
+<figure data-type="image" tabindex="39"><img src="https://i.loli.net/2021/08/29/LeyW5VXivqmAsuI.png" alt="img" loading="lazy"></figure>
+<center>修改物理项目设置以进一步提高性能。</center>
+<figure data-type="image" tabindex="40"><img src="https://i.loli.net/2021/08/29/nqNRXAkEQUh87lZ.png" alt="img" loading="lazy"></figure>
+<center>留意 Profiler 的 Physics 模块是否有性能问题。</center>
+<p><strong>简化碰撞体</strong></p>
+<p>网格碰撞体开销较大。用简单的原始碰撞体或网格碰撞体代替更复杂的网格碰撞体来近似原始形状。</p>
+<figure data-type="image" tabindex="41"><img src="https://i.loli.net/2021/08/29/JH5TuGQdRfUSVA9.png" alt="img" loading="lazy"></figure>
+<center>使用原始或简化网格来表示碰撞体。</center>
+<p><strong>使用物理方法移动刚体</strong></p>
+<p>使用类方法（如 <strong>MovePosition</strong> 或 <strong>AddForce</strong>）来移动 <strong>Rigidbody</strong> 对象。直接转换其 <strong>Transform</strong> 组件可能导致重新计算物理世界，在复杂场景中，这样需要较大开销。</p>
+<p>在 <strong>FixedUpdate</strong> 中而不是 <strong>Update</strong> 中移动物理体。</p>
+<p><strong>修改固定时间间隔</strong></p>
+<p>Project Settings 中的默认 <strong>Fixed Timestep</strong> 是 0.02 (50 Hz)。根据目标帧率对此进行更改（例如，对 30 fps 设置为 0.03）。</p>
+<p>否则，如果帧率在运行时下降，也就是说 Unity 每帧都多次调用 <strong>FixedUpdate</strong>，可能会因物理内容过多而造成 CPU 性能问题。</p>
+<p><strong>Maximum Allowed Timestep</strong> 对帧率下降时物理计算和 FixedUpdate 事件可以使用的时间进行限制。降低该值意味着在性能顿挫过程中，物理系统和动画会缓慢下来，但也会减小其对帧率的影响。</p>
+<figure data-type="image" tabindex="42"><img src="https://i.loli.net/2021/08/29/DUfqwpESt8AxGWs.png" alt="img" loading="lazy"></figure>
+<center>将以减 Fixed Timestep 修改为与目标帧率相符，降低 Maximum Allowed Timestep 以减少性能毛刺。</center>
+<p><strong>通过</strong> <strong>Physics Debugger</strong> <strong>实现可视化</strong></p>
+<p>使用 Physics Debug 窗口 (<strong>Window &gt; Analysis &gt; Physics Debugger</strong>) 可帮助故障检查有问题的碰撞体或者出现差异的情况。下面是一个颜色编码的指示器，指示哪些游戏对象可以相互碰撞。</p>
+<figure data-type="image" tabindex="43"><img src="https://i.loli.net/2021/08/29/JHU3TZmoduYXrxi.png" alt="img" loading="lazy"></figure>
+<center>Physics Debugger 可帮助您可视化物理对象能够相互交互的方式。</center>
+<p>有关更多信息，请参阅 Unity 文档中的<a href="https://docs.unity3d.com/cn/current/Manual/PhysicsDebugVisualization.html">物理调试可视化</a>。</p>
+<h1 id="工作流程和协作">工作流程和协作</h1>
+<p>在 Unity 中构建应用程序是一件常常需要很多开发者参与的大型工作。请务必将项目设置为最适合团队协作。</p>
+<p><strong>使用版本控制</strong></p>
+<p>每个人都应使用某种版本控制。确保 <strong>Editor Settings</strong> 的 <strong>Asset Serialization Mode</strong> 设置为 <strong>Force Text</strong>。</p>
+<figure data-type="image" tabindex="44"><img src="https://i.loli.net/2021/08/29/W24B6TV5UEzfox1.png" alt="img" loading="lazy"></figure>
+<p>如果要在 <strong>Version Control</strong> 设置中使用外部版本控制系统（如 Git），请确保将 <strong>Mode</strong> 设置为 <strong>Visible Meta Files</strong>。</p>
+<figure data-type="image" tabindex="45"><img src="https://i.loli.net/2021/08/29/bhXgON13zkKj7Id.png" alt="img" loading="lazy"></figure>
+<p>Unity 还有内置 YAML（可读的数据序列化语言）工具，它专用于合并场景和预制件。有关更多信息，请参阅 Unity 文档中的<a href="https://docs.unity3d.com/cn/current/Manual/SmartMerge.html">智能合并</a>。</p>
+<p>在团队工作中，版本控制非常重要。它可以帮助您追踪 Bug 和错误修订版。按照较好的做法（如使用分支和标签）来管理重要步骤和发布版本。</p>
+<p>请参阅<a href="https://www.plasticscm.com/"> </a><a href="https://www.plasticscm.com/">Plastic SCM</a>，我们建议的<a href="https://unity.cn/plasticscm">版本控制解决方案来进行 Unity 游戏开发</a>。</p>
+<p><strong>分解大型场景</strong></p>
+<p>单个的大型 Unity 场景不适合进行协作。将关卡分解为许多较小的场景，美术师和设计师可以更好地进行单个关卡的协作，同时最大程度减小冲突的风险。</p>
+<p>在运行时，项目可以以附加方式加载场景，方法是使用 <strong>SceneManager.LoadSceneAsync</strong> <strong>并且传递</strong> <strong>LoadSceneMode.Additive</strong> <strong>参数模式。</strong></p>
+<p><strong>移除未使用的资源</strong></p>
+<p>密切注意第三方插件和库所绑定的任何未使用的资源。很多都包含嵌入式测试资源和脚本，如果不将其移除，则会成为构建版本的组成部分。删除从原型制作遗留的所有不需要的资源。</p>
+<p><strong>利用Unity Accelerator</strong> <strong>加快共享</strong></p>
+<p>Unity Accelerator 是<a href="https://unity3d.com/unity/features/collaborate?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a><a href="https://unity.com/cn/unity/features/collaborate">Collaborate</a> 服务的代理和缓存，可更快地共享 Unity 编辑器内容。如果团队在同一本地网络中工作，您无需重新构建项目的某些部分，就可以显著减少下载时间。Accelerator 与<a href="https://unity3d.com/teams?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=asset-links-gmg-choose-unity-for-mobile&amp;utm_content=optimize-mobile-game-performance-ebook"> </a><a href="https://unity.com/cn/products/unity-teams">Unity Teams Advanced</a> 配合使用时，还可共享源资源。</p>
+<figure data-type="image" tabindex="46"><img src="https://i.loli.net/2021/08/29/iLVzOvdeT3KGjXl.png" alt="img" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[贪心算法]]></title>
+        <id>https://anchengxiang.space/post/tan-xin-suan-fa-1/</id>
+        <link href="https://anchengxiang.space/post/tan-xin-suan-fa-1/">
+        </link>
+        <updated>2021-08-27T03:43:18.000Z</updated>
+        <summary type="html"><![CDATA[<h1 id="算法解释">算法解释</h1>
+<p>贪心算法或贪心思想采用贪心的策略，保证<u>每次操作都是局部最优</u>的，从而使最后得到的结果是<u>全局最优的</u> 。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h1 id="算法解释">算法解释</h1>
+<p>贪心算法或贪心思想采用贪心的策略，保证<u>每次操作都是局部最优</u>的，从而使最后得到的结果是<u>全局最优的</u> 。</p>
+<!-- more -->
+<p>举一个例子：A和B喜欢吃苹果，A可以吃五个，B可以吃三个。已知苹果园里有吃不完的苹果，求A和B一共最多吃多少个苹果。在这个例子中，我们可以选用的贪心策略为，每个人吃自己能吃的最多数量的苹果，这在每个人身上都是局部最优的。有因为全局结果是局部结果的简单求和，且局部结果互补想干，因此局部最优的策略也同样是全局最优策略。</p>
+<h1 id="分配问题">分配问题</h1>
+<h2 id="455-assign-cookies">455. Assign Cookies</h2>
+<h3 id="题目">题目</h3>
+<p>有一群孩子和一堆饼干，每一个孩子有一个饥饿度，每一个饼干都有一个大小。每个孩子只能吃最多一个饼干，且只有饼干的大小大于孩子的饥饿度时，这个孩子才能吃饱。求最多有多少孩子可以吃饱。</p>
+<h3 id="示例">示例</h3>
+<p>输入两个数组，分别代表孩子的饥饿度和饼干的大小。输出最多有多少孩子可以吃饱的数量。</p>
+<pre><code>Input:[1,2],[1,2,3]
+Output:2
+</code></pre>
+<p>在这个示例中，我们可以给两个孩子吃<code>[1,2]、[1,3]、[2,3]</code>这三个组合的任意一种</p>
+<h3 id="解题">解题</h3>
+<p>因为饥饿度最小的孩子最容易吃饱，所以先考虑这个孩子。为了尽量使得剩下的饼干可以满足饥饿度更大的孩子，所以我们应该把大于等于这个孩子饥饿度的、且大小最小的饼干给这个孩子。满足了这个孩子后，我们采取同样的策略，考虑剩下孩子里饥饿度最小的孩子，知道没有满足饼干存在。</p>
+<p>简而言之，这里的贪心策略是给剩余孩子里最小饥饿度的孩子分配最小能饱腹的饼干。</p>
+<p>至于具体实现，因为我们需要获得大小关系，所以最方便的就是把孩子和饼干分别排序。这样我们就可以从饥饿度最小的孩子和大小最小的饼干出发，计算有多少组合可以满足条件。</p>
+<pre><code class="language-c#">public class Solution {
+    public int FindContentChildren(int[] g, int[] s) {
+        if (g.Length == 0 || s.Length == 0) return 0;
+
+        Array.Sort(g);
+        Array.Sort(s);
+        int child = 0;
+        int cookie = 0;
+        while (child &lt; g.Length &amp;&amp; cookie &lt; s.Length)
+        {
+            if (s[cookie] &gt;= g[child]) child++;
+            cookie++;
+        }
+        return child;
+    }
+}
+</code></pre>
+<h2 id="135candy">135.Candy</h2>
+<h3 id="题目-2">题目</h3>
+<p>一群孩子站成一排，每一个孩子有自己的评分。现在需要给这些孩子发糖果，规则是如果一个孩子的评分比自己身旁的一个孩子要高，那么这个孩子就必须得到比身旁孩子更多的糖果；所有的孩子至少要有一个糖果。求解最少需要多少个糖果。</p>
+<h3 id="示例-2">示例</h3>
+<p>输入一个数组，表示孩子的评分。输出是最少糖果的数量。</p>
+<pre><code>Input:[1,0,2]
+Output:5
+</code></pre>
+<p>在此示例中，最少的糖果分法是<code>[2,1,2]</code></p>
+<h3 id="解题-2">解题</h3>
+<p>这一题也运用贪心策略，但是我们只需要简单的两次遍历即可，不需要排序或者选择，不要认为存在比较关系的贪心策略一定需要排序或者是选择。</p>
+<p>把所有的孩子的糖果数初始化为1；先从左往右遍历一遍，如果右边孩子的评分比左边高，则右边孩子的糖果数更新为左边孩子的糖果数加1,；再从右往左遍历一遍，如果左边孩子的评分数比右边高，且左边孩子当前的糖果数不大于右边孩子的糖果数，则左边孩子的糖果数更新为右边孩子的糖果数加1。通过两次遍历，分配的糖果就可以满足题目要求了。这里的贪心策略即为，<u>在每次遍历中，只考虑并更新相邻一侧的大小关系</u></p>
+<p>这示例中，初始化糖果为<code>[1,1,1]</code>，第一次遍历后结果为<code>[1,1,2]</code>，第二次遍历结果为<code>[2,1,2]</code>.</p>
+<pre><code class="language-c#">public class Solution {
+    public int Candy(int[] ratings) {
+        int size=ratings.Length;
+        int num=0;
+        if(size&lt;2)
+        {
+            return size;
+        }
+        int[] pnum=new int[size];
+        for(int i=0;i&lt;size;i++)
+        {
+            pnum[i]=1;
+        }
+        for(int i=1;i&lt;size;i++)
+        {
+            if(ratings[i]&gt;ratings[i-1])
+            {
+                pnum[i]=pnum[i-1]+1;
+            }
+        }
+        for(int i=size-1;i&gt;0;i--)
+        {
+            if(ratings[i]&lt;ratings[i-1])
+            {
+                pnum[i-1]=Math.Max(pnum[i-1],pnum[i]+1);
+            }
+        }
+        foreach (int i in pnum)
+        {
+            num += i;
+        }
+        return num;
+    }
+}
+</code></pre>
+<h1 id="区间问题">区间问题</h1>
+<h2 id="435无重叠区间non-overlapping-intervals">435.无重叠区间Non-overlapping Intervals</h2>
+<h3 id="题目-3">题目</h3>
+<p>给定多个区间，计算让这些区间互不重叠所需要移除区间的最少个数。起止相连不算重叠。</p>
+<h3 id="示例-3">示例</h3>
+<p>输入是一个数组，数组由多个长度固定为2的数组组成，表示区间的开始和结尾。输出一个整数，表示需要移除的区间数量。</p>
+<pre><code>Input：[[1,2],[2,4],[1,3]]
+Output:1
+</code></pre>
+<p>在此示例中，我们可以移除区间[1,3]，使得剩余的区间[[1,2],[2,4]]互不重叠。</p>
+<h3 id="解题-3">解题</h3>
+<p>在选择要保留区间时，区间的结尾十分重要：选择的区间结尾越小，余留给其他区间的空间就越大，也就能保留更多的区间。因此，我们采取的贪心策略为，优先保留结尾小且不想交的区间。</p>
+<p>具体实现方法为，先把区间按照结尾的大小进行增序排序，每次选择结尾最小和前一个选择的区间不重叠的区间。</p>
+<p>在示例中，排序后的数组为[[1,2],[1,3],[2,4]]。按照我们的贪心策略，首先初始化为区间[1,2]；由于[1,3]与[1,2]相交，我们跳过该区间；由于[2,4]与[1,2]不想交，我们保留。因此最终保留的区间为[[1,2],[2,4]]。</p>
+<pre><code class="language-c#">public class Solution {
+    public int EraseOverlapIntervals(int[][] intervals) {
+		if(intervals.Length==0)return 0;
+        Array.Sort(intervals,(a,b)=&gt;a[1].CompareTo(b[1]));
+        int temp=-1;
+        int right=int.MinValue;
+        int count=0;
+        temp=intervals[0][0];
+        right=intervals[0][1];
+        for(int i=1;i&lt;intervals.Length;i++){
+            if(temp==intervals[i][0]){
+                if(right&gt;=intervals[i][1]){
+                    right=intervals[i][1];
+                }
+                count++;
+            }
+            else{
+                if(right&lt;=intervals[i][0]){
+                    temp=intervals[i][0];
+                    right=intervals[i][1];
+            }
+            else count++;
+            }
+        }
+        return count;
     }
 }
 </code></pre>
